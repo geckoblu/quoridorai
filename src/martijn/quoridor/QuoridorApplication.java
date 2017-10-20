@@ -45,7 +45,9 @@ public class QuoridorApplication {
 
 	private static void registerAdapter(ComboPane combo) {
 		try {
+			@SuppressWarnings("rawtypes")
 			Class adapter = Class.forName("martijn.quoridor.OSXAdapter");
+			@SuppressWarnings("unchecked")
 			Method method = adapter.getMethod("register", ComboPane.class);
 			method.invoke(null, combo);
 		} catch (SecurityException e) {
