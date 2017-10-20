@@ -3,10 +3,6 @@
  */
 package martijn.quoridor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-
 import javax.swing.JFrame;
 
 import martijn.quoridor.brains.BrainFactory;
@@ -33,34 +29,11 @@ public class QuoridorApplication {
 		f.setSize(400, 500);
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		if (Core.isMac()) {
-			registerAdapter(combo);
-		}
 	}
 
 	/** Launches Quoridor. */
 	public static void main(String[] args) {
 		launch();
-	}
-
-	private static void registerAdapter(ComboPane combo) {
-		try {
-			Class adapter = Class.forName("martijn.quoridor.OSXAdapter");
-			Method method = adapter.getMethod("register", ComboPane.class);
-			method.invoke(null, combo);
-		} catch (SecurityException e) {
-			Core.LOGGER.log(Level.WARNING, "Failed to register OSXAdapter.", e);
-		} catch (IllegalArgumentException e) {
-			Core.LOGGER.log(Level.WARNING, "Failed to register OSXAdapter.", e);
-		} catch (ClassNotFoundException e) {
-			Core.LOGGER.log(Level.WARNING, "Failed to register OSXAdapter.", e);
-		} catch (NoSuchMethodException e) {
-			Core.LOGGER.log(Level.WARNING, "Failed to register OSXAdapter.", e);
-		} catch (IllegalAccessException e) {
-			Core.LOGGER.log(Level.WARNING, "Failed to register OSXAdapter.", e);
-		} catch (InvocationTargetException e) {
-			Core.LOGGER.log(Level.WARNING, "Failed to register OSXAdapter.", e);
-		}
 	}
 
 }

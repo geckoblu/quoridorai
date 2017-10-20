@@ -40,10 +40,4 @@ public class Core {
 		return new Color(rgb | a, true);
 	}
 
-	/** Returns whether we're on the Macintosh platform. */
-	public static boolean isMac() {
-		// http://java.sun.com/developer/technicalArticles/JavaLP/JavaToMac2/
-		return System.getProperty("mrj.version") != null;
-	}
-
 }
