@@ -20,6 +20,7 @@ import martijn.quoridor.ui.actions.UndoAction;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class GameCard extends JPanel {
 
 	public static final int HOR_STRUT = 20;

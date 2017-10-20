@@ -25,6 +25,7 @@ import martijn.quoridor.model.Player;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class PlayerIcon extends JLabel implements Icon {
 
 	private static final int NFRAMES = 12;

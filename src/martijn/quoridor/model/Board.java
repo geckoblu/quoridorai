@@ -332,7 +332,6 @@ public class Board {
 	// Cloning.
 
 	/** Creates a deep copy of this board. */
-	@SuppressWarnings("unchecked")
 	public Board clone() {
 		Board clone = new Board(width, height);
 		clone.history.addAll(history);

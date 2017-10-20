@@ -25,6 +25,7 @@ import martijn.quoridor.ui.actions.ShowCardAction;
  * 
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class AboutCard extends JPanel {
 
 	/** The ComboPane that holds the cards. */

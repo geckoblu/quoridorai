@@ -89,7 +89,6 @@ public class HumanController extends Controller {
 	 * @param mousePosition
 	 *            the mouse position in board coordinates.
 	 */
-	@SuppressWarnings("unchecked")
 	private void updateShadow(Point2D mousePosition) {
 		if (mousePosition == null) {
 			getCanvas().setShadow(null);

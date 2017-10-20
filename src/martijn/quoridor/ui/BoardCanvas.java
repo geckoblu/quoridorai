@@ -31,6 +31,7 @@ import martijn.quoridor.model.Wall;
  * 
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class BoardCanvas extends JPanel implements BoardListener {
 
 	private static final float WALL_THICKNESS = .1f;

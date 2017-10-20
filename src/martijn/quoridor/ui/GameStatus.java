@@ -16,6 +16,7 @@ import martijn.quoridor.model.Move;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 	private PlayerStatus[] lines;

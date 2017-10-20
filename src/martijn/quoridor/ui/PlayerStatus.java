@@ -121,6 +121,7 @@ public class PlayerStatus {
 		return getBoard().getPlayers()[playerIndex];
 	}
 
+	@SuppressWarnings("serial")
 	private class ControllerModel extends AbstractListModel implements
 			ComboBoxModel, SetupListener {
 

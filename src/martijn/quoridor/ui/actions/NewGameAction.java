@@ -14,6 +14,7 @@ import martijn.quoridor.model.Move;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class NewGameAction extends AbstractAction implements BoardListener {
 
 	private Board board;

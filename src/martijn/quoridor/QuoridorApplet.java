@@ -15,6 +15,7 @@ import martijn.quoridor.ui.ComboPane;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class QuoridorApplet extends JApplet {
 
 	public void init() {

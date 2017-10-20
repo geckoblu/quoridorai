@@ -16,6 +16,7 @@ import martijn.quoridor.brains.BrainFactory;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class ComboPane extends JPanel {
 
 	public static final String GAME_CARD = "game";

@@ -18,6 +18,7 @@ import martijn.quoridor.ui.SetupListener;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class UndoAction extends AbstractAction implements BoardListener,
 		SetupListener {
 

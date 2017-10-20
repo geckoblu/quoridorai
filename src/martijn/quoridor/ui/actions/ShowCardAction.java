@@ -14,6 +14,7 @@ import martijn.quoridor.ui.ComboPane;
 /**
  * @author Martijn van Steenbergen
  */
+@SuppressWarnings("serial")
 public class ShowCardAction extends AbstractAction {
 
 	private ComboPane combo;
