@@ -13,15 +13,10 @@ import javax.swing.JPanel;
 import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.model.Board;
-import martijn.quoridor.ui.actions.NewGameAction;
-import martijn.quoridor.ui.actions.ShowCardAction;
 import martijn.quoridor.ui.actions.UndoAction;
 
-/**
- * @author Martijn van Steenbergen
- */
 @SuppressWarnings("serial")
-public class GameCard extends JPanel {
+public class GamePanel extends JPanel {
 
 	public static final int HOR_STRUT = 20;
 
@@ -33,13 +28,13 @@ public class GameCard extends JPanel {
 
 	private final Setup setup;
 
-	public GameCard(ComboPane combo, BrainFactory factory) {
-		board = new Board();
+	public GamePanel(Board board, BrainFactory factory) {
+		this.board = board;
 		canvas = new BoardCanvas(board);
 		controllers = getControllers(factory, canvas);
 		setup = new Setup(canvas, new Controller[] { controllers[0],
 				controllers[2] });
-		createGUI(combo);
+		initUI();
 		new SoundPlayer(board, setup);
 	}
 
@@ -55,16 +50,15 @@ public class GameCard extends JPanel {
 		return controllers;
 	}
 
-	private void createGUI(ComboPane combo) {
+	private void initUI() {
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(canvas, BorderLayout.CENTER);
 		p.add(new GameStatus(this), BorderLayout.SOUTH);
 
 		JPanel buttons = new JPanel();
-		buttons.add(new JButton(new NewGameAction(board)));
+		//buttons.add(new JButton(new NewGameAction(board)));
 		buttons.add(new JButton(new UndoAction(this)));
-		buttons.add(new JButton(new ShowCardAction(combo, ComboPane.ABOUT_CARD,
-				"About")));
+		//buttons.add(new JButton(new ShowCardAction(combo, ComboPane.ABOUT_CARD, "About")));
 
 		setLayout(new BorderLayout());
 		add(p, BorderLayout.CENTER);

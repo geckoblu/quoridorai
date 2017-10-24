@@ -21,7 +21,7 @@ public class PlayerStatus {
 
 	// Model.
 
-	private GameCard game;
+	private GamePanel game;
 
 	private int playerIndex;
 
@@ -40,7 +40,7 @@ public class PlayerStatus {
 	 * @param gbc
 	 *            the constraints with the gridy value set.
 	 */
-	public PlayerStatus(GameCard game, int player) {
+	public PlayerStatus(GamePanel game, int player) {
 		this.game = game;
 		this.playerIndex = player;
 	}

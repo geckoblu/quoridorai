@@ -21,9 +21,9 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 	private PlayerStatus[] lines;
 
-	private GameCard game;
+	private GamePanel game;
 
-	public GameStatus(GameCard game) {
+	public GameStatus(GamePanel game) {
 		this.game = game;
 		createGUI();
 		getBoard().addBoardListener(this);

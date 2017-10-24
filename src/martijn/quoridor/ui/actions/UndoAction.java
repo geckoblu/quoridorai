@@ -12,7 +12,7 @@ import javax.swing.Action;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
-import martijn.quoridor.ui.GameCard;
+import martijn.quoridor.ui.GamePanel;
 import martijn.quoridor.ui.SetupListener;
 
 /**
@@ -22,9 +22,9 @@ import martijn.quoridor.ui.SetupListener;
 public class UndoAction extends AbstractAction implements BoardListener,
 		SetupListener {
 
-	private GameCard game;
+	private GamePanel game;
 
-	public UndoAction(GameCard game) {
+	public UndoAction(GamePanel game) {
 		super("Undo");
 		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Z);
 		this.game = game;

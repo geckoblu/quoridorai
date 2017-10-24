@@ -3,16 +3,15 @@
  */
 package martijn.quoridor;
 
-import javax.swing.JFrame;
-
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.brains.DefaultBrainFactory;
-import martijn.quoridor.ui.ComboPane;
+import martijn.quoridor.model.Board;
+import martijn.quoridor.ui.ApplicationFrame;
 
 /**
  * The application's main entry point.
- * 
  * @author Martijn van Steenbergen
+ * @author Alessio Piccoli
  */
 public class QuoridorApplication {
 
@@ -23,12 +22,11 @@ public class QuoridorApplication {
 
 	/** Launches Quoridor with the brains created by the specified factory. */
 	public static void launch(BrainFactory factory) {
-		JFrame f = new JFrame("Quoridor");
-		ComboPane combo = new ComboPane(factory);
-		f.setContentPane(combo);
-		f.setSize(400, 500);
+		Board board = new Board();
+		ApplicationFrame f = new ApplicationFrame(board, factory);
+		
+		f.setLocationRelativeTo(null);
 		f.setVisible(true);
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	/** Launches Quoridor. */

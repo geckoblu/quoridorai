@@ -9,15 +9,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import martijn.quoridor.Core;
-import martijn.quoridor.ui.actions.ShowCardAction;
 
 /**
  * The About card in the application. Shows the contents of the about file,
@@ -28,12 +24,8 @@ import martijn.quoridor.ui.actions.ShowCardAction;
 @SuppressWarnings("serial")
 public class AboutCard extends JPanel {
 
-	/** The ComboPane that holds the cards. */
-	private ComboPane combo;
-
 	/** Creates a new AboutCard. */
-	public AboutCard(ComboPane combo) {
-		this.combo = combo;
+	public AboutCard() {
 		createGUI();
 	}
 
@@ -44,20 +36,10 @@ public class AboutCard extends JPanel {
 		area.setWrapStyleWord(true);
 		area.setText(getAboutText());
 		area.setEditable(false);
-		JScrollPane scroller = new JScrollPane(area);
-
-		JButton ok = new JButton(new ShowCardAction(combo, ComboPane.GAME_CARD,
-				"Back"));
-
-		JPanel buttons = new JPanel();
-		buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
-		buttons.add(Box.createHorizontalGlue());
-		buttons.add(ok);
-		buttons.add(Box.createHorizontalStrut(GameCard.HOR_STRUT));
+		JScrollPane scroller = new JScrollPane(area);		
 
 		setLayout(new BorderLayout());
 		add(scroller, BorderLayout.CENTER);
-		add(buttons, BorderLayout.SOUTH);
 	}
 
 	/** Reads the about text from the about file. */
