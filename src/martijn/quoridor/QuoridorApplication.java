@@ -3,6 +3,9 @@
  */
 package martijn.quoridor;
 
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.brains.DefaultBrainFactory;
 import martijn.quoridor.model.Board;
@@ -22,11 +25,20 @@ public class QuoridorApplication {
 
 	/** Launches Quoridor with the brains created by the specified factory. */
 	public static void launch(BrainFactory factory) {
-		Board board = new Board();
-		ApplicationFrame f = new ApplicationFrame(board, factory);
+		final Board board = new Board();
+		final BrainFactory ffactory = factory;
 		
-		f.setLocationRelativeTo(null);
-		f.setVisible(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				UIManager.put("swing.boldMetal", false);
+				
+				ApplicationFrame f = new ApplicationFrame(board, ffactory);
+
+				f.setLocationRelativeTo(null);
+				f.setVisible(true);
+			}
+		});
 	}
 
 	/** Launches Quoridor. */
