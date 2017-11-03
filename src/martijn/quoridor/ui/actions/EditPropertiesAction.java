@@ -11,7 +11,6 @@ import martijn.quoridor.Config;
 import martijn.quoridor.I18N;
 import martijn.quoridor.ui.PropertiesPanel;
 
-
 @SuppressWarnings("serial")
 public class EditPropertiesAction extends AbstractAction {
 

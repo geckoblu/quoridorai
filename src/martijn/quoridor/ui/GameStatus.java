@@ -1,6 +1,3 @@
-/*
- * Created on Aug 12, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.GridBagConstraints;
@@ -13,9 +10,6 @@ import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
 
-/**
- * @author Martijn van Steenbergen
- */
 @SuppressWarnings("serial")
 public class GameStatus extends JPanel implements BoardListener, SetupListener {
 

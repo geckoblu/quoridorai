@@ -1,13 +1,8 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.model;
 
 /**
  * A BoardListener registered on a Board is notified of any state changes the
  * Board goes through.
- * 
- * @author Martijn van Steenbergen
  */
 public interface BoardListener {
 

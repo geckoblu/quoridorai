@@ -1,6 +1,3 @@
-/*
- * Created on Aug 6, 2006 
- */
 package martijn.quoridor.ui.actions;
 
 import java.awt.event.ActionEvent;
@@ -15,9 +12,6 @@ import martijn.quoridor.model.Move;
 import martijn.quoridor.ui.GamePanel;
 import martijn.quoridor.ui.SetupListener;
 
-/**
- * @author Martijn van Steenbergen
- */
 @SuppressWarnings("serial")
 public class UndoAction extends AbstractAction implements BoardListener,
 		SetupListener {

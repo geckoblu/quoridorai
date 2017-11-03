@@ -1,6 +1,3 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.brains;
 
 import java.util.Collections;
@@ -10,9 +7,6 @@ import java.util.List;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Move;
 
-/**
- * @author Martijn van Steenbergen
- */
 public abstract class NegamaxBrain extends Brain {
 
 	private int depth;

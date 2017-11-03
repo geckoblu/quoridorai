@@ -1,12 +1,7 @@
-/*
- * Created on Aug 14, 2006 
- */
 package martijn.quoridor.anim;
 
 /**
  * An animation. Upon creation, the animation should be in reset state.
- * 
- * @author Martijn van Steenbergen
  */
 public interface Animation {
 

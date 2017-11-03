@@ -1,6 +1,3 @@
-/*
- * Created on Aug 17, 2006 
- */
 package martijn.quoridor.brains;
 
 import java.util.List;
@@ -8,8 +5,6 @@ import java.util.List;
 /**
  * The DefaultBrainFactory provides the default brains used in the Quoridor
  * application.
- * 
- * @author Martijn van Steenbergen
  */
 public class DefaultBrainFactory implements BrainFactory {
 

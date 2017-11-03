@@ -1,6 +1,3 @@
-/*
- * Created on Aug 31, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.applet.Applet;
@@ -10,9 +7,6 @@ import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class SoundPlayer implements BoardListener {
 
 	private Board board;

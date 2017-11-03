@@ -1,6 +1,3 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.brains;
 
 import martijn.quoridor.model.Board;
@@ -8,8 +5,6 @@ import martijn.quoridor.model.Move;
 
 /**
  * A brain determines the best move in a given board.
- * 
- * @author Martijn van Steenbergen
  */
 public abstract class Brain {
 

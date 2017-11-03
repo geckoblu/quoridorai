@@ -1,6 +1,3 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.brains;
 
 import java.util.LinkedList;
@@ -16,9 +13,6 @@ import martijn.quoridor.model.PositionSet;
 import martijn.quoridor.model.PutWall;
 import martijn.quoridor.model.Wall;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class SmartBrain extends NegamaxBrain {
 
 	public SmartBrain(int depth) {

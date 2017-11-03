@@ -1,6 +1,3 @@
-/*
- * Created on Aug 14, 2006 
- */
 package martijn.quoridor.anim;
 
 import java.util.concurrent.BlockingQueue;
@@ -11,8 +8,6 @@ import martijn.quoridor.Core;
 
 /**
  * An animator manages one thread that executes play jobs.
- * 
- * @author Martijn van Steenbergen
  */
 public class Animator implements Runnable {
 

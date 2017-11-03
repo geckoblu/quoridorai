@@ -1,11 +1,5 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
-/**
- * @author Martijn van Steenbergen
- */
 public enum Wall {
 
 	HORIZONTAL, VERTICAL;

@@ -1,6 +1,3 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.Container;
@@ -14,9 +11,6 @@ import javax.swing.JLabel;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Player;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class PlayerStatus {
 
 	// Model.

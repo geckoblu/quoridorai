@@ -1,11 +1,5 @@
-/*
- * Created on Aug 17, 2006 
- */
 package martijn.quoridor.anim;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class PlayJob {
 
 	public static final int LOOP = -1;

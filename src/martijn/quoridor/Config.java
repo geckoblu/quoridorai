@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
 
-
 public final class Config {
 
 	public static final String SHOWCOORDINATES = "SHOWCOORDINATES";

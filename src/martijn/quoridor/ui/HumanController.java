@@ -1,6 +1,3 @@
-/*
- * Created on Aug 9, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.Point;
@@ -23,9 +20,6 @@ import martijn.quoridor.model.Position;
 import martijn.quoridor.model.PutWall;
 import martijn.quoridor.model.Wall;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class HumanController extends Controller {
 
 	private MouseMotionListener hoverListener;

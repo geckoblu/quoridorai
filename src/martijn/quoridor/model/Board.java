@@ -1,6 +1,3 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
 import java.awt.Color;
@@ -9,9 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class Board {
 
 	private int width;

@@ -1,6 +1,3 @@
-/*
- * Created on Aug 9, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.util.logging.Level;
@@ -12,9 +9,6 @@ import martijn.quoridor.brains.Brain;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Move;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class BrainController extends Controller {
 
 	private Brain brain;

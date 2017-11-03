@@ -1,6 +1,3 @@
-/*
- * Created on Aug 12, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.BorderLayout;

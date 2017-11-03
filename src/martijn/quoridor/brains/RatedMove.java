@@ -1,13 +1,7 @@
-/*
- * Created on Aug 31, 2006 
- */
 package martijn.quoridor.brains;
 
 import martijn.quoridor.model.Move;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class RatedMove implements Comparable {
 
 	private Move move;

@@ -1,11 +1,5 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.model;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class PositionSet {
 
 	private boolean[][] flags;

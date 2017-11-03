@@ -1,6 +1,3 @@
-/*
- * Created on Aug 9, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.util.Arrays;
@@ -12,8 +9,6 @@ import martijn.quoridor.model.Board;
 
 /**
  * Setup describes a complete game setup: board and controllers.
- * 
- * @author Martijn van Steenbergen
  */
 public class Setup implements Iterable<Controller> {
 

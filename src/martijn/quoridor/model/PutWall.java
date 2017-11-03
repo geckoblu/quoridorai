@@ -1,11 +1,5 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class PutWall implements Move {
 
 	private Position position;

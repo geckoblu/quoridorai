@@ -1,15 +1,9 @@
-/*
- * Created on Aug 11, 2006 
- */
 package martijn.quoridor.model;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class GoalSeeker implements Comparator<Position> {
 
 	private Player player;

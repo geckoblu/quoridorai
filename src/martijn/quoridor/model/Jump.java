@@ -1,12 +1,7 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
 /**
  * A jump move.
- * 
- * @author Martijn van Steenbergen
  */
 public class Jump implements Move {
 

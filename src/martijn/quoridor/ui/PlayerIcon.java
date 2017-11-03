@@ -1,6 +1,3 @@
-/*
- * Created on Aug 9, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.Color;
@@ -22,9 +19,6 @@ import martijn.quoridor.anim.PlayJob;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Player;
 
-/**
- * @author Martijn van Steenbergen
- */
 @SuppressWarnings("serial")
 public class PlayerIcon extends JLabel implements Icon {
 

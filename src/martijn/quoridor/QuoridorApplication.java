@@ -1,6 +1,3 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor;
 
 import javax.swing.SwingUtilities;
@@ -13,8 +10,6 @@ import martijn.quoridor.ui.ApplicationFrame;
 
 /**
  * The application's main entry point.
- * @author Martijn van Steenbergen
- * @author Alessio Piccoli
  */
 public class QuoridorApplication {
 

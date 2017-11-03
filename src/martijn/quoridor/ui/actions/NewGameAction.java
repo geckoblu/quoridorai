@@ -1,6 +1,3 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.ui.actions;
 
 import java.awt.event.ActionEvent;
@@ -11,8 +8,6 @@ import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
 
-/**
- */
 @SuppressWarnings("serial")
 public class NewGameAction extends AbstractAction implements BoardListener {
 

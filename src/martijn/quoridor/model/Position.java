@@ -1,13 +1,7 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
 import static java.lang.Math.abs;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class Position implements Comparable {
 
 	private int x;

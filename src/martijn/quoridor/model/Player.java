@@ -1,6 +1,3 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
 import java.awt.Color;
@@ -11,8 +8,6 @@ import java.util.TreeSet;
 
 /**
  * A player participating in a game of Quoridor.
- * 
- * @author Martijn van Steenbergen
  */
 public class Player {
 

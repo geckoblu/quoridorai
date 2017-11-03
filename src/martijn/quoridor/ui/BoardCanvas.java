@@ -1,6 +1,3 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.BasicStroke;
@@ -28,8 +25,6 @@ import martijn.quoridor.model.Wall;
 
 /**
  * A JPanel that draws a Quoridor state and a shadow move.
- * 
- * @author Martijn van Steenbergen
  */
 @SuppressWarnings("serial")
 public class BoardCanvas extends JPanel implements BoardListener {

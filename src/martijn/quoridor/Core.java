@@ -1,6 +1,3 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor;
 
 import java.awt.Color;
@@ -8,9 +5,6 @@ import java.util.logging.Logger;
 
 /**
  * The Core provides the Logger and some utility methods.
- * 
- * @author Martijn van Steenbergen
- * @auhtor Alessio Piccoli
  */
 public class Core {
 

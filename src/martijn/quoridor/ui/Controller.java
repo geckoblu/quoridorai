@@ -1,6 +1,3 @@
-/*
- * Created on Aug 9, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.util.LinkedList;
@@ -12,8 +9,6 @@ import martijn.quoridor.model.Move;
 
 /**
  * A Controller controls a specific player.
- * 
- * @author Martijn van Steenbergen
  */
 public abstract class Controller implements BoardListener {
 
