@@ -4,14 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -24,6 +21,7 @@ import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.ui.actions.AboutAction;
 import martijn.quoridor.ui.actions.EditPropertiesAction;
+import martijn.quoridor.ui.actions.ExitAction;
 import martijn.quoridor.ui.actions.NewGameAction;
 
 @SuppressWarnings("serial")
@@ -31,18 +29,24 @@ public class ApplicationFrame extends JFrame {
 
 	private final Board board;
 	private final BrainFactory factory;
-	
+		
 	public ApplicationFrame(Board board, BrainFactory factory) {
 		this.board = board;
 		this.factory = factory;
 		
 		initUI();
+		
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {				
+				close();
+			}});		
 	}
 	
 	private void initUI() {
-		setTitle("Quoridor");
+		setTitle("QuoridorAI");
 		setSize(400, 500);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		URL url = getClass().getResource("/icons/quoridor.png");
 		Image icon = Toolkit.getDefaultToolkit().getImage(url);
@@ -68,8 +72,9 @@ public class ApplicationFrame extends JFrame {
 	
 	private void createFileMenu(JMenuBar menubar) {
 		
-		JMenu file = new JMenu(I18N.tr("File"));
-        file.setMnemonic(KeyEvent.VK_F);
+		I18N.Menu i18nMenu = I18N.getMenu("FILE");
+		JMenu file = new JMenu(i18nMenu.label);
+        file.setMnemonic(i18nMenu.mnemonic);
         
         JMenuItem menuItem = new JMenuItem();
         menuItem.setAction(new NewGameAction(board));
@@ -82,18 +87,9 @@ public class ApplicationFrame extends JFrame {
         file.add(menuItem);
 
         file.addSeparator();
-        
-        ImageIcon icon = new ImageIcon("exit.png");
-        Action exitAction = new AbstractAction(I18N.tr("Exit"), icon) {
-        	public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        };
-        exitAction.putValue(Action.SHORT_DESCRIPTION, I18N.tr("Exit application"));
-        //exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
 
-        menuItem = new JMenuItem();
-        menuItem.setAction(exitAction);
+        menuItem = new JMenuItem();        
+        menuItem.setAction(new ExitAction(this));
 
         file.add(menuItem);
 		
@@ -102,8 +98,9 @@ public class ApplicationFrame extends JFrame {
 	
 	private void createHelpMenu(JMenuBar menubar) {
 		
-		JMenu help = new JMenu("Help");
-		help.setMnemonic(KeyEvent.VK_H);
+		I18N.Menu i18nMenu = I18N.getMenu("HELP");
+		JMenu help = new JMenu(i18nMenu.label);
+		help.setMnemonic(i18nMenu.mnemonic);
 		
 		JMenuItem menuItem = new JMenuItem();
         menuItem.setAction(new AboutAction(this));
@@ -119,8 +116,12 @@ public class ApplicationFrame extends JFrame {
 	    JLabel status = new JLabel(" ");
 	    statusBar.add(status);
 	    
-	    add(statusBar, BorderLayout.SOUTH);
-	    
+	    add(statusBar, BorderLayout.SOUTH); 
+	}
+	
+	public final void close() {		
+		dispose();
+		System.exit(0);
 	}
 
 }

@@ -3,7 +3,9 @@ package martijn.quoridor.ui.actions;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 
+import martijn.quoridor.I18N;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
@@ -14,7 +16,13 @@ public class NewGameAction extends AbstractAction implements BoardListener {
 	private Board board;
 
 	public NewGameAction(Board board) {
-		super("New Game");
+		super();
+		
+		I18N.Action action = I18N.getAction("NEW_GAME");
+		putValue(Action.NAME, action.name);
+		putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
+		putValue(Action.SHORT_DESCRIPTION, action.short_description);
+		
 		this.board = board;
 		update();
 		board.addBoardListener(this);

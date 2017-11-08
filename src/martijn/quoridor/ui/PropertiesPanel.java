@@ -65,7 +65,7 @@ public class PropertiesPanel extends JPanel {
 		c.weightx = 0;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.WEST;
-		add(new JLabel("<html><b>" + I18N.tr("Notation") + ":</b></html>"), c);
+		add(new JLabel("<html><b>" + I18N.tr("NOTATION") + ":</b></html>"), c);
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -92,12 +92,12 @@ public class PropertiesPanel extends JPanel {
 		c.gridx = 0;
 		c.gridy = 4;
 		c.gridwidth = 2;
-		add(new JLabel("<html><b>" + I18N.tr("Coordinates") + ":</b></html>"), c);
+		add(new JLabel("<html><b>" + I18N.tr("COORDINATES") + ":</b></html>"), c);
 
 		c.gridx = 1;
 		c.gridy = 5;
 		c.gridwidth = 1;
-		showCoordinates = new JCheckBox(I18N.tr("Show coordinates"));
+		showCoordinates = new JCheckBox(I18N.tr("SHOW_COORDINATES"));
 		add(showCoordinates, c);
 	}
 

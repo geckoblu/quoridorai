@@ -1,11 +1,11 @@
 package martijn.quoridor.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import martijn.quoridor.I18N;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
@@ -19,8 +19,13 @@ public class UndoAction extends AbstractAction implements BoardListener,
 	private GamePanel game;
 
 	public UndoAction(GamePanel game) {
-		super("Undo");
-		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Z);
+		super();
+		
+		I18N.Action action = I18N.getAction("UNDO");
+		putValue(Action.NAME, action.name);
+		putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
+		putValue(Action.SHORT_DESCRIPTION, action.short_description);
+		
 		this.game = game;
 		update();
 		game.getBoard().addBoardListener(this);
