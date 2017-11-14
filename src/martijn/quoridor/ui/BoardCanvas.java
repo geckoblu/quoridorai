@@ -2,6 +2,7 @@ package martijn.quoridor.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -48,71 +49,93 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
 	// Painting.
 
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
 		Graphics2D g2 = (Graphics2D) g;
 
-		// Transform from pixel coordinates to board coordinates.
-		transform = new AffineTransform();
-		double scale = Math.min((double) getWidth() / board.getWidth(),
-				(double) getHeight() / board.getHeight());
+		int bWidth = board.getWidth() + 2;
+		int bHeight = board.getHeight() + 2;
+		double scale = Math.min((double) getWidth() / bWidth,
+				                (double) getHeight() / bHeight);
 		scale *= .95;
-		double boardWidth = board.getWidth() * scale;
-		double boardHeight = board.getHeight() * scale;
-		transform.translate((getWidth() - boardWidth) / 2,
-				-(getHeight() - boardHeight) / 2);
-		transform.translate(0, getHeight());
-		transform.scale(1, -1);
-		transform.scale(scale, scale);
+		double boardWidth = bWidth * scale;
+		double boardHeight = bHeight * scale;
 
-		g2.transform(transform);
+		g2.translate((getWidth() - boardWidth) / 2,
+				            (getHeight() - boardHeight) / 2);
+		g2.scale(scale, scale);
+
 		paintState(g2, (float) (1 / scale));
 	}
 
 	/** Paints the current state. */
-	private void paintState(Graphics2D g, float hairline) {
-		g.setColor(Color.GRAY);
+	private void paintState(Graphics2D g2, float hairline) {
 
+		g2.setColor(Color.GRAY);
+		Font currentFont = g2.getFont();
+		Font newFont = currentFont.deriveFont(0.7F);
+		g2.setFont(newFont);
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
+		g2.drawString("X", 1, 1);
+		g2.drawString("X", 0, 2);
+
+
+		g2.translate(1, 1);
+		g2.translate(0, 9);
+		g2.scale(1, -1);
+		transform = g2.getTransform();
+
+		g2.setColor(Color.GRAY);
 		// Draw cells.
-		g.setStroke(new BasicStroke(hairline));
+		g2.setStroke(new BasicStroke(hairline));
 		for (int x = 0; x < board.getWidth(); x++) {
 			for (int y = 0; y < board.getHeight(); y++) {
-				g.draw(new Rectangle2D.Double(x + WALL_THICKNESS / 2, y
-						+ WALL_THICKNESS / 2, 1 - WALL_THICKNESS,
-						1 - WALL_THICKNESS));
+				g2.draw(new Rectangle2D.Double(x + WALL_THICKNESS / 2,
+						                       y + WALL_THICKNESS / 2,
+						                       1 - WALL_THICKNESS,
+						                       1 - WALL_THICKNESS));
 			}
 		}
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				           RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// Draw walls.
 		for (int x = 0; x < board.getWidth() - 1; x++) {
 			for (int y = 0; y < board.getHeight() - 1; y++) {
 				Wall wall = board.getWall(new Position(x, y));
 				if (wall != null) {
-					drawWall(g, hairline, wall, x, y, false);
+					drawWall(g2, hairline, wall, x, y, false);
 				}
 			}
 		}
 
 		// Draw players.
 		for (Player p : board.getPlayers()) {
-			drawPlayer(g, hairline, p, p.getPosition(), false);
+			drawPlayer(g2, hairline, p, p.getPosition(), false);
 		}
 
 		// Draw shadow.
 		if (isShadowLegal()) {
 			if (shadow instanceof PutWall) {
 				PutWall pw = (PutWall) shadow;
-				drawWall(g, hairline, pw.getWall(), pw.getPosition().getX(), pw
+				drawWall(g2, hairline, pw.getWall(), pw.getPosition().getX(), pw
 						.getPosition().getY(), true);
 			} else if (shadow instanceof Jump) {
 				Jump j = (Jump) shadow;
-				drawPlayer(g, hairline, board.getTurn(), j.getNewPosition(),
+				drawPlayer(g2, hairline, board.getTurn(), j.getNewPosition(),
 						true);
 			}
 		}
+
 	}
 
 	/** Draws a single player. */
@@ -204,16 +227,19 @@ public class BoardCanvas extends JPanel implements BoardListener {
 		setShadow(null);
 	}
 
+	@Override
 	public void moveExecuted(Move move) {
 		setShadow(null);
 		repaint();
 	}
 
+	@Override
 	public void movesUndone(Move[] moves) {
 		setShadow(null);
 		repaint();
 	}
 
+	@Override
 	public void newGame() {
 		setShadow(null);
 		repaint();

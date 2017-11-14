@@ -29,8 +29,7 @@ public class GamePanel extends JPanel {
 		this.board = board;
 		canvas = new BoardCanvas(board);
 		controllers = getControllers(factory, canvas);
-		setup = new Setup(canvas, new Controller[] { controllers[0],
-				controllers[2] });
+		setup = new Setup(canvas, new Controller[] { controllers[0], controllers[2] });
 		initUI();
 		new SoundPlayer(board, setup);
 	}
