@@ -5,14 +5,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 
-import martijn.quoridor.Core;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Jump;
 import martijn.quoridor.model.Move;
@@ -62,24 +58,13 @@ public class HumanController extends Controller {
 		if (mouseLocation == null) {
 			return null;
 		}
-		Point2D.Double p = new Point2D.Double();
-		AffineTransform transform = getCanvas().getPaintTransformation();
-		if (transform == null) {
-			return null;
-		}
-		try {
-			transform.inverseTransform(mouseLocation, p);
-			return p;
-		} catch (NoninvertibleTransformException e) {
-			Core.LOGGER.log(Level.WARNING,
-					"Could not convert mouse location to board location.", e);
-			return null;
-		}
+
+		return getCanvas().toBoardCoordinates(mouseLocation);
 	}
 
 	/**
 	 * Updates the shadow based on the current mouse position.
-	 * 
+	 *
 	 * @param mousePosition
 	 *            the mouse position in board coordinates.
 	 */
@@ -146,10 +131,12 @@ public class HumanController extends Controller {
 	/** Listens to mouse movements. */
 	private class HoverListener implements MouseMotionListener {
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 			updateShadow(toBoardCoordinates(e.getPoint()));
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 			mouseMoved(e);
 		}
@@ -175,6 +162,7 @@ public class HumanController extends Controller {
 
 	}
 
+	@Override
 	public String toString() {
 		return "Human";
 	}
