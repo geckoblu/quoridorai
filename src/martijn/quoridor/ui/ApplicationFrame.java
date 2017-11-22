@@ -45,7 +45,7 @@ public class ApplicationFrame extends JFrame {
 
 	private void initUI() {
 		setTitle("QuoridorAI");
-		setSize(500, 600);
+		setSize(750, 600);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		URL url = getClass().getResource("/icons/quoridor.png");

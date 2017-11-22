@@ -1,12 +1,14 @@
 package martijn.quoridor.ui;
 
-import java.awt.Container;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Player;
@@ -23,38 +25,47 @@ public class PlayerStatus {
 
 	private PlayerIcon icon;
 
-	private JComboBox controller;
+	private JComboBox<Controller> controller;
 
 	private JLabel walls;
 
-	/**
-	 * @param board
-	 * @param setup
-	 * @param player
-	 * @param gbc
-	 *            the constraints with the gridy value set.
-	 */
 	public PlayerStatus(GamePanel game, int player) {
 		this.game = game;
 		this.playerIndex = player;
 	}
 
-	public void createGUI(Container container, GridBagConstraints gbc) {
+	public JPanel getPlayerStatusPanel() {
+		JPanel p = new JPanel();
+		p.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+
+		//gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(2, 2, 2, 2);
+		//gbc.gridx = 0;
+
+		//p.setBorder(BorderFactory.createEtchedBorder());
+
 		icon = new PlayerIcon(getBoard(), playerIndex);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		p.add(icon, gbc);
+
 		ControllerModel model = new ControllerModel();
 		getSetup().addSetupListener(model);
-		controller = new JComboBox(model);
-		walls = new JLabel();
+		controller = new JComboBox<Controller>(model);
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		p.add(controller, gbc);
 
-		gbc.gridx = 0;
-		container.add(icon, gbc);
-		gbc.gridx++;
-		container.add(controller, gbc);
-		gbc.gridx++;
-		container.add(walls, gbc);
+		walls = new JLabel();
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.anchor = GridBagConstraints.WEST;
+		p.add(walls, gbc);
 
 		update();
-		walls.setPreferredSize(walls.getPreferredSize());
+
+		return p;
 	}
 
 	private Board getBoard() {
@@ -116,25 +127,30 @@ public class PlayerStatus {
 	}
 
 	@SuppressWarnings("serial")
-	private class ControllerModel extends AbstractListModel implements
-			ComboBoxModel, SetupListener {
+	private class ControllerModel extends AbstractListModel<Controller>
+	                              implements ComboBoxModel<Controller>, SetupListener {
 
+		@Override
 		public Object getSelectedItem() {
 			return getSetup().getController(playerIndex);
 		}
 
+		@Override
 		public void setSelectedItem(Object controller) {
 			getSetup().setController(playerIndex, (Controller) controller);
 		}
 
-		public Object getElementAt(int index) {
+		@Override
+		public Controller getElementAt(int index) {
 			return game.getControllers()[index];
 		}
 
+		@Override
 		public int getSize() {
 			return game.getControllers().length;
 		}
 
+		@Override
 		public void setupChanged(int player) {
 			fireContentsChanged(this, 0, getSize());
 		}

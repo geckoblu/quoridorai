@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -11,6 +12,7 @@ import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.ui.actions.UndoAction;
+
 
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel {
@@ -47,18 +49,24 @@ public class GamePanel extends JPanel {
 	}
 
 	private void initUI() {
-		JPanel p = new JPanel(new BorderLayout());
-		p.add(canvas, BorderLayout.CENTER);
-		p.add(new GameStatus(this), BorderLayout.SOUTH);
+		setLayout(new BorderLayout());
+
+		JPanel p1 = new JPanel(new BorderLayout());
+		p1.add(canvas, BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
 		//buttons.add(new JButton(new NewGameAction(board)));
 		buttons.add(new JButton(new UndoAction(this)));
 		//buttons.add(new JButton(new ShowCardAction(combo, ComboPane.ABOUT_CARD, "About")));
+		p1.add(buttons, BorderLayout.SOUTH);
 
-		setLayout(new BorderLayout());
-		add(p, BorderLayout.CENTER);
-		add(buttons, BorderLayout.SOUTH);
+		add(p1, BorderLayout.CENTER);
+
+		JPanel p2 = new JPanel(new BorderLayout());
+		p2.setBorder(BorderFactory.createEtchedBorder());
+		p2.add(new GameStatus(this), BorderLayout.NORTH);
+
+		add(p2, BorderLayout.EAST);
 	}
 
 	public Board getBoard() {
