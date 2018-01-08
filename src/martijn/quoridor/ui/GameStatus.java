@@ -9,30 +9,30 @@ import javax.swing.JPanel;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
+import martijn.quoridor.model.Player;
+import martijn.quoridor.model.Setup;
+import martijn.quoridor.model.SetupListener;
 
 @SuppressWarnings("serial")
 public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 	private PlayerStatus[] lines;
 
-	private GamePanel game;
+	private Setup setup;
+	private StatusBar statusbar;
 
-	public GameStatus(GamePanel game) {
-		this.game = game;
-		createGUI();
+	public GameStatus(Setup setup, Controller[] controllers, StatusBar statusbar) {
+
+		this.setup = setup;
+		this.statusbar = statusbar;
+
+		createGUI(controllers);
+
+		setup.addSetupListener(this);
 		getBoard().addBoardListener(this);
-		getSetup().addSetupListener(this);
 	}
 
-	private Setup getSetup() {
-		return game.getSetup();
-	}
-
-	private Board getBoard() {
-		return game.getBoard();
-	}
-
-	private void createGUI() {
+	private void createGUI(Controller[] controllers) {
 		setLayout(new GridBagLayout());
 
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -43,12 +43,36 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 		lines = new PlayerStatus[getBoard().getPlayers().length];
 		for (int i = 0; i < getBoard().getPlayers().length; i++) {
-			lines[i] = new PlayerStatus(game, i);
+			lines[i] = new PlayerStatus(getBoard().getPlayers()[i], setup, controllers);
 			gbc.gridy = i;
 			add(lines[i].getPlayerStatusPanel(), gbc);
 		}
 
+		update();
+
 	}
+
+	private void update() {
+		for (PlayerStatus s : lines) {
+			s.update();
+		}
+
+		System.out.println("GS update");
+		Player activePlayer = getBoard().getTurn();
+		if (getBoard().isGameOver()) {
+			activePlayer = getBoard().getWinner();
+		}
+
+		if (setup.getController(activePlayer).isHuman()) {
+			statusbar.setPlayerToMove(activePlayer);
+		} else {
+			statusbar.setPlayerThinking(activePlayer);
+		}
+	}
+
+	/**
+	 * BoardListener
+	 */
 
 	@Override
 	public void moveExecuted(Move move) {
@@ -62,18 +86,21 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 	@Override
 	public void newGame() {
+		System.out.println("GS newGame");
 		update();
 	}
+
+	/**
+	 * SetupListener
+	 */
 
 	@Override
 	public void setupChanged(int player) {
 		update();
 	}
 
-	private void update() {
-		for (PlayerStatus s : lines) {
-			s.update();
-		}
+	private Board getBoard() {
+		return setup.getBoard();
 	}
 
 }

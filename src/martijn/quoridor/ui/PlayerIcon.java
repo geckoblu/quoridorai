@@ -16,7 +16,6 @@ import martijn.quoridor.Core;
 import martijn.quoridor.anim.Animation;
 import martijn.quoridor.anim.Animator;
 import martijn.quoridor.anim.PlayJob;
-import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Player;
 
 @SuppressWarnings("serial")
@@ -28,9 +27,7 @@ public class PlayerIcon extends JLabel implements Icon {
 
 	private static final long BRAIN_DELAY = 2000;
 
-	private Board board;
-
-	private int playerIndex;
+	private Color color;
 
 	// Animations.
 
@@ -42,27 +39,36 @@ public class PlayerIcon extends JLabel implements Icon {
 
 	private boolean solid = false;
 
-	public PlayerIcon(Board board, int playerIndex) {
-		this.board = board;
-		this.playerIndex = playerIndex;
+	public PlayerIcon(Color color) {
+
+		this.color = color;
+
 		animator = new Animator();
 		setIcon(this);
 	}
 
-	public Player getPlayer() {
-		return board.getPlayers()[playerIndex];
+	public PlayerIcon(Player player) {
+		this(player.getColor());
+	}
+
+	public void setPlayer(Player player) {
+		this.color = player.getColor();
+		repaint();
 	}
 
 	// Icon implementation.
 
+	@Override
 	public int getIconHeight() {
 		return 16;
 	}
 
+	@Override
 	public int getIconWidth() {
 		return 16;
 	}
 
+	@Override
 	public void paintIcon(Component comp, Graphics g, int x, int y) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -76,7 +82,7 @@ public class PlayerIcon extends JLabel implements Icon {
 		at.scale(scale, 1);
 		disc = at.createTransformedShape(disc);
 
-		Color fill = Core.transparent(getPlayer().getColor(), alpha);
+		Color fill = Core.transparent(color, alpha);
 		Color stroke = Core.transparent(Color.BLACK, alpha);
 		// if ((!board.isGameOver() && !getPlayer().isTurn())
 		// || (board.isGameOver() && !getPlayer().isWinner())) {
@@ -145,18 +151,22 @@ public class PlayerIcon extends JLabel implements Icon {
 
 	private class Flip implements Animation {
 
+		@Override
 		public int getFrameCount() {
 			return NFRAMES;
 		}
 
+		@Override
 		public long getFrameDisplayTime(int frame) {
 			return FLIP_DURATION / NFRAMES;
 		}
 
+		@Override
 		public void showFrame(int frame) {
 			setScale(Math.cos((double) frame / (NFRAMES - 1) * Math.PI));
 		}
 
+		@Override
 		public void animationStopped() {
 			setScale(1);
 		}
@@ -165,18 +175,22 @@ public class PlayerIcon extends JLabel implements Icon {
 
 	private class FadeIn implements Animation {
 
+		@Override
 		public int getFrameCount() {
 			return NFRAMES;
 		}
 
+		@Override
 		public long getFrameDisplayTime(int frame) {
 			return 250 / NFRAMES;
 		}
 
+		@Override
 		public void showFrame(int frame) {
 			setAlpha(0x80 + 0x7f * frame / (NFRAMES - 1));
 		}
 
+		@Override
 		public void animationStopped() {
 			setAlpha(solid ? 0xff : 0x7f);
 		}

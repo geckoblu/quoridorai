@@ -1,20 +1,16 @@
 package martijn.quoridor.ui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import martijn.quoridor.I18N;
 import martijn.quoridor.brains.BrainFactory;
@@ -53,9 +49,11 @@ public class ApplicationFrame extends JFrame {
 		setIconImage(icon);
 
 		createMenuBar();
-		createStatusBar();
 
-		GamePanel gamePanel = new GamePanel(board, factory);
+		StatusBar statusbar = new StatusBar();
+		add(statusbar, BorderLayout.SOUTH);
+
+		GamePanel gamePanel = new GamePanel(board, factory, statusbar);
 		add(gamePanel, BorderLayout.CENTER);
 
 	}
@@ -107,16 +105,6 @@ public class ApplicationFrame extends JFrame {
         help.add(menuItem);
 
 		menubar.add(help);
-	}
-
-	private void createStatusBar() {
-
-		JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	    statusBar.setBorder(BorderFactory.createEtchedBorder());
-	    JLabel status = new JLabel(" ");
-	    statusBar.add(status);
-
-	    add(statusBar, BorderLayout.SOUTH);
 	}
 
 	public final void close() {

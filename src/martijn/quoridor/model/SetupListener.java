@@ -1,4 +1,4 @@
-package martijn.quoridor.ui;
+package martijn.quoridor.model;
 
 public interface SetupListener {
 

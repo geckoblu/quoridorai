@@ -1,30 +1,28 @@
-package martijn.quoridor.ui;
+package martijn.quoridor.model;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import martijn.quoridor.model.Board;
+import martijn.quoridor.ui.Controller;
 
 /**
  * Setup describes a complete game setup: board and controllers.
  */
 public class Setup implements Iterable<Controller> {
 
-	private BoardCanvas canvas;
-
+	private Board board;
 	private Controller[] controllers;
 
 	private List<SetupListener> listeners;
 
-	public Setup(BoardCanvas canvas, Controller[] controllers) {
-		Board board = canvas.getBoard();
+	public Setup(Board board, Controller[] controllers) {
 		if (board.getPlayers().length != controllers.length) {
 			throw new IllegalArgumentException("Player number mismatch.");
 		}
 
-		this.canvas = canvas;
+		this.board = board;
 		this.controllers = controllers;
 		listeners = new LinkedList<SetupListener>();
 
@@ -34,14 +32,11 @@ public class Setup implements Iterable<Controller> {
 		}
 	}
 
-	public BoardCanvas getCanvas() {
-		return canvas;
-	}
-
 	public Board getBoard() {
-		return canvas.getBoard();
+		return board;
 	}
 
+	@Override
 	public Iterator<Controller> iterator() {
 		return Arrays.asList(controllers).iterator();
 	}
@@ -64,12 +59,25 @@ public class Setup implements Iterable<Controller> {
 		return controllers[player];
 	}
 
+	public Controller getController(Player player) {
+		return controllers[player.getIndex()];
+	}
+
 	public void setController(int player, Controller controller) {
 		if (controllers[player] != controller) {
 			controllers[player].stopControlling(player);
 			controllers[player] = controller;
 			controller.startControlling(player);
 			fireSetupChanged(player);
+		}
+	}
+
+	public void setController(Player player, Controller controller) {
+		if (controllers[player.getIndex()] != controller) {
+			controllers[player.getIndex()].stopControlling(player.getIndex());
+			controllers[player.getIndex()] = controller;
+			controller.startControlling(player.getIndex());
+			fireSetupChanged(player.getIndex());
 		}
 	}
 

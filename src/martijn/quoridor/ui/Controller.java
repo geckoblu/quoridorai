@@ -52,16 +52,19 @@ public abstract class Controller implements BoardListener {
 		wake();
 	}
 
+	@Override
 	public void moveExecuted(Move move) {
 		stopExpecting();
 		wake();
 	}
 
+	@Override
 	public void movesUndone(Move[] moves) {
 		stopExpecting();
 		wake();
 	}
 
+	@Override
 	public void newGame() {
 		stopExpecting();
 		wake();

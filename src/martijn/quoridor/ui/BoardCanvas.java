@@ -313,6 +313,9 @@ public class BoardCanvas extends JPanel implements BoardListener {
 		setShadow(null);
 	}
 
+	/**
+	 * BoardListener
+	 */
 	@Override
 	public void moveExecuted(Move move) {
 		setShadow(null);

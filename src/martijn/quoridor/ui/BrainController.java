@@ -65,6 +65,7 @@ public class BrainController extends Controller {
 			this.thinkerMove = thinkerMove;
 		}
 
+		@Override
 		public void run() {
 			try {
 				// Record the current time.
@@ -134,6 +135,7 @@ public class BrainController extends Controller {
 				JOptionPane.ERROR_MESSAGE);
 	}
 
+	@Override
 	public String toString() {
 		return brain.getName();
 	}

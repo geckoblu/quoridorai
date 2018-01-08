@@ -6,6 +6,7 @@ import java.applet.AudioClip;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
+import martijn.quoridor.model.Setup;
 
 public class SoundPlayer implements BoardListener {
 

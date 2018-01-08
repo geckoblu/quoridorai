@@ -12,26 +12,31 @@ import javax.swing.JPanel;
 
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Player;
+import martijn.quoridor.model.Setup;
+import martijn.quoridor.model.SetupListener;
 
 public class PlayerStatus {
 
 	// Model.
 
-	private GamePanel game;
+	private Setup setup;
 
-	private int playerIndex;
+	private Player player;
+
+	private Controller[] controllers;
 
 	// Components.
 
 	private PlayerIcon icon;
 
-	private JComboBox<Controller> controller;
+	private JComboBox<Controller> cmbController;
 
 	private JLabel walls;
 
-	public PlayerStatus(GamePanel game, int player) {
-		this.game = game;
-		this.playerIndex = player;
+	public PlayerStatus(Player player, Setup setup, Controller[] controllers) {
+		this.setup = setup;
+		this.player = player;
+		this.controllers = controllers;
 	}
 
 	public JPanel getPlayerStatusPanel() {
@@ -45,17 +50,17 @@ public class PlayerStatus {
 
 		//p.setBorder(BorderFactory.createEtchedBorder());
 
-		icon = new PlayerIcon(getBoard(), playerIndex);
+		icon = new PlayerIcon(player);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		p.add(icon, gbc);
 
 		ControllerModel model = new ControllerModel();
 		getSetup().addSetupListener(model);
-		controller = new JComboBox<Controller>(model);
+		cmbController = new JComboBox<Controller>(model);
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		p.add(controller, gbc);
+		p.add(cmbController, gbc);
 
 		walls = new JLabel();
 		gbc.gridx = 1;
@@ -69,11 +74,11 @@ public class PlayerStatus {
 	}
 
 	private Board getBoard() {
-		return game.getBoard();
+		return setup.getBoard();
 	}
 
 	public Setup getSetup() {
-		return game.getSetup();
+		return setup;
 	}
 
 	void update() {
@@ -84,15 +89,15 @@ public class PlayerStatus {
 		if (getBoard().isGameOver()) {
 			activePlayer = getBoard().getWinner();
 		}
-		boolean active = activePlayer == getPlayer();
+		boolean active = activePlayer == player;
 
 		// Set icon solidness.
 		icon.setSolid(active);
 
 		icon.stopFlipping();
-		if (getPlayer().isWinner()) {
+		if (player.isWinner()) {
 			icon.startFlippingContinuously();
-		} else if (active && !getSetup().getController(playerIndex).isHuman()) {
+		} else if (active && !getSetup().getController(player).isHuman()) {
 			icon.startFlippingSlowly();
 		}
 
@@ -103,15 +108,15 @@ public class PlayerStatus {
 	private String getWallText() {
 		StringBuffer buf = new StringBuffer();
 		if (getBoard().isGameOver()) {
-			if (getPlayer().isWinner()) {
+			if (player.isWinner()) {
 				buf.append("Winner!");
 			}
 		} else {
 			buf.append("Walls: ");
-			if (getPlayer().getWallCount() == 0) {
+			if (player.getWallCount() == 0) {
 				buf.append("none");
 			} else {
-				for (int i = 0; i < getPlayer().getWallCount(); i++) {
+				for (int i = 0; i < player.getWallCount(); i++) {
 					buf.append('|');
 					if (i % 5 == 4) {
 						buf.append(' ');
@@ -122,9 +127,9 @@ public class PlayerStatus {
 		return buf.toString();
 	}
 
-	private Player getPlayer() {
-		return getBoard().getPlayers()[playerIndex];
-	}
+//	private Player getPlayer() {
+//		return getBoard().getPlayers()[playerIndex];
+//	}
 
 	@SuppressWarnings("serial")
 	private class ControllerModel extends AbstractListModel<Controller>
@@ -132,22 +137,22 @@ public class PlayerStatus {
 
 		@Override
 		public Object getSelectedItem() {
-			return getSetup().getController(playerIndex);
+			return getSetup().getController(player);
 		}
 
 		@Override
 		public void setSelectedItem(Object controller) {
-			getSetup().setController(playerIndex, (Controller) controller);
+			getSetup().setController(player, (Controller) controller);
 		}
 
 		@Override
 		public Controller getElementAt(int index) {
-			return game.getControllers()[index];
+			return controllers[index];
 		}
 
 		@Override
 		public int getSize() {
-			return game.getControllers().length;
+			return controllers.length;
 		}
 
 		@Override

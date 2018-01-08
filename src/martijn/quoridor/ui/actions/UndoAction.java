@@ -6,70 +6,75 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import martijn.quoridor.I18N;
-import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
-import martijn.quoridor.ui.GamePanel;
-import martijn.quoridor.ui.SetupListener;
+import martijn.quoridor.model.Setup;
+import martijn.quoridor.model.SetupListener;
 
 @SuppressWarnings("serial")
 public class UndoAction extends AbstractAction implements BoardListener,
 		SetupListener {
 
-	private GamePanel game;
+	private Setup setup;
 
-	public UndoAction(GamePanel game) {
+	public UndoAction(Setup setup) {
 		super();
-		
+
 		I18N.Action action = I18N.getAction("UNDO");
 		putValue(Action.NAME, action.name);
 		putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
 		putValue(Action.SHORT_DESCRIPTION, action.short_description);
-		
-		this.game = game;
+
+		this.setup = setup;
+
 		update();
-		game.getBoard().addBoardListener(this);
-		game.getSetup().addSetupListener(this);
+
+		setup.addSetupListener(this);
+		setup.getBoard().addBoardListener(this);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
-		game.getBoard().undo(getUndoLevel());
+		setup.getBoard().undo(getUndoLevel());
 	}
 
 	public int getUndoLevel() {
-		Board board = game.getBoard();
 		int number = 0;
-		int turn = board.getTurnIndex();
+		int turn = setup.getBoard().getTurnIndex();
 		do {
-			if (number > board.getHistory().size()) {
+			if (number > setup.getBoard().getHistory().size()) {
 				return -1;
 			}
 			number++;
 			turn--;
 			if (turn < 0) {
-				turn += board.getPlayers().length;
+				turn += setup.getBoard().getPlayers().length;
 			}
-		} while (!game.getSetup().getController(turn).isHuman());
+		} while (!setup.getController(turn).isHuman());
 		return number;
 	}
 
+	@Override
 	public void moveExecuted(Move move) {
 		update();
 	}
 
+	@Override
 	public void movesUndone(Move[] moves) {
 		update();
 	}
 
+	@Override
 	public void newGame() {
 		update();
 	}
 
 	private void update() {
 		int n = getUndoLevel();
-		setEnabled(n >= 0 && n <= game.getBoard().getHistory().size());
+		setEnabled(n >= 0 && n <= setup.getBoard().getHistory().size());
 	}
 
+	@Override
 	public void setupChanged(int player) {
 		update();
 	}
