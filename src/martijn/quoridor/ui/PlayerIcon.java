@@ -37,8 +37,6 @@ public class PlayerIcon extends JLabel implements Icon {
 
 	private int alpha = 0x7f;
 
-	private boolean solid = false;
-
 	public PlayerIcon(Color color) {
 
 		this.color = color;
@@ -72,7 +70,7 @@ public class PlayerIcon extends JLabel implements Icon {
 	public void paintIcon(Component comp, Graphics g, int x, int y) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+				            RenderingHints.VALUE_ANTIALIAS_ON);
 		int w = getIconWidth() - 2;
 		int h = getIconHeight() - 2;
 		Shape disc = new Ellipse2D.Double(-w / 2.0, -h / 2.0, w, h);
@@ -82,13 +80,8 @@ public class PlayerIcon extends JLabel implements Icon {
 		at.scale(scale, 1);
 		disc = at.createTransformedShape(disc);
 
-		Color fill = Core.transparent(color, alpha);
-		Color stroke = Core.transparent(Color.BLACK, alpha);
-		// if ((!board.isGameOver() && !getPlayer().isTurn())
-		// || (board.isGameOver() && !getPlayer().isWinner())) {
-		// fill = Core.transparent(fill);
-		// stroke = Core.transparent(stroke);
-		// }
+		Color fill = Core.transparent(color, 0xff);
+		Color stroke = Core.transparent(Color.BLACK, 0xff);
 
 		g2.setColor(fill);
 		g2.fill(disc);
@@ -111,8 +104,7 @@ public class PlayerIcon extends JLabel implements Icon {
 	}
 
 	public void startFlippingSlowly() {
-		animator.play(new PlayJob(new Flip(), PlayJob.LOOP, BRAIN_DELAY,
-				BRAIN_DELAY, true));
+		animator.play(new PlayJob(new Flip(), PlayJob.LOOP, BRAIN_DELAY, BRAIN_DELAY, true));
 	}
 
 	public void stopFlipping() {
@@ -120,21 +112,6 @@ public class PlayerIcon extends JLabel implements Icon {
 			PlayJob current = animator.getCurrent();
 			if (current != null && current.getAnimation() instanceof Flip) {
 				animator.cancelCurrent();
-			}
-		}
-	}
-
-	public boolean isSolid() {
-		return solid;
-	}
-
-	public void setSolid(boolean solid) {
-		if (this.solid != solid) {
-			this.solid = solid;
-			if (solid) {
-				animator.play(PlayJob.playOnce(new FadeIn(), true));
-			} else {
-				animator.play(PlayJob.playOnce(new FadeIn(), false));
 			}
 		}
 	}
@@ -192,7 +169,7 @@ public class PlayerIcon extends JLabel implements Icon {
 
 		@Override
 		public void animationStopped() {
-			setAlpha(solid ? 0xff : 0x7f);
+			setAlpha(0x7f);
 		}
 
 	}

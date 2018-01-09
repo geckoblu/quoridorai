@@ -12,6 +12,8 @@ public class Board {
 
 	private int height;
 
+	private int nplayers;
+
 	private Wall[][] walls;
 
 	private Player[] players;
@@ -24,22 +26,25 @@ public class Board {
 
 	// Initialization.
 
-	/** Creates a new 9x9 board. */
+	/** Creates a new 9x9 board with two players. */
 	public Board() {
-		this(9);
+		this(9, 2);
 	}
 
 	/** Creates a board of the specified size. */
-	public Board(int size) {
-		this(size, size);
+	public Board(int size, int nplayers) {
+		this(size, size, nplayers);
 	}
 
-	private Board(int width, int height) {
+	private Board(int width, int height, int nplayers) {
 		this.width = width;
 		this.height = height;
-		players = new Player[2];
+		this.nplayers = nplayers;
+
+		players = new Player[nplayers];
 		history = new Stack<Move>();
 		listeners = new LinkedList<BoardListener>();
+
 		newGame();
 	}
 
@@ -49,7 +54,7 @@ public class Board {
 		walls = new Wall[width - 1][height - 1];
 
 		// Create fresh players.
-		Color[] cs = createPlayerColors(2);
+		Color[] cs = createPlayerColors();
 		players[0] = new Player(this, Orientation.SOUTH, "Player 1", 10, cs[0]);
 		players[1] = new Player(this, Orientation.NORTH, "Player 2", 10, cs[1]);
 
@@ -65,7 +70,7 @@ public class Board {
 
 	// Listeners.
 
-	private Color[] createPlayerColors(int nplayers) {
+	private Color[] createPlayerColors() {
 		List<Color> colors = createPossibleColors();
 		Color[] cs = new Color[nplayers];
 		for (int i = 0; i < nplayers; i++) {
@@ -228,6 +233,11 @@ public class Board {
 		return players;
 	}
 
+	/** Returns the i-player. */
+	public Player getPlayer(int i) {
+		return players[i];
+	}
+
 	/** Returns the player whose turn it is. */
 	public Player getTurn() {
 		return players[turn];
@@ -326,8 +336,9 @@ public class Board {
 	// Cloning.
 
 	/** Creates a deep copy of this board. */
+	@Override
 	public Board clone() {
-		Board clone = new Board(width, height);
+		Board clone = new Board(width, height, nplayers);
 		clone.history.addAll(history);
 		for (int i = 0; i < players.length; i++) {
 			clone.players[i] = new Player(clone, players[i]);

@@ -43,7 +43,7 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 		lines = new PlayerStatus[getBoard().getPlayers().length];
 		for (int i = 0; i < getBoard().getPlayers().length; i++) {
-			lines[i] = new PlayerStatus(getBoard().getPlayers()[i], setup, controllers);
+			lines[i] = new PlayerStatus(getBoard().getPlayer(i), setup, controllers);
 			gbc.gridy = i;
 			add(lines[i].getPlayerStatusPanel(), gbc);
 		}
@@ -57,16 +57,17 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 			s.update();
 		}
 
-		System.out.println("GS update");
 		Player activePlayer = getBoard().getTurn();
 		if (getBoard().isGameOver()) {
 			activePlayer = getBoard().getWinner();
-		}
-
-		if (setup.getController(activePlayer).isHuman()) {
-			statusbar.setPlayerToMove(activePlayer);
+			statusbar.setWinner(activePlayer);
 		} else {
-			statusbar.setPlayerThinking(activePlayer);
+
+			if (setup.getController(activePlayer).isHuman()) {
+				statusbar.setPlayerToMove(activePlayer);
+			} else {
+				statusbar.setPlayerThinking(activePlayer);
+			}
 		}
 	}
 
@@ -86,7 +87,9 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 	@Override
 	public void newGame() {
-		System.out.println("GS newGame");
+		for (int i = 0; i < getBoard().getPlayers().length; i++) {
+			lines[i].setPlayer(getBoard().getPlayer(i));
+		}
 		update();
 	}
 

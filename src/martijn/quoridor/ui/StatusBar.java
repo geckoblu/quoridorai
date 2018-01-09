@@ -20,7 +20,6 @@ public class StatusBar extends JPanel {
 		this.setBorder(BorderFactory.createEtchedBorder());
 
 		playerIcon = new PlayerIcon(Color.red);
-		playerIcon.setSolid(true);
 		this.add(playerIcon);
 		playerIcon.setVisible(false);
 
@@ -29,12 +28,14 @@ public class StatusBar extends JPanel {
 	}
 
 	public void setPlayerToMove(Player player) {
+		playerIcon.stopFlipping();
 		playerIcon.setPlayer(player);
 		playerIcon.setVisible(true);
 		statusLabel.setText("Turn to move.");
 	}
 
 	public void setPlayerThinking(Player player) {
+		playerIcon.stopFlipping();
 		playerIcon.setPlayer(player);
 		playerIcon.setVisible(true);
 		statusLabel.setText("Thinking ...");
@@ -43,6 +44,7 @@ public class StatusBar extends JPanel {
 	public void setWinner(Player player) {
 		playerIcon.setPlayer(player);
 		playerIcon.setVisible(true);
+		playerIcon.startFlippingContinuously();
 		statusLabel.setText("Winner!");
 	}
 
