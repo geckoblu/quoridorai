@@ -8,11 +8,11 @@ import java.util.Stack;
 
 public class Board {
 
+	private static final int NPLAYERS = 2;
+
 	private int width;
 
 	private int height;
-
-	private int nplayers;
 
 	private Wall[][] walls;
 
@@ -28,20 +28,19 @@ public class Board {
 
 	/** Creates a new 9x9 board with two players. */
 	public Board() {
-		this(9, 2);
+		this(9);
 	}
 
 	/** Creates a board of the specified size. */
-	public Board(int size, int nplayers) {
-		this(size, size, nplayers);
+	public Board(int size) {
+		this(size, size);
 	}
 
-	private Board(int width, int height, int nplayers) {
+	private Board(int width, int height) {
 		this.width = width;
 		this.height = height;
-		this.nplayers = nplayers;
 
-		players = new Player[nplayers];
+		players = new Player[NPLAYERS];
 		history = new Stack<Move>();
 		listeners = new LinkedList<BoardListener>();
 
@@ -72,8 +71,8 @@ public class Board {
 
 	private Color[] createPlayerColors() {
 		List<Color> colors = createPossibleColors();
-		Color[] cs = new Color[nplayers];
-		for (int i = 0; i < nplayers; i++) {
+		Color[] cs = new Color[NPLAYERS];
+		for (int i = 0; i < NPLAYERS; i++) {
 			cs[i] = colors.get(i);
 		}
 		return cs;
@@ -338,7 +337,7 @@ public class Board {
 	/** Creates a deep copy of this board. */
 	@Override
 	public Board clone() {
-		Board clone = new Board(width, height, nplayers);
+		Board clone = new Board(width, height);
 		clone.history.addAll(history);
 		for (int i = 0; i < players.length; i++) {
 			clone.players[i] = new Player(clone, players[i]);
