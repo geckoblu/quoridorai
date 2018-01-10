@@ -8,4 +8,12 @@ public enum Wall {
 		return values()[(ordinal() + 1) % 2];
 	}
 
+	public String notation() {
+		if (this == HORIZONTAL) {
+			return "h";
+		} else {
+			return "v";
+		}
+	}
+
 }

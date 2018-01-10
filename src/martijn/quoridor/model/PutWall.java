@@ -1,5 +1,7 @@
 package martijn.quoridor.model;
 
+import martijn.quoridor.Config;
+
 public class PutWall implements Move {
 
 	private Position position;
@@ -30,16 +32,19 @@ public class PutWall implements Move {
 		return new PutWall(position, wall.flip());
 	}
 
+	@Override
 	public void execute(Board board) {
 		board.setWall(position, wall);
 		board.getTurn().takeWall();
 	}
 
+	@Override
 	public void undo(Board board) {
 		board.getTurn().giveWall();
 		board.setWall(position, null);
 	}
 
+	@Override
 	public boolean isLegal(Board board) {
 		// Does position exist on board?
 		if (!board.containsWallPosition(position)) {
@@ -99,8 +104,18 @@ public class PutWall implements Move {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		return "PutWall " + getWall().toString() + " at " + getPosition();
+	}
+
+	@Override
+	public String notation() {
+		if (Config.lamekNotation()) {
+			return "" + (char)( 'a' + position.getX()) + (char)('1' + position.getY()) + wall.notation();
+		} else {
+			return "" + (char)( 'a' + position.getX()) + (char)('8' - position.getY()) + wall.notation();
+		}
 	}
 
 }

@@ -16,4 +16,7 @@ public interface Move {
 	/** Returns whether this move is legal in the specified state. */
 	public abstract boolean isLegal(Board board);
 
+	/** Returns the move notation, either in Lamek or Glendenning **/
+	public abstract String notation();
+
 }

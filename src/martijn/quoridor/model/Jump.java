@@ -1,5 +1,8 @@
 package martijn.quoridor.model;
 
+import martijn.quoridor.Config;
+
+
 /**
  * A jump move.
  */
@@ -30,23 +33,37 @@ public class Jump implements Move {
 		return oldPosition;
 	}
 
+	@Override
 	public void execute(Board board) {
 		Player p = board.getTurn();
 		oldPosition = p.getPosition();
 		p.setPosition(newPosition);
 	}
 
+	@Override
 	public void undo(Board board) {
 		board.getTurn().setPosition(oldPosition);
 	}
 
+	@Override
 	public boolean isLegal(Board board) {
 		return !board.isGameOver()
 				&& board.getTurn().getJumpPositions().contains(newPosition);
 	}
 
+	@Override
 	public String toString() {
 		return "Jump to " + getNewPosition();
+	}
+
+	@Override
+	public String notation() {
+		Position position = getNewPosition();
+		if (Config.lamekNotation()) {
+			return "" + (char)( 'a' + position.getX()) + (char)('1' + position.getY());
+		} else {
+			return "" + (char)( 'a' + position.getX()) + (char)('9' - position.getY());
+		}
 	}
 
 }

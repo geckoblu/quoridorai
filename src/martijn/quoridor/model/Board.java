@@ -248,7 +248,7 @@ public class Board {
 	}
 
 	/**
-	 * Returns the player who has won, or {@literal null} is the game is not
+	 * Returns the player who has won, or {@literal null} if the game is not
 	 * over yet.
 	 */
 	public Player getWinner() {

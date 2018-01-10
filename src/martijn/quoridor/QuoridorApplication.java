@@ -22,15 +22,16 @@ public class QuoridorApplication {
 	public static void launch(BrainFactory factory) {
 		final Board board = new Board();
 		final BrainFactory ffactory = factory;
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				UIManager.put("swing.boldMetal", false);
-				
+
 				ApplicationFrame f = new ApplicationFrame(board, ffactory);
 
-				f.setLocationRelativeTo(null);
+				//TODO reactivate this for center the application
+				// f.setLocationRelativeTo(null);
 				f.setVisible(true);
 			}
 		});

@@ -2,7 +2,7 @@ package martijn.quoridor.model;
 
 import static java.lang.Math.abs;
 
-public class Position implements Comparable {
+public class Position implements Comparable<Position> {
 
 	private int x;
 
@@ -53,13 +53,15 @@ public class Position implements Comparable {
 		}
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		Position that = (Position) o;
 		return this.x == that.x && this.y == that.y;
 	}
 
-	public int compareTo(Object o) {
-		Position that = (Position) o;
+	@Override
+	public int compareTo(Position o) {
+		Position that = o;
 		if (this.x != that.x) {
 			return this.x - that.x;
 		} else {
@@ -67,6 +69,7 @@ public class Position implements Comparable {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}
