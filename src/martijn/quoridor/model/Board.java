@@ -2,9 +2,9 @@ package martijn.quoridor.model;
 
 import java.awt.Color;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 public class Board {
 
@@ -20,7 +20,8 @@ public class Board {
 
 	private int turn;
 
-	private Stack<Move> history;
+	private LinkedList<Move> _history;
+	private int _historyIndex;
 
 	private List<BoardListener> listeners;
 
@@ -41,7 +42,8 @@ public class Board {
 		this.height = height;
 
 		players = new Player[NPLAYERS];
-		history = new Stack<Move>();
+		_history = new LinkedList<Move>();
+		_historyIndex = 0;
 		listeners = new LinkedList<BoardListener>();
 
 		newGame();
@@ -61,7 +63,8 @@ public class Board {
 		turn = 0;
 
 		// Clear history.
-		history.clear();
+		_history.clear();
+		_historyIndex = 0;
 
 		// Notify listeners.
 		fireNewGame();
@@ -278,7 +281,12 @@ public class Board {
 
 		move.execute(this);
 		increaseTurn();
-		history.push(move);
+
+		while (_historyIndex < _history.size()) {
+			_history.removeFirst();
+		}
+		_history.push(move);
+		_historyIndex++;
 
 		fireMoveExecuted(move);
 	}
@@ -294,16 +302,17 @@ public class Board {
 			throw new IllegalArgumentException("Number must be at least 1.");
 		}
 
-		if (number > history.size()) {
+		if (number > _history.size()) {
 			throw new IllegalArgumentException("Cannot undo " + number
-					+ " moves (max is " + history.size() + ")");
+					+ " moves (max is " + _history.size() + ")");
 		}
 
 		List<Move> undone = new LinkedList<Move>();
 
 		for (int i = 0; i < number; i++) {
 			// Note: decrease turn before undoing.
-			Move move = history.pop();
+			Move move = _history.get(_history.size() - _historyIndex);
+			_historyIndex--;
 			decreaseTurn();
 			move.undo(this);
 			undone.add(move);
@@ -314,9 +323,22 @@ public class Board {
 		fireMovesUndone(moves);
 	}
 
-	/** Returns the stack of executed moves. */
-	public Stack<Move> getHistory() {
-		return history;
+	/** Returns an iterator over the stack of executed moves. */
+	public Iterator<Move> getHistory() {
+		return _history.descendingIterator();
+	}
+
+	public int getHistoryIndex() {
+		return _historyIndex;
+	}
+
+	public boolean hasHistory() {
+		return !_history.isEmpty();
+	}
+
+	// TODO See if is possible to remove this method
+	public int getHistorySize() {
+		return _history.size();
 	}
 
 	/** Increases the turn by 1. */
@@ -338,7 +360,7 @@ public class Board {
 	@Override
 	public Board clone() {
 		Board clone = new Board(width, height);
-		clone.history.addAll(history);
+		clone._history.addAll(_history);
 		for (int i = 0; i < players.length; i++) {
 			clone.players[i] = new Player(clone, players[i]);
 		}

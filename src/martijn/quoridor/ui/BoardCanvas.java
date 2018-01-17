@@ -137,6 +137,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
 		// Draw players.
 		for (Player p : board.getPlayers()) {
+			//System.out.println("BC " + p + " " + p.getPosition());
 			drawPlayer(g2, p, p.getPosition(), false);
 		}
 

@@ -14,18 +14,18 @@ import martijn.quoridor.model.Setup;
 import martijn.quoridor.model.SetupListener;
 
 @SuppressWarnings("serial")
-public class UndoAction extends AbstractAction implements BoardListener, SetupListener {
+public class RedoAction extends AbstractAction implements BoardListener, SetupListener {
 
     private Setup setup;
 
-    public UndoAction(Setup setup) {
+    public RedoAction(Setup setup) {
         super();
 
-        I18N.Action action = I18N.getAction("UNDO");
+        I18N.Action action = I18N.getAction("REDO");
         //putValue(Action.NAME, action.name);
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
-        URL url = getClass().getResource("/icons/go-previous.png");
+        URL url = getClass().getResource("/icons/go-next.png");
         ImageIcon icon = new ImageIcon(url);
         putValue(Action.LARGE_ICON_KEY, icon);
 
@@ -42,7 +42,7 @@ public class UndoAction extends AbstractAction implements BoardListener, SetupLi
         setup.getBoard().undo(getUndoLevel());
     }
 
-    private int getUndoLevel() {
+    public int getUndoLevel() {
         int number = 0;
         int turn = setup.getBoard().getTurnIndex();
         do {

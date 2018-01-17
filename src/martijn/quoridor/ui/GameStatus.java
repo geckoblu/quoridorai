@@ -3,8 +3,6 @@ package martijn.quoridor.ui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Iterator;
-import java.util.Stack;
 
 import javax.swing.JPanel;
 
@@ -79,20 +77,6 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
 	@Override
 	public void moveExecuted(Move move) {
-		//System.out.println("GS " + move + " " + move.notation());
-		System.out.println(" ");
-		Stack<Move> history = setup.getBoard().getHistory();
-		Iterator<Move> iter = history.iterator();
-		int i = 0;
-		if (history.size() % 2 == 0) {
-			while (iter.hasNext()){
-				Move m1 = iter.next();
-				Move m2 = iter.next();
-				i++;
-				System.out.println("" + i + ". " + m1.notation() + " "+ m2.notation());
-			}
-		}
-
 		update();
 	}
 

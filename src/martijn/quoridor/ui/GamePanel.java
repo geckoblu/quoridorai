@@ -6,12 +6,15 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Setup;
+import martijn.quoridor.ui.actions.RedoAction;
 import martijn.quoridor.ui.actions.UndoAction;
 
 
@@ -25,14 +28,18 @@ public class GamePanel extends JPanel {
 	private final Setup setup;
 	private final GameStatus gamestatusPanel;
 
+	private HistoryArea historyArea;
+
 	public GamePanel(Board board, BrainFactory factory, StatusBar statusbar) {
 
 		canvas = new BoardCanvas(board);
 
 		controllers = getControllers(factory);
-		setup = new Setup(board, new Controller[] { controllers[0], controllers[2] });
+		setup = new Setup(board, new Controller[] { controllers[0], controllers[1] });
 
 		gamestatusPanel = new GameStatus(setup, controllers, statusbar);
+
+		historyArea = new HistoryArea(board);
 
 		initUI();
 
@@ -61,14 +68,23 @@ public class GamePanel extends JPanel {
 		JPanel buttons = new JPanel();
 		//buttons.add(new JButton(new NewGameAction(board)));
 		buttons.add(new JButton(new UndoAction(setup)));
-		//buttons.add(new JButton(new ShowCardAction(combo, ComboPane.ABOUT_CARD, "About")));
+		buttons.add(new JButton(new RedoAction(setup)));
 		p1.add(buttons, BorderLayout.SOUTH);
 
 		add(p1, BorderLayout.CENTER);
 
 		JPanel p2 = new JPanel(new BorderLayout());
 		p2.setBorder(BorderFactory.createEtchedBorder());
+
 		p2.add(gamestatusPanel, BorderLayout.NORTH);
+
+		JPanel p3 = new JPanel(new BorderLayout());
+
+		historyArea.setEditable(false);
+
+		p3.add(new JLabel(" "), BorderLayout.NORTH);
+		p3.add(new JScrollPane(historyArea), BorderLayout.CENTER);
+		p2.add(p3, BorderLayout.CENTER);
 
 		add(p2, BorderLayout.EAST);
 	}
