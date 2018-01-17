@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 
 import martijn.quoridor.I18N;
 import martijn.quoridor.model.BoardListener;
-import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Setup;
 import martijn.quoridor.model.SetupListener;
 
@@ -22,7 +21,7 @@ public class UndoAction extends AbstractAction implements BoardListener, SetupLi
         super();
 
         I18N.Action action = I18N.getAction("UNDO");
-        //putValue(Action.NAME, action.name);
+        // putValue(Action.NAME, action.name);
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
         URL url = getClass().getResource("/icons/go-previous.png");
@@ -59,12 +58,7 @@ public class UndoAction extends AbstractAction implements BoardListener, SetupLi
     }
 
     @Override
-    public void moveExecuted(Move move) {
-        update();
-    }
-
-    @Override
-    public void movesUndone(Move[] moves) {
+    public void moveExecuted() {
         update();
     }
 

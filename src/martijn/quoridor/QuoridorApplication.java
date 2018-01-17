@@ -39,7 +39,7 @@ public class QuoridorApplication {
 
 	/** Launches Quoridor. */
 	public static void main(String[] args) {
-		launch();
-	}
+        launch();
+    }
 
 }

@@ -12,73 +12,73 @@ import martijn.quoridor.ui.Controller;
  */
 public class Setup implements Iterable<Controller> {
 
-	private Board board;
-	private Controller[] controllers;
+    private Board board;
+    private Controller[] controllers;
 
-	private List<SetupListener> listeners;
+    private List<SetupListener> listeners;
 
-	public Setup(Board board, Controller[] controllers) {
-		if (board.getPlayers().length != controllers.length) {
-			throw new IllegalArgumentException("Player number mismatch.");
-		}
+    public Setup(Board board, Controller[] controllers) {
+        if (board.getPlayers().length != controllers.length) {
+            throw new IllegalArgumentException("Player number mismatch.");
+        }
 
-		this.board = board;
-		this.controllers = controllers;
-		listeners = new LinkedList<SetupListener>();
+        this.board = board;
+        this.controllers = controllers;
+        listeners = new LinkedList<SetupListener>();
 
-		// Activate controllers.
-		for (int i = 0; i < controllers.length; i++) {
-			controllers[i].startControlling(i);
-		}
-	}
+        // Activate controllers.
+        for (int i = 0; i < controllers.length; i++) {
+            controllers[i].startControlling(i);
+        }
+    }
 
-	public Board getBoard() {
-		return board;
-	}
+    public Board getBoard() {
+        return board;
+    }
 
-	@Override
-	public Iterator<Controller> iterator() {
-		return Arrays.asList(controllers).iterator();
-	}
+    @Override
+    public Iterator<Controller> iterator() {
+        return Arrays.asList(controllers).iterator();
+    }
 
-	public void addSetupListener(SetupListener l) {
-		listeners.add(l);
-	}
+    public void addSetupListener(SetupListener l) {
+        listeners.add(l);
+    }
 
-	public void removeSetupListener(SetupListener l) {
-		listeners.remove(l);
-	}
+    public void removeSetupListener(SetupListener l) {
+        listeners.remove(l);
+    }
 
-	protected void fireSetupChanged(int player) {
-		for (SetupListener l : listeners) {
-			l.setupChanged(player);
-		}
-	}
+    protected void fireSetupChanged(int player) {
+        for (SetupListener l : listeners) {
+            l.setupChanged(player);
+        }
+    }
 
-	public Controller getController(int player) {
-		return controllers[player];
-	}
+    public Controller getController(int player) {
+        return controllers[player];
+    }
 
-	public Controller getController(Player player) {
-		return controllers[player.getIndex()];
-	}
+    public Controller getController(Player player) {
+        return controllers[player.getIndex()];
+    }
 
-	public void setController(int player, Controller controller) {
-		if (controllers[player] != controller) {
-			controllers[player].stopControlling(player);
-			controllers[player] = controller;
-			controller.startControlling(player);
-			fireSetupChanged(player);
-		}
-	}
+    public void setController(int player, Controller controller) {
+        if (controllers[player] != controller) {
+            controllers[player].stopControlling(player);
+            controllers[player] = controller;
+            controller.startControlling(player);
+            fireSetupChanged(player);
+        }
+    }
 
-	public void setController(Player player, Controller controller) {
-		if (controllers[player.getIndex()] != controller) {
-			controllers[player.getIndex()].stopControlling(player.getIndex());
-			controllers[player.getIndex()] = controller;
-			controller.startControlling(player.getIndex());
-			fireSetupChanged(player.getIndex());
-		}
-	}
+    public void setController(Player player, Controller controller) {
+        if (controllers[player.getIndex()] != controller) {
+            controllers[player.getIndex()].stopControlling(player.getIndex());
+            controllers[player.getIndex()] = controller;
+            controller.startControlling(player.getIndex());
+            fireSetupChanged(player.getIndex());
+        }
+    }
 
 }

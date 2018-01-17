@@ -18,153 +18,153 @@ import martijn.quoridor.model.Wall;
 
 public class HumanController extends Controller {
 
-	private MouseMotionListener hoverListener;
+    private MouseMotionListener hoverListener;
 
-	private MouseListener clickListener;
+    private MouseListener clickListener;
 
-	public HumanController(BoardCanvas canvas) {
-		super(canvas);
-		hoverListener = new HoverListener();
-		clickListener = new ClickListener();
-	}
+    public HumanController(BoardCanvas canvas) {
+        super(canvas);
+        hoverListener = new HoverListener();
+        clickListener = new ClickListener();
+    }
 
-	@Override
-	protected void moveExpected() {
-		// Start user interaction.
-		getCanvas().addMouseMotionListener(hoverListener);
-		getCanvas().addMouseListener(clickListener);
-	}
+    @Override
+    protected void moveExpected() {
+        // Start user interaction.
+        getCanvas().addMouseMotionListener(hoverListener);
+        getCanvas().addMouseListener(clickListener);
+    }
 
-	@Override
-	protected void moveCancelled() {
-		removeListeners();
-	}
+    @Override
+    protected void moveCancelled() {
+        removeListeners();
+    }
 
-	private void removeListeners() {
-		getCanvas().removeMouseMotionListener(hoverListener);
-		getCanvas().removeMouseListener(clickListener);
-	}
+    private void removeListeners() {
+        getCanvas().removeMouseMotionListener(hoverListener);
+        getCanvas().removeMouseListener(clickListener);
+    }
 
-	@Override
-	public boolean isHuman() {
-		return true;
-	}
+    @Override
+    public boolean isHuman() {
+        return true;
+    }
 
-	/**
-	 * Converts from pixel coordinates to board coordinates. Returns
-	 * {@code null} if something went wrong.
-	 */
-	private Point2D toBoardCoordinates(Point mouseLocation) {
-		if (mouseLocation == null) {
-			return null;
-		}
+    /**
+     * Converts from pixel coordinates to board coordinates. Returns
+     * {@code null} if something went wrong.
+     */
+    private Point2D toBoardCoordinates(Point mouseLocation) {
+        if (mouseLocation == null) {
+            return null;
+        }
 
-		return getCanvas().toBoardCoordinates(mouseLocation);
-	}
+        return getCanvas().toBoardCoordinates(mouseLocation);
+    }
 
-	/**
-	 * Updates the shadow based on the current mouse position.
-	 *
-	 * @param mousePosition
-	 *            the mouse position in board coordinates.
-	 */
-	private void updateShadow(Point2D mousePosition) {
-		if (mousePosition == null) {
-			getCanvas().setShadow(null);
-			return;
-		}
+    /**
+     * Updates the shadow based on the current mouse position.
+     *
+     * @param mousePosition
+     *            the mouse position in board coordinates.
+     */
+    private void updateShadow(Point2D mousePosition) {
+        if (mousePosition == null) {
+            getCanvas().setShadow(null);
+            return;
+        }
 
-		Board board = getBoard();
+        Board board = getBoard();
 
-		if (board.isGameOver()) {
-			return;
-		}
+        if (board.isGameOver()) {
+            return;
+        }
 
-		List<Move> moves = new LinkedList<Move>();
+        List<Move> moves = new LinkedList<Move>();
 
-		// Are we trying to jump?
-		int x = (int) Math.round(mousePosition.getX() * 2);
-		int y = (int) Math.round(mousePosition.getY() * 2);
-		boolean jump = x % 2 == 1 && y % 2 == 1;
-		if (jump) {
-			Position pos = new Position(x / 2, y / 2);
-			Move move = new Jump(pos);
-			if (move.isLegal(board)) {
-				getCanvas().setShadow(move);
-			}
-			return;
-		}
+        // Are we trying to jump?
+        int x = (int) Math.round(mousePosition.getX() * 2);
+        int y = (int) Math.round(mousePosition.getY() * 2);
+        boolean jump = x % 2 == 1 && y % 2 == 1;
+        if (jump) {
+            Position pos = new Position(x / 2, y / 2);
+            Move move = new Jump(pos);
+            if (move.isLegal(board)) {
+                getCanvas().setShadow(move);
+            }
+            return;
+        }
 
-		// Determine whether we're trying to place a horizontal or a vertical
-		// wall. Thanks to John Farrell (friendless.farrell@gmail.com), 18
-		// January 2007.
-		double rx = (mousePosition.getX() + .5) % 1;
-		double ry = (mousePosition.getY() + .5) % 1;
-		Wall wall = (ry < rx) ^ (ry < 1 - rx) ? Wall.HORIZONTAL : Wall.VERTICAL;
+        // Determine whether we're trying to place a horizontal or a vertical
+        // wall. Thanks to John Farrell (friendless.farrell@gmail.com), 18
+        // January 2007.
+        double rx = (mousePosition.getX() + .5) % 1;
+        double ry = (mousePosition.getY() + .5) % 1;
+        Wall wall = (ry < rx) ^ (ry < 1 - rx) ? Wall.HORIZONTAL : Wall.VERTICAL;
 
-		x = (int) Math.round(mousePosition.getX()) - 1;
-		y = (int) Math.round(mousePosition.getY()) - 1;
-		Position pos = new Position(x, y);
+        x = (int) Math.round(mousePosition.getX()) - 1;
+        y = (int) Math.round(mousePosition.getY()) - 1;
+        Position pos = new Position(x, y);
 
-		moves.add(new PutWall(pos, wall));
-		moves.add(new PutWall(pos, wall.flip()));
+        moves.add(new PutWall(pos, wall));
+        moves.add(new PutWall(pos, wall.flip()));
 
-		for (Move move : moves) {
-			if (move.isLegal(board)) {
-				getCanvas().setShadow(move);
-				return;
-			}
-		}
+        for (Move move : moves) {
+            if (move.isLegal(board)) {
+                getCanvas().setShadow(move);
+                return;
+            }
+        }
 
-		// No valid move found for the current mouse position.
-		getCanvas().setShadow(null);
-	}
+        // No valid move found for the current mouse position.
+        getCanvas().setShadow(null);
+    }
 
-	/** Applies the shadow and ends the turn, if possible. */
-	private void applyShadow() {
-		if (getCanvas().isShadowLegal()) {
-			removeListeners();
-			move(getCanvas().getShadow());
-		}
-	}
+    /** Applies the shadow and ends the turn, if possible. */
+    private void applyShadow() {
+        if (getCanvas().isShadowLegal()) {
+            removeListeners();
+            move(getCanvas().getShadow());
+        }
+    }
 
-	/** Listens to mouse movements. */
-	private class HoverListener implements MouseMotionListener {
+    /** Listens to mouse movements. */
+    private class HoverListener implements MouseMotionListener {
 
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			updateShadow(toBoardCoordinates(e.getPoint()));
-		}
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            updateShadow(toBoardCoordinates(e.getPoint()));
+        }
 
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			mouseMoved(e);
-		}
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            mouseMoved(e);
+        }
 
-	}
+    }
 
-	/** Listens to mouse clicks. */
-	private class ClickListener extends MouseAdapter {
+    /** Listens to mouse clicks. */
+    private class ClickListener extends MouseAdapter {
 
-		@Override
-		public void mousePressed(MouseEvent e) {
-			getCanvas().requestFocus();
-			if (e.getButton() == MouseEvent.BUTTON1 && !e.isControlDown()) {
-				applyShadow();
-			}
-			updateShadow(toBoardCoordinates(e.getPoint()));
-		}
+        @Override
+        public void mousePressed(MouseEvent e) {
+            getCanvas().requestFocus();
+            if (e.getButton() == MouseEvent.BUTTON1 && !e.isControlDown()) {
+                applyShadow();
+            }
+            updateShadow(toBoardCoordinates(e.getPoint()));
+        }
 
-		@Override
-		public void mouseExited(MouseEvent arg0) {
-			getCanvas().setShadow(null);
-		}
+        @Override
+        public void mouseExited(MouseEvent arg0) {
+            getCanvas().setShadow(null);
+        }
 
-	}
+    }
 
-	@Override
-	public String toString() {
-		return "Human";
-	}
+    @Override
+    public String toString() {
+        return "Human";
+    }
 
 }

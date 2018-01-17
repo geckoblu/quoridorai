@@ -8,17 +8,17 @@ import java.util.List;
  */
 public class DefaultBrainFactory implements BrainFactory {
 
-	public void addBrains(List<Brain> brains) {
-		brains.add(new DumbBrain());
-		brains.add(createSmartBrain(2));
-		brains.add(createSmartBrain(3));
-		brains.add(createSmartBrain(4));
-	}
+    public void addBrains(List<Brain> brains) {
+        brains.add(new DumbBrain());
+        brains.add(createSmartBrain(2));
+        brains.add(createSmartBrain(3));
+        brains.add(createSmartBrain(4));
+    }
 
-	private Brain createSmartBrain(int i) {
-		NegamaxBrain b = new SmartBrain(i);
-		b.setDeterministic(false);
-		return b;
-	}
+    private Brain createSmartBrain(int i) {
+        NegamaxBrain b = new SmartBrain(i);
+        b.setDeterministic(false);
+        return b;
+    }
 
 }

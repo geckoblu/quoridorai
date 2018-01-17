@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 
 import martijn.quoridor.I18N;
 import martijn.quoridor.model.BoardListener;
-import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Setup;
 import martijn.quoridor.model.SetupListener;
 
@@ -22,7 +21,7 @@ public class RedoAction extends AbstractAction implements BoardListener, SetupLi
         super();
 
         I18N.Action action = I18N.getAction("REDO");
-        //putValue(Action.NAME, action.name);
+        // putValue(Action.NAME, action.name);
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
         URL url = getClass().getResource("/icons/go-next.png");
@@ -39,7 +38,7 @@ public class RedoAction extends AbstractAction implements BoardListener, SetupLi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        setup.getBoard().undo(getUndoLevel());
+        setup.getBoard().redo(2);
     }
 
     public int getUndoLevel() {
@@ -59,12 +58,7 @@ public class RedoAction extends AbstractAction implements BoardListener, SetupLi
     }
 
     @Override
-    public void moveExecuted(Move move) {
-        update();
-    }
-
-    @Override
-    public void movesUndone(Move[] moves) {
+    public void moveExecuted() {
         update();
     }
 
@@ -75,7 +69,7 @@ public class RedoAction extends AbstractAction implements BoardListener, SetupLi
 
     private void update() {
         int n = getUndoLevel();
-        setEnabled(n >= 0 && n <= setup.getBoard().getHistoryIndex());
+        setEnabled(setup.getBoard().getHistoryIndex() < setup.getBoard().getHistorySize());
     }
 
     @Override

@@ -7,16 +7,19 @@ package martijn.quoridor.model;
  */
 public interface Move {
 
-	/** Executes the move. */
-	public abstract void execute(Board board);
+    /** Executes the move. */
+    public abstract void execute(Board board);
 
-	/** Undoes the move. */
-	public abstract void undo(Board board);
+    /** Undoes the move. */
+    public abstract void undo(Board board);
 
-	/** Returns whether this move is legal in the specified state. */
-	public abstract boolean isLegal(Board board);
+    /** Re-does the move. */
+    public abstract void redo(Board board);
 
-	/** Returns the move notation, either in Lamek or Glendenning **/
-	public abstract String notation();
+    /** Returns whether this move is legal in the specified state. */
+    public abstract boolean isLegal(Board board);
+
+    /** Returns the move notation, either in Lamek or Glendenning **/
+    public abstract String notation();
 
 }

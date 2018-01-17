@@ -11,71 +11,72 @@ import martijn.quoridor.Core;
  */
 public class Animator implements Runnable {
 
-	/** The thread that executes the play jobs. */
-	private Thread thread;
+    /** The thread that executes the play jobs. */
+    private Thread thread;
 
-	/** The queue containing the play jobs to be run. */
-	private BlockingQueue<PlayJob> queue;
+    /** The queue containing the play jobs to be run. */
+    private BlockingQueue<PlayJob> queue;
 
-	/** The currently running play job. */
-	private PlayJob current;
+    /** The currently running play job. */
+    private PlayJob current;
 
-	/** Creates a new animator. */
-	public Animator() {
-		queue = new LinkedBlockingQueue<PlayJob>();
-		thread = new Thread(this, toString());
-		thread.setDaemon(true);
-		thread.setPriority(Thread.MAX_PRIORITY);
-		thread.start();
-	}
+    /** Creates a new animator. */
+    public Animator() {
+        queue = new LinkedBlockingQueue<PlayJob>();
+        thread = new Thread(this, toString());
+        thread.setDaemon(true);
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
+    }
 
-	/**
-	 * Returns the currently running play job, or {@code null} if the animator
-	 * is idle.
-	 */
-	public synchronized PlayJob getCurrent() {
-		return current;
-	}
+    /**
+     * Returns the currently running play job, or {@code null} if the animator
+     * is idle.
+     */
+    public synchronized PlayJob getCurrent() {
+        return current;
+    }
 
-	/** Cancels the currently running play job, if there is one. */
-	public synchronized void cancelCurrent() {
-		if (current != null) {
-			thread.interrupt();
-		}
-	}
+    /** Cancels the currently running play job, if there is one. */
+    public synchronized void cancelCurrent() {
+        if (current != null) {
+            thread.interrupt();
+        }
+    }
 
-	/** Adds the play job to the queue to be run soon. */
-	public void play(PlayJob job) {
-		queue.add(job);
-	}
+    /** Adds the play job to the queue to be run soon. */
+    public void play(PlayJob job) {
+        queue.add(job);
+    }
 
-	public void run() {
-		while (true) {
-			// Retrieve next play job.
-			PlayJob job = null;
-			try {
-				job = queue.take();
-			} catch (InterruptedException e) {
-				Core.LOGGER.log(Level.WARNING, this + " has died.", e);
-				return;
-			}
-			synchronized (this) {
-				current = job;
-			}
+    @Override
+    public void run() {
+        while (true) {
+            // Retrieve next play job.
+            PlayJob job = null;
+            try {
+                job = queue.take();
+            } catch (InterruptedException e) {
+                Core.LOGGER.log(Level.WARNING, this + " has died.", e);
+                return;
+            }
+            synchronized (this) {
+                current = job;
+            }
 
-			// Execute it.
-			try {
-				current.execute();
-			} catch (InterruptedException e) {
-				current.getAnimation().animationStopped();
-				// The animation was cancelled.
-			}
+            // Execute it.
+            try {
+                current.execute();
+            } catch (InterruptedException e) {
+                current.getAnimation().animationStopped();
+                // The animation was cancelled.
+            }
 
-			// Mark as finished.
-			synchronized (this) {
-				current = null;
-			}
-		}
-	}
+            // Mark as finished.
+            synchronized (this) {
+                current = null;
+            }
+        }
+    }
 
 }

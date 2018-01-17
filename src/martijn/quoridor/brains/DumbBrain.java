@@ -10,9 +10,9 @@ import martijn.quoridor.model.Move;
  */
 public class DumbBrain extends Brain {
 
-	@Override
-	public Move getMove(Board board) {
-		return new Jump(board.getTurn().stepToGoal());
-	}
+    @Override
+    public Move getMove(Board board) {
+        return new Jump(board.getTurn().stepToGoal());
+    }
 
 }

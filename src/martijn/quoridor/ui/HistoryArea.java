@@ -15,81 +15,74 @@ import martijn.quoridor.model.Move;
 @SuppressWarnings("serial")
 public class HistoryArea extends JTextArea implements BoardListener {
 
-	private Board _board;
+    private Board _board;
 
-	DefaultHighlighter.DefaultHighlightPainter _painter;
+    DefaultHighlighter.DefaultHighlightPainter _painter;
 
-	public HistoryArea(Board board) {
-		this._board = board;
-		_board.addBoardListener(this);
+    public HistoryArea(Board board) {
+        this._board = board;
+        _board.addBoardListener(this);
 
-		_painter = new DefaultHighlighter.DefaultHighlightPainter(new Color(232, 242, 254));
+        _painter = new DefaultHighlighter.DefaultHighlightPainter(new Color(232, 242, 254));
 
-		DefaultHighlighter highlighter = (DefaultHighlighter) this.getHighlighter();
-		highlighter.setDrawsLayeredHighlights(false);
+        DefaultHighlighter highlighter = (DefaultHighlighter) this.getHighlighter();
+        highlighter.setDrawsLayeredHighlights(false);
 
-		setFont(new Font(Font.MONOSPACED, Font.PLAIN, getFont().getSize()));
-	}
+        setFont(new Font(Font.MONOSPACED, Font.PLAIN, getFont().getSize()));
+    }
 
-	private void update() {
+    private void update() {
 
-		StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-		Iterator<Move> history = _board.getHistory();
-		int i = 0;
-		while (history.hasNext()) {
-			i++;
+        Iterator<Move> history = _board.getHistory();
+        int i = 0;
+        while (history.hasNext()) {
+            i++;
 
-			String line = "  " + i + ".  ";
-			line = line.substring(line.length() - 6);
-			sb.append(line);
+            String line = "  " + i + ".  ";
+            line = line.substring(line.length() - 6);
+            sb.append(line);
 
-			Move m1 = history.next();
-			String m1s = m1.notation() + "   ";
-			m1s = m1s.substring(0, 5);
-			sb.append(m1s);
+            Move m1 = history.next();
+            String m1s = m1.notation() + "   ";
+            m1s = m1s.substring(0, 5);
+            sb.append(m1s);
 
-			if (history.hasNext()) {
-				Move m2 = history.next();
-				sb.append(" " + m2.notation());
-			}
+            if (history.hasNext()) {
+                Move m2 = history.next();
+                sb.append(" " + m2.notation());
+            }
 
-			sb.append("\n");
-		}
-		setText(sb.toString());
+            sb.append("\n");
+        }
+        setText(sb.toString());
 
+        if (_board.hasHistory()) {
+            int historyIndex = _board.getHistoryIndex();
+            if (historyIndex > 0) {
+                int line = (historyIndex - 1) / 2;
+                try {
+                    int start = this.getLineStartOffset(line);
+                    int end = this.getLineEndOffset(line);
+                    this.getHighlighter().addHighlight(start, end, _painter);
+                } catch (BadLocationException e) {
+                    System.err.println(e);
+                }
+            }
+        }
+    }
 
-		if (_board.hasHistory()) {
-			int historyIndex = _board.getHistoryIndex();
-			if (historyIndex > 0) {
-				int line = (historyIndex - 1) / 2;
-				try {
-					int start = this.getLineStartOffset(line);
-					int end = this.getLineEndOffset(line);
-					this.getHighlighter().addHighlight(start, end, _painter);
-				} catch (BadLocationException e) {
-					System.err.println(e);
-				}
-			}
-		}
-	}
+    @Override
+    // BoardListener
+    public void moveExecuted() {
+        update();
+    }
 
-	@Override
-	// BoardListener
-	public void moveExecuted(Move move) {
-		update();
-	}
-
-	@Override
-	// BoardListener
-	public void movesUndone(Move[] moves) {
-		update();
-	}
-
-	@Override
-	// BoardListener
-	public void newGame() {
-		update();
-	}
+    @Override
+    // BoardListener
+    public void newGame() {
+        update();
+    }
 
 }

@@ -23,42 +23,43 @@ import martijn.quoridor.ui.actions.NewGameAction;
 @SuppressWarnings("serial")
 public class ApplicationFrame extends JFrame {
 
-	private final Board board;
-	private final BrainFactory factory;
+    private final Board board;
+    private final BrainFactory factory;
 
-	public ApplicationFrame(Board board, BrainFactory factory) {
-		this.board = board;
-		this.factory = factory;
+    public ApplicationFrame(Board board, BrainFactory factory) {
+        this.board = board;
+        this.factory = factory;
 
-		initUI();
+        initUI();
 
-		this.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				close();
-			}});
-	}
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                close();
+            }
+        });
+    }
 
-	private void initUI() {
-		setTitle("QuoridorAI");
-		setSize(750, 600);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    private void initUI() {
+        setTitle("QuoridorAI");
+        setSize(750, 600);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-		URL url = getClass().getResource("/icons/quoridor.png");
-		Image icon = Toolkit.getDefaultToolkit().getImage(url);
-		setIconImage(icon);
+        URL url = getClass().getResource("/icons/quoridor.png");
+        Image icon = Toolkit.getDefaultToolkit().getImage(url);
+        setIconImage(icon);
 
-		createMenuBar();
+        createMenuBar();
 
-		StatusBar statusbar = new StatusBar();
-		add(statusbar, BorderLayout.SOUTH);
+        StatusBar statusbar = new StatusBar();
+        add(statusbar, BorderLayout.SOUTH);
 
-		GamePanel gamePanel = new GamePanel(board, factory, statusbar);
-		add(gamePanel, BorderLayout.CENTER);
+        GamePanel gamePanel = new GamePanel(board, factory, statusbar);
+        add(gamePanel, BorderLayout.CENTER);
 
-	}
+    }
 
-	private void createMenuBar() {
+    private void createMenuBar() {
 
         JMenuBar menubar = new JMenuBar();
 
@@ -68,10 +69,10 @@ public class ApplicationFrame extends JFrame {
         setJMenuBar(menubar);
     }
 
-	private void createFileMenu(JMenuBar menubar) {
+    private void createFileMenu(JMenuBar menubar) {
 
-		I18N.Menu i18nMenu = I18N.getMenu("FILE");
-		JMenu file = new JMenu(i18nMenu.label);
+        I18N.Menu i18nMenu = I18N.getMenu("FILE");
+        JMenu file = new JMenu(i18nMenu.label);
         file.setMnemonic(i18nMenu.mnemonic);
 
         JMenuItem menuItem = new JMenuItem();
@@ -92,24 +93,24 @@ public class ApplicationFrame extends JFrame {
         file.add(menuItem);
 
         menubar.add(file);
-	}
+    }
 
-	private void createHelpMenu(JMenuBar menubar) {
+    private void createHelpMenu(JMenuBar menubar) {
 
-		I18N.Menu i18nMenu = I18N.getMenu("HELP");
-		JMenu help = new JMenu(i18nMenu.label);
-		help.setMnemonic(i18nMenu.mnemonic);
+        I18N.Menu i18nMenu = I18N.getMenu("HELP");
+        JMenu help = new JMenu(i18nMenu.label);
+        help.setMnemonic(i18nMenu.mnemonic);
 
-		JMenuItem menuItem = new JMenuItem();
+        JMenuItem menuItem = new JMenuItem();
         menuItem.setAction(new AboutAction(this));
         help.add(menuItem);
 
-		menubar.add(help);
-	}
+        menubar.add(help);
+    }
 
-	public final void close() {
-		dispose();
-		System.exit(0);
-	}
+    public final void close() {
+        dispose();
+        System.exit(0);
+    }
 
 }
