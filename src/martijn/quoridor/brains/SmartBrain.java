@@ -29,12 +29,12 @@ public class SmartBrain extends NegamaxBrain {
 
         // Add PutWalls.
         if (p.getWallCount() > 0) {
-            PositionSet set = new PositionSet(board.getWidth() + 1, board.getHeight() + 1);
+            PositionSet set = new PositionSet(Board.SIZE + 1, Board.SIZE + 1);
             for (Player pl : board.getPlayers()) {
                 markWallLocations(set, pl);
             }
-            for (int x = 1; x < board.getWidth(); x++) {
-                for (int y = 1; y < board.getHeight(); y++) {
+            for (int x = 1; x < Board.SIZE; x++) {
+                for (int y = 1; y < Board.SIZE; y++) {
                     Position pos = new Position(x, y);
                     if (set.contains(pos)) {
                         pos = pos.south().west();

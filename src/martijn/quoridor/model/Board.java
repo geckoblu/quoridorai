@@ -8,11 +8,9 @@ import java.util.List;
 
 public class Board {
 
+    public static final int SIZE = 9;
+
     private static final int NPLAYERS = 2;
-
-    private int width;
-
-    private int height;
 
     private Wall[][] walls;
 
@@ -29,17 +27,6 @@ public class Board {
 
     /** Creates a new 9x9 board with two players. */
     public Board() {
-        this(9);
-    }
-
-    /** Creates a board of the specified size. */
-    public Board(int size) {
-        this(size, size);
-    }
-
-    private Board(int width, int height) {
-        this.width = width;
-        this.height = height;
 
         players = new Player[NPLAYERS];
         _history = new LinkedList<Move>();
@@ -52,7 +39,7 @@ public class Board {
     /** Starts a new game, clearing the history. */
     public void newGame() {
         // Clear walls.
-        walls = new Wall[width - 1][height - 1];
+        walls = new Wall[SIZE - 1][SIZE - 1];
 
         // Create fresh players.
         Color[] cs = createPlayerColors();
@@ -113,24 +100,12 @@ public class Board {
         }
     }
 
-    // Board size.
-
-    /** Returns the board's width. */
-    public int getWidth() {
-        return width;
-    }
-
-    /** Returns the board's height. */
-    public int getHeight() {
-        return height;
-    }
-
     // Player positions.
 
     /** Returns whether the player position is within the board's bounds. */
     public boolean containsPlayerPosition(Position position) {
-        return 0 <= position.getX() && position.getX() < width && 0 <= position.getY()
-                && position.getY() < height;
+        return 0 <= position.getX() && position.getX() < SIZE && 0 <= position.getY()
+                && position.getY() < SIZE;
     }
 
     /** Returns whether the position is taken by any player. */
@@ -147,8 +122,8 @@ public class Board {
 
     /** Returns whether the wall position is within the board's bounds. */
     public boolean containsWallPosition(Position wallPosition) {
-        return 0 <= wallPosition.getX() && wallPosition.getX() < width - 1 && 0 <= wallPosition.getY()
-                && wallPosition.getY() < height - 1;
+        return 0 <= wallPosition.getX() && wallPosition.getX() < SIZE - 1 && 0 <= wallPosition.getY()
+                && wallPosition.getY() < SIZE - 1;
     }
 
     /**
@@ -373,18 +348,18 @@ public class Board {
     /** Creates a deep copy of this board. */
     @Override
     public Board clone() {
-        Board clone = new Board(width, height);
-        clone._history.addAll(_history);
+        Board cloneBoard = new Board();
+        cloneBoard._history.addAll(_history);
         for (int i = 0; i < players.length; i++) {
-            clone.players[i] = new Player(clone, players[i]);
+            cloneBoard.players[i] = new Player(cloneBoard, players[i]);
         }
-        clone.turn = turn;
-        for (int x = 0; x < width - 1; x++) {
-            for (int y = 0; y < height - 1; y++) {
-                clone.walls[x][y] = walls[x][y];
+        cloneBoard.turn = turn;
+        for (int x = 0; x < SIZE - 1; x++) {
+            for (int y = 0; y < SIZE - 1; y++) {
+                cloneBoard.walls[x][y] = walls[x][y];
             }
         }
-        return clone;
+        return cloneBoard;
     }
 
 }

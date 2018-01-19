@@ -5,6 +5,7 @@ import java.applet.AudioClip;
 
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.Player;
 import martijn.quoridor.model.Setup;
 
 public class SoundPlayer implements BoardListener {
@@ -40,12 +41,12 @@ public class SoundPlayer implements BoardListener {
             AudioClip yay = yahoo;
 
             // Determine winner.
-            int winner = board.getWinner().getIndex();
+            Player winner = board.getWinner();
 
             if (setup.getController(winner).isHuman()) {
                 // Maybe we need to play the sad yahoo.
                 for (int i = 0; i < board.getPlayers().length; i++) {
-                    if (i == winner) {
+                    if (i == winner.getIndex()) {
                         continue;
                     }
                     if (!setup.getController(i).isHuman()) {

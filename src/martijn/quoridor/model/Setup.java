@@ -63,15 +63,6 @@ public class Setup implements Iterable<Controller> {
         return controllers[player.getIndex()];
     }
 
-    public void setController(int player, Controller controller) {
-        if (controllers[player] != controller) {
-            controllers[player].stopControlling(player);
-            controllers[player] = controller;
-            controller.startControlling(player);
-            fireSetupChanged(player);
-        }
-    }
-
     public void setController(Player player, Controller controller) {
         if (controllers[player.getIndex()] != controller) {
             controllers[player.getIndex()].stopControlling(player.getIndex());

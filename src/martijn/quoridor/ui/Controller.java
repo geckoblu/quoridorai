@@ -12,29 +12,31 @@ import martijn.quoridor.model.Move;
  */
 public abstract class Controller implements BoardListener {
 
-    private BoardCanvas canvas;
+    private BoardCanvas _canvas;
 
-    private List<Integer> controlling;
+    /** Which player is this Controller controlling (Player 1 or Player 2 or both or none)**/
+    private List<Integer> _controlling;
 
     private boolean expecting;
 
     /** Creates a new Controller. */
     public Controller(BoardCanvas canvas) {
+        System.out.println("New Controller");
         if (canvas == null) {
             throw new NullPointerException("Canvas is null.");
         }
-        this.canvas = canvas;
-        controlling = new LinkedList<Integer>();
+        _canvas = canvas;
+        _controlling = new LinkedList<Integer>();
         getBoard().addBoardListener(this);
     }
 
-    public BoardCanvas getCanvas() {
-        return canvas;
+    protected BoardCanvas getCanvas() {
+        return _canvas;
     }
 
     /** Returns the board. */
-    public Board getBoard() {
-        return canvas.getBoard();
+    protected Board getBoard() {
+        return _canvas.getBoard();
     }
 
     /**
@@ -42,13 +44,13 @@ public abstract class Controller implements BoardListener {
      * if it's its player's turn.
      */
     public void startControlling(int player) {
-        controlling.add(player);
+        _controlling.add(player);
         wake();
     }
 
     /** Deactivates the controller. */
     public void stopControlling(int player) {
-        controlling.remove(new Integer(player));
+        _controlling.remove(new Integer(player));
         wake();
     }
 
@@ -66,6 +68,7 @@ public abstract class Controller implements BoardListener {
 
     /** Calls {@link #moveExpected()} if it's {@link #getPlayer()}'s turn. */
     private void wake() {
+        System.out.println("CTRL wake " + _controlling);
         if (shouldExpect()) {
             startExpecting();
         } else {
@@ -74,14 +77,14 @@ public abstract class Controller implements BoardListener {
     }
 
     public boolean shouldExpect() {
-        return controlling.contains(getBoard().getTurnIndex()) && !getBoard().isGameOver();
+        return _controlling.contains(getBoard().getTurnIndex()) && !getBoard().isGameOver();
     }
 
     /**
      * Returns whether the controller is expecting. That is, whether it is the
      * controller's player's turn, and the controller hasn't made a move yet.
      */
-    public boolean isExpecting() {
+    private boolean isExpecting() {
         return expecting;
     }
 

@@ -9,6 +9,7 @@ import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
 
+import martijn.quoridor.I18N;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Jump;
 import martijn.quoridor.model.Move;
@@ -164,7 +165,7 @@ public class HumanController extends Controller {
 
     @Override
     public String toString() {
-        return "Human";
+        return I18N.tr("HUMAN");
     }
 
 }

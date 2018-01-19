@@ -10,6 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import martijn.quoridor.I18N;
 import martijn.quoridor.model.Player;
 import martijn.quoridor.model.Setup;
 import martijn.quoridor.model.SetupListener;
@@ -86,7 +87,7 @@ public class PlayerStatus {
     private String getWallText() {
         StringBuffer buf = new StringBuffer();
 
-        buf.append("Walls: ");
+        buf.append(I18N.tr("WALLS") + ": ");
         if (player.getWallCount() == 0) {
             buf.append("none");
         } else {
@@ -127,6 +128,7 @@ public class PlayerStatus {
 
         @Override
         public void setupChanged(int player) {
+            System.out.println("PS setupChanged");
             fireContentsChanged(this, 0, getSize());
         }
 

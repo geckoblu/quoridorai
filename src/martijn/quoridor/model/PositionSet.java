@@ -5,7 +5,7 @@ public class PositionSet {
     private boolean[][] flags;
 
     public PositionSet(Board board) {
-        this(board.getWidth(), board.getHeight());
+        this(Board.SIZE, Board.SIZE);
     }
 
     public PositionSet(int width, int height) {

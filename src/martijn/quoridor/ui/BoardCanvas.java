@@ -103,8 +103,8 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
         int dim = Config.showCoordinates() ? 2 : 0;
 
-        double bWidth = (board.getWidth() + dim) * CELL_SIZE;
-        double bHeight = (board.getHeight() + dim) * CELL_SIZE;
+        double bWidth = (Board.SIZE + dim) * CELL_SIZE;
+        double bHeight = (Board.SIZE + dim) * CELL_SIZE;
         scale = Math.min(getWidth() / bWidth, getHeight() / bHeight);
         scale *= .95;
 
@@ -121,8 +121,8 @@ public class BoardCanvas extends JPanel implements BoardListener {
         drawCoordinates(g2);
 
         // Draw walls.
-        for (int x = 0; x < board.getWidth() - 1; x++) {
-            for (int y = 0; y < board.getHeight() - 1; y++) {
+        for (int x = 0; x < Board.SIZE - 1; x++) {
+            for (int y = 0; y < Board.SIZE - 1; y++) {
                 Wall wall = board.getWall(new Position(x, y));
                 if (wall != null) {
                     drawWall(g2, wall, x, y, false);
@@ -165,8 +165,8 @@ public class BoardCanvas extends JPanel implements BoardListener {
     private void drawCells(Graphics2D g2) {
 
         g2.setColor(Color.GRAY);
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
+        for (int x = 0; x < Board.SIZE; x++) {
+            for (int y = 0; y < Board.SIZE; y++) {
                 drawCell(g2, x, y);
             }
         }
@@ -206,7 +206,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
         FontMetrics metrics = g2.getFontMetrics();
 
         // Draw X coordinates
-        for (int i = 0; i < board.getWidth(); i++) {
+        for (int i = 0; i < Board.SIZE; i++) {
             String coord = Character.toString((char) ('a' + i));
 
             double deltaX = (cell_size - metrics.stringWidth(coord)) / 2;
@@ -216,12 +216,12 @@ public class BoardCanvas extends JPanel implements BoardListener {
             double y1 = getY(-1);
             g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
 
-            y1 = getY(board.getHeight());
+            y1 = getY(Board.SIZE);
             g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
         }
 
         // Draw Y coordinates
-        for (int i = 0; i < board.getWidth(); i++) {
+        for (int i = 0; i < Board.SIZE; i++) {
             String coord;
             if (Config.lamekNotation()) {
                 coord = Character.toString((char) ('1' + i));
@@ -236,7 +236,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
             double x1 = getX(-1);
             g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
 
-            x1 = getX(board.getWidth());
+            x1 = getX(Board.SIZE);
             g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
         }
     }

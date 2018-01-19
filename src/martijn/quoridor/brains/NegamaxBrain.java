@@ -35,7 +35,6 @@ public abstract class NegamaxBrain extends Brain {
         this.deterministic = deterministic;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Move getMove(Board board) throws InterruptedException {
         debug("");

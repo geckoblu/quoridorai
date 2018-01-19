@@ -28,7 +28,7 @@ public class BrainController extends Controller {
         this(canvas, brain, 500);
     }
 
-    public BrainController(BoardCanvas canvas, Brain brain, long minimumThinkTime) {
+    private BrainController(BoardCanvas canvas, Brain brain, long minimumThinkTime) {
         super(canvas);
         this.brain = brain;
         this.minimumThinkTime = minimumThinkTime;

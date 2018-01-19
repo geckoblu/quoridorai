@@ -2,7 +2,7 @@ package martijn.quoridor.brains;
 
 import martijn.quoridor.model.Move;
 
-public class RatedMove implements Comparable {
+public class RatedMove implements Comparable<RatedMove> {
 
     private Move move;
 
@@ -32,8 +32,8 @@ public class RatedMove implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        RatedMove rm = (RatedMove) o;
+    public int compareTo(RatedMove o) {
+        RatedMove rm = o;
         return rm.rating - rating;
     }
 

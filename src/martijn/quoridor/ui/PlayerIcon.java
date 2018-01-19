@@ -149,28 +149,28 @@ public class PlayerIcon extends JLabel implements Icon {
 
     }
 
-    private class FadeIn implements Animation {
-
-        @Override
-        public int getFrameCount() {
-            return NFRAMES;
-        }
-
-        @Override
-        public long getFrameDisplayTime(int frame) {
-            return 250 / NFRAMES;
-        }
-
-        @Override
-        public void showFrame(int frame) {
-            setAlpha(0x80 + 0x7f * frame / (NFRAMES - 1));
-        }
-
-        @Override
-        public void animationStopped() {
-            setAlpha(0x7f);
-        }
-
-    }
+//    private class FadeIn implements Animation {
+//
+//        @Override
+//        public int getFrameCount() {
+//            return NFRAMES;
+//        }
+//
+//        @Override
+//        public long getFrameDisplayTime(int frame) {
+//            return 250 / NFRAMES;
+//        }
+//
+//        @Override
+//        public void showFrame(int frame) {
+//            setAlpha(0x80 + 0x7f * frame / (NFRAMES - 1));
+//        }
+//
+//        @Override
+//        public void animationStopped() {
+//            setAlpha(0x7f);
+//        }
+//
+//    }
 
 }

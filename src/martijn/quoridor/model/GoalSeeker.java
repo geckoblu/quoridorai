@@ -26,8 +26,8 @@ public class GoalSeeker implements Comparator<Position> {
             return;
         }
 
-        int w = getBoard().getWidth();
-        int h = getBoard().getHeight();
+        int w = Board.SIZE;
+        int h = Board.SIZE;
         from = new Orientation[w][h];
         distance = new int[w][h];
         for (int x = 0; x < w; x++) {
@@ -106,10 +106,10 @@ public class GoalSeeker implements Comparator<Position> {
             goal = new Position(0, pos.getY());
             break;
         case SOUTH:
-            goal = new Position(pos.getX(), getBoard().getHeight() - 1);
+            goal = new Position(pos.getX(), Board.SIZE - 1);
             break;
         case WEST:
-            goal = new Position(getBoard().getWidth() - 1, pos.getY());
+            goal = new Position(Board.SIZE - 1, pos.getY());
             break;
         default:
             throw new InternalError();

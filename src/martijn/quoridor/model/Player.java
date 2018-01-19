@@ -11,7 +11,7 @@ import java.util.TreeSet;
  */
 public class Player {
 
-    private Board board;
+    //private Board board;
 
     private Orientation orientation;
 
@@ -50,13 +50,13 @@ public class Player {
     }
 
     public static Position getInitialPosition(Board board, Orientation o) {
-        int x = board.getWidth() / 2;
-        int y = board.getHeight() / 2;
+        int x = Board.SIZE / 2;
+        int y = Board.SIZE / 2;
         switch (o) {
         case NORTH:
-            return new Position(x, board.getHeight() - 1);
+            return new Position(x, Board.SIZE - 1);
         case EAST:
-            return new Position(board.getWidth() - 1, y);
+            return new Position(Board.SIZE - 1, y);
         case SOUTH:
             return new Position(x, 0);
         case WEST:
@@ -128,9 +128,9 @@ public class Player {
         case EAST:
             return p.getX() == 0;
         case SOUTH:
-            return p.getY() == board.getHeight() - 1;
+            return p.getY() == Board.SIZE - 1;
         case WEST:
-            return p.getX() == board.getWidth() - 1;
+            return p.getX() == Board.SIZE - 1;
         default:
             throw new InternalError();
         }
