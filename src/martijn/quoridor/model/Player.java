@@ -11,7 +11,15 @@ import java.util.TreeSet;
  */
 public class Player {
 
-    //private Board board;
+    private static final Color[] COLOR;
+
+    static {
+        COLOR = new Color[2];
+        COLOR[0] = Color.decode("#809FFF");
+        COLOR[1] = Color.decode("#FF80FF");
+    }
+
+    private final Board _board;
 
     private Orientation orientation;
 
@@ -21,7 +29,7 @@ public class Player {
 
     private int nwalls;
 
-    private Color color;
+    public final int index;
 
     /**
      * Creates a new player.
@@ -37,16 +45,29 @@ public class Player {
      * @param color
      *            The player's color.
      */
-    public Player(Board board, Orientation orientation, String name, int nwalls, Color color) {
+    public Player(int index, Board board, Orientation orientation, String name, int nwalls, Color color) {
         if (board == null) {
             throw new NullPointerException("Board is null.");
         }
-        this.board = board;
+        this.index = index;
+        this._board = board;
         this.orientation = orientation;
         this.name = name;
         this.nwalls = nwalls;
-        this.color = color;
         this.position = getInitialPosition(board, orientation);
+    }
+
+    /**
+     * Creates a player on the specified board that is a clone of the specified
+     * player.
+     */
+    public Player(Board board, Player player) {
+        this._board = board;
+        this.index = player.index;
+        this.name = player.name;
+        this.nwalls = player.nwalls;
+        this.orientation = player.orientation;
+        this.position = player.position;
     }
 
     public static Position getInitialPosition(Board board, Orientation o) {
@@ -67,19 +88,6 @@ public class Player {
     }
 
     /**
-     * Creates a player on the specified board that is a clone of the specified
-     * player.
-     */
-    public Player(Board board, Player player) {
-        this.board = board;
-        this.color = player.color;
-        this.name = player.name;
-        this.nwalls = player.nwalls;
-        this.orientation = player.orientation;
-        this.position = player.position;
-    }
-
-    /**
      * Returns this player's orientation on the board. The orientation
      * determines the player's starting position and goal positions.
      */
@@ -89,17 +97,7 @@ public class Player {
 
     /** Returns the board this player participates in. */
     public Board getBoard() {
-        return board;
-    }
-
-    /** Returns a number i such that {@code getBoard().getPlayers()[i] == this}. */
-    public int getIndex() {
-        for (int i = 0; i < board.getPlayers().length; i++) {
-            if (board.getPlayers()[i] == this) {
-                return i;
-            }
-        }
-        throw new IllegalStateException("This player is not participating in this player's board.");
+        return _board;
     }
 
     /** Returns the number of walls this player owns. */
@@ -143,7 +141,7 @@ public class Player {
 
     /** Returns whether it's this player's turn. */
     public boolean isTurn() {
-        return board.getTurn() == this;
+        return _board.getTurn() == this;
     }
 
     /** Returns the player's current position. */
@@ -151,14 +149,14 @@ public class Player {
         return position;
     }
 
+    /** Returns this player's color. */
+    public Color getColor() {
+        return COLOR[index];
+    }
+
     /** Sets the player's position. */
     public void setPosition(Position position) {
         this.position = position;
-    }
-
-    /** Returns this player's color. */
-    public Color getColor() {
-        return color;
     }
 
     /**
@@ -209,7 +207,7 @@ public class Player {
             // Get position from queue.
             Position pos = front.remove();
 
-            if (board.isTaken(pos)) {
+            if (_board.isTaken(pos)) {
                 // This position is taken by a player. Spread 1 unit in all
                 // unblocked directions.
 
@@ -217,7 +215,7 @@ public class Player {
                 illegal.add(pos);
 
                 for (Orientation o : Orientation.values()) {
-                    if (!board.isBlocked(pos, o)) {
+                    if (!_board.isBlocked(pos, o)) {
                         Position p2 = pos.move(o);
                         if (!illegal.contains(p2)) {
                             // Visit this position soon.

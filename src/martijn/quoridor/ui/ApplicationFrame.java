@@ -23,14 +23,9 @@ import martijn.quoridor.ui.actions.NewGameAction;
 @SuppressWarnings("serial")
 public class ApplicationFrame extends JFrame {
 
-    private final Board board;
-    private final BrainFactory factory;
+    public ApplicationFrame(BrainFactory factory) {
 
-    public ApplicationFrame(Board board, BrainFactory factory) {
-        this.board = board;
-        this.factory = factory;
-
-        initUI();
+        initUI(factory);
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -40,7 +35,7 @@ public class ApplicationFrame extends JFrame {
         });
     }
 
-    private void initUI() {
+    private void initUI(BrainFactory factory) {
         setTitle("QuoridorAI");
         setSize(750, 600);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -49,7 +44,9 @@ public class ApplicationFrame extends JFrame {
         Image icon = Toolkit.getDefaultToolkit().getImage(url);
         setIconImage(icon);
 
-        createMenuBar();
+        Board board = new Board();
+
+        createMenuBar(board);
 
         StatusBar statusbar = new StatusBar();
         add(statusbar, BorderLayout.SOUTH);
@@ -59,17 +56,17 @@ public class ApplicationFrame extends JFrame {
 
     }
 
-    private void createMenuBar() {
+    private void createMenuBar(Board board) {
 
         JMenuBar menubar = new JMenuBar();
 
-        createFileMenu(menubar);
+        createFileMenu(menubar, board);
         createHelpMenu(menubar);
 
         setJMenuBar(menubar);
     }
 
-    private void createFileMenu(JMenuBar menubar) {
+    private void createFileMenu(JMenuBar menubar, Board board) {
 
         I18N.Menu i18nMenu = I18N.getMenu("FILE");
         JMenu file = new JMenu(i18nMenu.label);

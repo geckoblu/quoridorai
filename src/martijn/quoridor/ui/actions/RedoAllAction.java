@@ -10,20 +10,21 @@ import javax.swing.ImageIcon;
 import martijn.quoridor.I18N;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.SetupListener;
 
 @SuppressWarnings("serial")
-public class UndoAction extends AbstractAction implements BoardListener {
+public class RedoAllAction extends AbstractAction implements BoardListener, SetupListener {
 
     private Board _board;
 
-    public UndoAction(Board board) {
+    public RedoAllAction(Board board) {
         super();
 
-        I18N.Action action = I18N.getAction("UNDO");
+        I18N.Action action = I18N.getAction("REDO_ALL");
         // putValue(Action.NAME, action.name);
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
-        URL url = getClass().getResource("/icons/go-previous.png");
+        URL url = getClass().getResource("/icons/go-last.png");
         ImageIcon icon = new ImageIcon(url);
         putValue(Action.LARGE_ICON_KEY, icon);
 
@@ -36,7 +37,7 @@ public class UndoAction extends AbstractAction implements BoardListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        _board.undo();
+        _board.redoAll();
     }
 
     @Override
@@ -50,7 +51,12 @@ public class UndoAction extends AbstractAction implements BoardListener {
     }
 
     private void update() {
-        setEnabled(_board.canUndo());
+        setEnabled(_board.canRedo());
+    }
+
+    @Override
+    public void setupChanged(int player) {
+        update();
     }
 
 }

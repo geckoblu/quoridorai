@@ -191,7 +191,11 @@ public class BoardCanvas extends JPanel implements BoardListener {
         g2.fill(s);
 
         // Draw outline.
-        g2.setColor(Color.BLACK);
+        c = Color.BLACK;
+        if (shadow) {
+            c = Core.transparent(c);
+        }
+        g2.setColor(c);
         g2.draw(s);
     }
 

@@ -29,9 +29,9 @@ public class SoundPlayer implements BoardListener {
         board.addBoardListener(this);
 
         // Load audio.
-        stone = Applet.newAudioClip(getClass().getResource("stone.wav"));
-        yahoo = Applet.newAudioClip(getClass().getResource("yahoo1.au"));
-        yahooSad = Applet.newAudioClip(getClass().getResource("yahoo2.au"));
+        stone = Applet.newAudioClip(getClass().getResource("/sounds/stone.wav"));
+        yahoo = Applet.newAudioClip(getClass().getResource("/sounds/yahoo1.au"));
+        yahooSad = Applet.newAudioClip(getClass().getResource("/sounds/yahoo2.au"));
     }
 
     @Override
@@ -45,11 +45,11 @@ public class SoundPlayer implements BoardListener {
 
             if (setup.getController(winner).isHuman()) {
                 // Maybe we need to play the sad yahoo.
-                for (int i = 0; i < board.getPlayers().length; i++) {
-                    if (i == winner.getIndex()) {
+                for (Player p: board.getPlayers()) {
+                    if (p == winner) {
                         continue;
                     }
-                    if (!setup.getController(i).isHuman()) {
+                    if (!setup.getController(p).isHuman()) {
                         // We've found a non-human opponent.
                         yay = yahooSad;
                         break;

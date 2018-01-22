@@ -5,7 +5,6 @@ import javax.swing.UIManager;
 
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.brains.DefaultBrainFactory;
-import martijn.quoridor.model.Board;
 import martijn.quoridor.ui.ApplicationFrame;
 
 /**
@@ -20,7 +19,7 @@ public class QuoridorApplication {
 
 	/** Launches Quoridor with the brains created by the specified factory. */
 	public static void launch(BrainFactory factory) {
-		final Board board = new Board();
+
 		final BrainFactory ffactory = factory;
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -28,7 +27,7 @@ public class QuoridorApplication {
 			public void run() {
 				UIManager.put("swing.boldMetal", false);
 
-				ApplicationFrame f = new ApplicationFrame(board, ffactory);
+				ApplicationFrame f = new ApplicationFrame(ffactory);
 
 				//TODO reactivate this for center the application
 				// f.setLocationRelativeTo(null);

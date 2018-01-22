@@ -17,11 +17,12 @@ public abstract class Controller implements BoardListener {
     /** Which player is this Controller controlling (Player 1 or Player 2 or both or none)**/
     private List<Integer> _controlling;
 
-    private boolean expecting;
+    private boolean _expecting;
+
+    private boolean _paused = false;
 
     /** Creates a new Controller. */
     public Controller(BoardCanvas canvas) {
-        System.out.println("New Controller");
         if (canvas == null) {
             throw new NullPointerException("Canvas is null.");
         }
@@ -54,6 +55,19 @@ public abstract class Controller implements BoardListener {
         wake();
     }
 
+    public void pause() {
+        _paused = true;
+        stopExpecting();
+    }
+
+    public void restart() {
+        _paused = false;
+    }
+
+    public boolean isPaused() {
+        return _paused;
+    }
+
     @Override
     public void moveExecuted() {
         stopExpecting();
@@ -68,8 +82,7 @@ public abstract class Controller implements BoardListener {
 
     /** Calls {@link #moveExpected()} if it's {@link #getPlayer()}'s turn. */
     private void wake() {
-        System.out.println("CTRL wake " + _controlling);
-        if (shouldExpect()) {
+        if (shouldExpect() && !_paused) {
             startExpecting();
         } else {
             stopExpecting();
@@ -84,20 +97,20 @@ public abstract class Controller implements BoardListener {
      * Returns whether the controller is expecting. That is, whether it is the
      * controller's player's turn, and the controller hasn't made a move yet.
      */
-    private boolean isExpecting() {
-        return expecting;
+    protected boolean isExpecting() {
+        return _expecting;
     }
 
     private synchronized void startExpecting() {
-        if (!expecting) {
-            expecting = true;
+        if (!_expecting) {
+            _expecting = true;
             moveExpected();
         }
     }
 
     private synchronized void stopExpecting() {
-        if (expecting) {
-            expecting = false;
+        if (_expecting) {
+            _expecting = false;
             moveCancelled();
         }
     }
@@ -118,7 +131,7 @@ public abstract class Controller implements BoardListener {
     protected abstract void moveCancelled();
 
     protected void move(Move move) {
-        expecting = false;
+        _expecting = false;
         getBoard().move(move);
     }
 

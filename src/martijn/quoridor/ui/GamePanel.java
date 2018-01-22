@@ -15,7 +15,9 @@ import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Setup;
 import martijn.quoridor.ui.actions.RedoAction;
+import martijn.quoridor.ui.actions.RedoAllAction;
 import martijn.quoridor.ui.actions.UndoAction;
+import martijn.quoridor.ui.actions.UndoAllAction;
 
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel {
@@ -34,13 +36,13 @@ public class GamePanel extends JPanel {
         canvas = new BoardCanvas(board);
 
         controllers = getControllers(factory);
-        setup = new Setup(board, new Controller[] { controllers[0], controllers[1] });
+        setup = new Setup(board, (HumanController) controllers[0], new Controller[] { controllers[0], controllers[1] });
 
         gamestatusPanel = new GameStatus(setup, controllers, statusbar);
 
         historyArea = new HistoryArea(board);
 
-        initUI();
+        initUI(board);
 
         new SoundPlayer(board, setup);
     }
@@ -57,7 +59,7 @@ public class GamePanel extends JPanel {
         return controllers;
     }
 
-    private void initUI() {
+    private void initUI(Board board) {
         setLayout(new BorderLayout());
 
         JPanel p1 = new JPanel(new BorderLayout());
@@ -65,9 +67,10 @@ public class GamePanel extends JPanel {
         p1.add(canvas, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
-        // buttons.add(new JButton(new NewGameAction(board)));
-        buttons.add(new JButton(new UndoAction(setup)));
-        buttons.add(new JButton(new RedoAction(setup)));
+        buttons.add(new JButton(new UndoAllAction(board)));
+        buttons.add(new JButton(new UndoAction(board)));
+        buttons.add(new JButton(new RedoAction(board)));
+        buttons.add(new JButton(new RedoAllAction(board)));
         p1.add(buttons, BorderLayout.SOUTH);
 
         add(p1, BorderLayout.CENTER);

@@ -1,7 +1,7 @@
 package martijn.quoridor.model;
 
 import java.awt.Color;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,44 +10,50 @@ public class Board {
 
     public static final int SIZE = 9;
 
-    private static final int NPLAYERS = 2;
+    public static final int NPLAYERS = 2;
 
-    private Wall[][] walls;
+    private Wall[][] _walls;
 
-    private Player[] players;
+    private Player[] _players;
 
-    private int turn;
+    private int _turn;
 
     private LinkedList<Move> _history;
     private int _historyIndex;
 
-    private List<BoardListener> listeners;
+    private List<BoardListener> _listeners; // not used in cloned boards
+
+    private Setup _setup; // not used in cloned boards
 
     // Initialization.
 
     /** Creates a new 9x9 board with two players. */
     public Board() {
 
-        players = new Player[NPLAYERS];
+        _players = new Player[NPLAYERS];
         _history = new LinkedList<Move>();
         _historyIndex = 0;
-        listeners = new LinkedList<BoardListener>();
+        _listeners = new LinkedList<BoardListener>();
 
         newGame();
+    }
+
+    protected void setSetup(Setup setup) {
+        _setup = setup;
     }
 
     /** Starts a new game, clearing the history. */
     public void newGame() {
         // Clear walls.
-        walls = new Wall[SIZE - 1][SIZE - 1];
+        _walls = new Wall[SIZE - 1][SIZE - 1];
 
         // Create fresh players.
         Color[] cs = createPlayerColors();
-        players[0] = new Player(this, Orientation.SOUTH, "Player 1", 10, cs[0]);
-        players[1] = new Player(this, Orientation.NORTH, "Player 2", 10, cs[1]);
+        _players[0] = new Player(0, this, Orientation.SOUTH, "Player 1", 10, cs[0]);
+        _players[1] = new Player(1, this, Orientation.NORTH, "Player 2", 10, cs[1]);
 
         // Reset turn.
-        turn = 0;
+        _turn = 0;
 
         // Clear history.
         _history.clear();
@@ -60,43 +66,33 @@ public class Board {
     // Listeners.
 
     private Color[] createPlayerColors() {
-        List<Color> colors = createPossibleColors();
         Color[] cs = new Color[NPLAYERS];
-        for (int i = 0; i < NPLAYERS; i++) {
-            cs[i] = colors.get(i);
-        }
+        cs[0] = Color.decode("#809FFF");
+        cs[1] = Color.decode("#FF80FF");
         return cs;
-    }
-
-    private List<Color> createPossibleColors() {
-        List<Color> colors = new LinkedList<Color>();
-        int n = 24;
-        for (int i = 0; i < n; i++) {
-            colors.add(Color.getHSBColor((float) i / n, .5f, 1));
-        }
-        Collections.shuffle(colors);
-        return colors;
     }
 
     /** Causes the listener to be notified of subsequent board events. */
     public void addBoardListener(BoardListener l) {
-        listeners.add(l);
+        _listeners.add(l);
     }
 
     /** Causes the listener to no longer be notified of subsequent board events. */
     public void removeBoardListener(BoardListener l) {
-        listeners.remove(l);
+        _listeners.remove(l);
     }
 
     private void fireNewGame() {
-        for (BoardListener l : listeners) {
+        for (BoardListener l : _listeners) {
             l.newGame();
         }
     }
 
     private void fireMoveExecuted() {
-        for (BoardListener l : listeners) {
-            l.moveExecuted();
+        if (_listeners != null) { // null in cloned board
+            for (BoardListener l : _listeners) {
+                l.moveExecuted();
+            }
         }
     }
 
@@ -110,7 +106,7 @@ public class Board {
 
     /** Returns whether the position is taken by any player. */
     public boolean isTaken(Position position) {
-        for (Player p : players) {
+        for (Player p : _players) {
             if (p.getPosition().equals(position)) {
                 return true;
             }
@@ -131,12 +127,12 @@ public class Board {
      * is no wall at that position.
      */
     public Wall getWall(Position position) {
-        return walls[position.getX()][position.getY()];
+        return _walls[position.getX()][position.getY()];
     }
 
     /** Sets the wall at the specified position. */
     public void setWall(Position position, Wall wall) {
-        walls[position.getX()][position.getY()] = wall;
+        _walls[position.getX()][position.getY()] = wall;
     }
 
     /**
@@ -198,23 +194,23 @@ public class Board {
     // Players.
 
     /** Returns all players participating in this game. */
-    public Player[] getPlayers() {
-        return players;
+    public Iterable<Player> getPlayers() {
+        return Arrays.asList(_players);
     }
 
     /** Returns the i-player. */
     public Player getPlayer(int i) {
-        return players[i];
+        return _players[i];
     }
 
     /** Returns the player whose turn it is. */
     public Player getTurn() {
-        return players[turn];
+        return _players[_turn];
     }
 
     /** Returns the index of the player whose turn it is. */
     public int getTurnIndex() {
-        return turn;
+        return _turn;
     }
 
     /**
@@ -245,22 +241,42 @@ public class Board {
         // }
 
         // Note: execute before increasing turn.
-
         move.execute(this);
+
         increaseTurn();
 
+        // made a move clears the future history
         while (_historyIndex < _history.size()) {
             _history.removeFirst();
         }
+        if (_setup != null) { // _setup is null in cloned boards
+            _setup.restartBrainController();
+        }
+
         _history.push(move);
         _historyIndex++;
 
         fireMoveExecuted();
     }
 
+    public boolean canUndo() {
+        return _historyIndex > 0;
+    }
+
     /** Equivalent to {@code undo(1)}. */
     public void undo() {
+        if (_setup != null) { // _setup is null in cloned boards
+            _setup.pauseBrainController();
+        }
         undo(1);
+    }
+
+    /** **/
+    public void undoAll() {
+        if (_setup != null) { // _setup is null in cloned boards
+            _setup.pauseBrainController();
+        }
+        undo(_history.size());
     }
 
     /** Undoes the last {@code number} moves. */
@@ -285,9 +301,17 @@ public class Board {
         fireMoveExecuted();
     }
 
+    public boolean canRedo() {
+        return _historyIndex < _history.size();
+    }
+
     /** Equivalent to {@code redo(1)}. */
     public void redo() {
         redo(1);
+    }
+
+    public void redoAll() {
+        redo(_history.size() - _historyIndex);
     }
 
     /** Re-play the next {@code number} moves. */
@@ -325,21 +349,16 @@ public class Board {
         return !_history.isEmpty();
     }
 
-    // TODO See if is possible to remove this method
-    public int getHistorySize() {
-        return _history.size();
-    }
-
     /** Increases the turn by 1. */
     private void increaseTurn() {
-        turn = (turn + 1) % players.length;
+        _turn = (_turn + 1) % _players.length;
     }
 
     /** Decreases the turn by 1. */
     private void decreaseTurn() {
-        turn--;
-        if (turn < 0) {
-            turn += players.length;
+        _turn--;
+        if (_turn < 0) {
+            _turn += _players.length;
         }
     }
 
@@ -348,18 +367,29 @@ public class Board {
     /** Creates a deep copy of this board. */
     @Override
     public Board clone() {
-        Board cloneBoard = new Board();
-        cloneBoard._history.addAll(_history);
-        for (int i = 0; i < players.length; i++) {
-            cloneBoard.players[i] = new Player(cloneBoard, players[i]);
+        Board clonedBoard = new Board(this);
+        return clonedBoard;
+    }
+
+    /** Used only for cloned boards **/
+    private Board(Board board) {
+        _players = new Player[NPLAYERS];
+        _walls = new Wall[SIZE - 1][SIZE - 1];
+        _history = new LinkedList<Move>(); // no history for cloned boards
+        _historyIndex = 0;
+
+        // Listeners are used only by main board, avoid to instantiate in cloned ones
+        //_listeners = new LinkedList<BoardListener>();
+
+        _turn = board._turn;
+        for (int i = 0; i < Board.NPLAYERS; i++) {
+            _players[i] = new Player(this, board._players[i]);
         }
-        cloneBoard.turn = turn;
         for (int x = 0; x < SIZE - 1; x++) {
             for (int y = 0; y < SIZE - 1; y++) {
-                cloneBoard.walls[x][y] = walls[x][y];
+                _walls[x][y] = board._walls[x][y];
             }
         }
-        return cloneBoard;
     }
 
 }

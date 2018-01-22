@@ -6,25 +6,31 @@ import java.util.LinkedList;
 import java.util.List;
 
 import martijn.quoridor.ui.Controller;
+import martijn.quoridor.ui.HumanController;
 
 /**
  * Setup describes a complete game setup: board and controllers.
  */
 public class Setup implements Iterable<Controller> {
 
-    private Board board;
-    private Controller[] controllers;
+    private final Board _board;
+    private Controller[] _controllers;
+    private final HumanController _humanController;
 
-    private List<SetupListener> listeners;
+    private List<SetupListener> _listeners;
 
-    public Setup(Board board, Controller[] controllers) {
-        if (board.getPlayers().length != controllers.length) {
+    public Setup(Board board, HumanController humanController, Controller[] controllers) {
+        if (controllers.length != Board.NPLAYERS) {
             throw new IllegalArgumentException("Player number mismatch.");
         }
 
-        this.board = board;
-        this.controllers = controllers;
-        listeners = new LinkedList<SetupListener>();
+        _board = board;
+        _board.setSetup(this);
+
+        _humanController = humanController;
+
+        _controllers = controllers;
+        _listeners = new LinkedList<SetupListener>();
 
         // Activate controllers.
         for (int i = 0; i < controllers.length; i++) {
@@ -33,42 +39,60 @@ public class Setup implements Iterable<Controller> {
     }
 
     public Board getBoard() {
-        return board;
+        return _board;
     }
 
     @Override
     public Iterator<Controller> iterator() {
-        return Arrays.asList(controllers).iterator();
+        return Arrays.asList(_controllers).iterator();
     }
 
     public void addSetupListener(SetupListener l) {
-        listeners.add(l);
+        _listeners.add(l);
     }
 
     public void removeSetupListener(SetupListener l) {
-        listeners.remove(l);
+        _listeners.remove(l);
     }
 
     protected void fireSetupChanged(int player) {
-        for (SetupListener l : listeners) {
+        for (SetupListener l : _listeners) {
             l.setupChanged(player);
         }
     }
 
     public Controller getController(int player) {
-        return controllers[player];
+        return _controllers[player];
     }
 
     public Controller getController(Player player) {
-        return controllers[player.getIndex()];
+        return _controllers[player.index];
     }
 
     public void setController(Player player, Controller controller) {
-        if (controllers[player.getIndex()] != controller) {
-            controllers[player.getIndex()].stopControlling(player.getIndex());
-            controllers[player.getIndex()] = controller;
-            controller.startControlling(player.getIndex());
-            fireSetupChanged(player.getIndex());
+        if (_controllers[player.index] != controller) {
+            _controllers[player.index].stopControlling(player.index);
+            _controllers[player.index] = controller;
+            controller.startControlling(player.index);
+            fireSetupChanged(player.index);
+        }
+    }
+
+    public void pauseBrainController() {
+        for(int i= 0; i < Board.NPLAYERS; i++) {
+            if (!_controllers[i].isHuman()) {
+                _controllers[i].pause();
+                _humanController.startControlling(i);
+            }
+        }
+    }
+
+    public void restartBrainController() {
+        for(int i= 0; i < Board.NPLAYERS; i++) {
+            if (!_controllers[i].isHuman()) {
+                _humanController.stopControlling(i);
+                _controllers[i].restart();
+            }
         }
     }
 

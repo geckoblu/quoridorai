@@ -12,18 +12,18 @@ import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 
 @SuppressWarnings("serial")
-public class UndoAction extends AbstractAction implements BoardListener {
+public class UndoAllAction extends AbstractAction implements BoardListener {
 
     private Board _board;
 
-    public UndoAction(Board board) {
+    public UndoAllAction(Board board) {
         super();
 
-        I18N.Action action = I18N.getAction("UNDO");
+        I18N.Action action = I18N.getAction("UNDO_ALL");
         // putValue(Action.NAME, action.name);
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
-        URL url = getClass().getResource("/icons/go-previous.png");
+        URL url = getClass().getResource("/icons/go-first.png");
         ImageIcon icon = new ImageIcon(url);
         putValue(Action.LARGE_ICON_KEY, icon);
 
@@ -36,7 +36,7 @@ public class UndoAction extends AbstractAction implements BoardListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        _board.undo();
+        _board.undoAll();
     }
 
     @Override

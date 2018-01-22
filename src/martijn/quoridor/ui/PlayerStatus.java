@@ -128,7 +128,6 @@ public class PlayerStatus {
 
         @Override
         public void setupChanged(int player) {
-            System.out.println("PS setupChanged");
             fireContentsChanged(this, 0, getSize());
         }
 

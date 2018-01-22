@@ -13,7 +13,7 @@ public class Core {
 
     /** Returns the same color but with 50% transparency. */
     public static Color transparent(Color c) {
-        return transparent(c, 0x7f);
+        return transparent(c, 0x4f);
     }
 
     /**

@@ -84,7 +84,7 @@ public class GoalSeeker implements Comparator<Position> {
         return path;
     }
 
-    public Board getBoard() {
+    private Board getBoard() {
         return player.getBoard();
     }
 

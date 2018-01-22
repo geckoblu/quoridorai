@@ -40,8 +40,8 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
 
-        lines = new PlayerStatus[getBoard().getPlayers().length];
-        for (int i = 0; i < getBoard().getPlayers().length; i++) {
+        lines = new PlayerStatus[Board.NPLAYERS];
+        for (int i = 0; i < Board.NPLAYERS; i++) {
             lines[i] = new PlayerStatus(getBoard().getPlayer(i), setup, controllers);
             gbc.gridy = i;
             add(lines[i].getPlayerStatusPanel(), gbc);
@@ -62,7 +62,8 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
             statusbar.setWinner(activePlayer);
         } else {
 
-            if (setup.getController(activePlayer).isHuman()) {
+            Controller controller = setup.getController(activePlayer);
+            if (controller.isHuman() || controller.isPaused()) {
                 statusbar.setPlayerToMove(activePlayer);
             } else {
                 statusbar.setPlayerThinking(activePlayer);
@@ -81,7 +82,7 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
     @Override
     public void newGame() {
-        for (int i = 0; i < getBoard().getPlayers().length; i++) {
+        for (int i = 0; i < Board.NPLAYERS; i++) {
             lines[i].setPlayer(getBoard().getPlayer(i));
         }
         update();
