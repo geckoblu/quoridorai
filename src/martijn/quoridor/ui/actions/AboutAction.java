@@ -13,7 +13,7 @@ import martijn.quoridor.ui.AboutCard;
 @SuppressWarnings("serial")
 public class AboutAction extends AbstractAction {
 
-    private final Component parent;
+    private final Component _parent;
 
     public AboutAction(Component parent) {
         super();
@@ -23,12 +23,12 @@ public class AboutAction extends AbstractAction {
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
 
-        this.parent = parent;
+        this._parent = parent;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(parent,
+        JOptionPane.showMessageDialog(_parent,
                                       new AboutCard(),
                                       I18N.tr("ABOUT_QUORIDORAI"),
                                       JOptionPane.PLAIN_MESSAGE);

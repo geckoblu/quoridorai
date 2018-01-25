@@ -259,6 +259,22 @@ public class Board {
         fireMoveExecuted();
     }
 
+    /**
+     * Add the move to the history, without playing it.
+     * @param move
+     */
+    public void add(Move move) {
+
+        move.execute(this);
+
+        // Note: execute before increasing turn.
+        increaseTurn();
+
+        _history.push(move);
+        _historyIndex++;
+
+    }
+
     public boolean canUndo() {
         return _historyIndex > 0;
     }

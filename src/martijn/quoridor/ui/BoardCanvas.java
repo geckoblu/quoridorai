@@ -123,9 +123,10 @@ public class BoardCanvas extends JPanel implements BoardListener {
         // Draw walls.
         for (int x = 0; x < Board.SIZE - 1; x++) {
             for (int y = 0; y < Board.SIZE - 1; y++) {
-                Wall wall = board.getWall(new Position(x, y));
+                Position pos = new Position(x, y);
+                Wall wall = board.getWall(pos);
                 if (wall != null) {
-                    drawWall(g2, wall, x, y, false);
+                    drawWall(g2, wall, pos, false);
                 }
             }
         }
@@ -140,10 +141,10 @@ public class BoardCanvas extends JPanel implements BoardListener {
         if (isShadowLegal()) {
             if (shadow instanceof PutWall) {
                 PutWall pw = (PutWall) shadow;
-                drawWall(g2, pw.getWall(), pw.getPosition().getX(), pw.getPosition().getY(), true);
+                drawWall(g2, pw.getWall(), pw.getPosition(), true);
             } else if (shadow instanceof Jump) {
                 Jump j = (Jump) shadow;
-                drawPlayer(g2, board.getTurn(), j.getNewPosition(), true);
+                drawPlayer(g2, board.getTurn(), j.getPosition(), true);
             }
         }
     }
@@ -211,7 +212,16 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
         // Draw X coordinates
         for (int i = 0; i < Board.SIZE; i++) {
-            String coord = Character.toString((char) ('a' + i));
+            String coord;
+            switch (Config.notation()) {
+            case LAMEK:
+            case GLENDENNING:
+                coord = Character.toString((char) ('a' + i));
+                break;
+            default:
+                coord = Character.toString((char) ('0' + i));
+                break;
+            }
 
             double deltaX = (cell_size - metrics.stringWidth(coord)) / 2;
             double deltaY = cell_size - (cell_size - metrics.getHeight()) / 2;
@@ -227,10 +237,16 @@ public class BoardCanvas extends JPanel implements BoardListener {
         // Draw Y coordinates
         for (int i = 0; i < Board.SIZE; i++) {
             String coord;
-            if (Config.lamekNotation()) {
+            switch (Config.notation()) {
+            case LAMEK:
                 coord = Character.toString((char) ('1' + i));
-            } else {
+                break;
+            case GLENDENNING:
                 coord = Character.toString((char) ('9' - i));
+                break;
+            default:
+                coord = Character.toString((char) ('0' + i));
+                break;
             }
 
             double deltaX = (cell_size - metrics.stringWidth(coord)) / 2;
@@ -246,7 +262,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
     }
 
     /** Draw a single wall. */
-    private void drawWall(Graphics2D g2, Wall wall, int x, int y, boolean shadow) {
+    private void drawWall(Graphics2D g2, Wall wall, Position pos, boolean shadow) {
 
         double x1;
         double y1;
@@ -264,13 +280,13 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
         switch (wall) {
         case HORIZONTAL:
-            x1 = getX(x);
-            y1 = getY(y);
+            x1 = getX(pos.getX());
+            y1 = getY(pos.getY());
             line = new Line2D.Double(x1 + border + lineWidth / 2, y1, x1 + length, y1);
             break;
         case VERTICAL:
-            x1 = getX(x + 1);
-            y1 = getY(y + 1);
+            x1 = getX(pos.getX() + 1);
+            y1 = getY(pos.getY() + 1);
             line = new Line2D.Double(x1, y1 + border + lineWidth / 2, x1, y1 + length);
             break;
         default:

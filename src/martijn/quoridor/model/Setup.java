@@ -1,7 +1,5 @@
 package martijn.quoridor.model;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +9,7 @@ import martijn.quoridor.ui.HumanController;
 /**
  * Setup describes a complete game setup: board and controllers.
  */
-public class Setup implements Iterable<Controller> {
+public class Setup {
 
     private final Board _board;
     private Controller[] _controllers;
@@ -40,11 +38,6 @@ public class Setup implements Iterable<Controller> {
 
     public Board getBoard() {
         return _board;
-    }
-
-    @Override
-    public Iterator<Controller> iterator() {
-        return Arrays.asList(_controllers).iterator();
     }
 
     public void addSetupListener(SetupListener l) {

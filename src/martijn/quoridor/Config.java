@@ -10,10 +10,12 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
 
+import martijn.quoridor.model.Notation;
+
 public final class Config {
 
     public static final String SHOWCOORDINATES = "SHOWCOORDINATES";
-    public static final String LAMEKNOTATION = "LAMEKNOTATION";
+    public static final String NOTATION = "NOTATION";
 
     private static final Config config = new Config();
 
@@ -136,28 +138,28 @@ public final class Config {
 
     }
 
-    public static final boolean lamekNotation() {
+    public static final Notation notation() {
 
-        boolean lamekNotation = true; // default value
+        Notation notation = Notation.LAMEK; // default value
 
-        String value = config.prop.getProperty(LAMEKNOTATION);
+        String value = config.prop.getProperty(NOTATION);
 
         if (value == null) {
-            config.prop.setProperty(LAMEKNOTATION, Boolean.toString(lamekNotation));
+            config.prop.setProperty(NOTATION, notation.toString());
         } else {
-            lamekNotation = Boolean.parseBoolean(value);
+            notation = Notation.parse(value);
         }
 
-        return lamekNotation;
+        return notation;
     }
 
-    public static final void lamekNotation(boolean lamekNotation) {
+    public static final void notation(Notation notation) {
 
-        boolean oldValue = lamekNotation();
+        Notation oldValue = notation();
 
-        if (lamekNotation != oldValue) {
-            config.prop.setProperty(LAMEKNOTATION, Boolean.toString(lamekNotation));
-            config.pcs.firePropertyChange(LAMEKNOTATION, oldValue, lamekNotation);
+        if (notation != oldValue) {
+            config.prop.setProperty(NOTATION, notation.toString());
+            config.pcs.firePropertyChange(NOTATION, oldValue, notation);
         }
 
     }

@@ -18,7 +18,9 @@ import martijn.quoridor.model.Board;
 import martijn.quoridor.ui.actions.AboutAction;
 import martijn.quoridor.ui.actions.EditPropertiesAction;
 import martijn.quoridor.ui.actions.ExitAction;
+import martijn.quoridor.ui.actions.LoadAction;
 import martijn.quoridor.ui.actions.NewGameAction;
+import martijn.quoridor.ui.actions.SaveAction;
 
 @SuppressWarnings("serial")
 public class ApplicationFrame extends JFrame {
@@ -74,6 +76,16 @@ public class ApplicationFrame extends JFrame {
 
         JMenuItem menuItem = new JMenuItem();
         menuItem.setAction(new NewGameAction(board));
+        file.add(menuItem);
+
+        file.addSeparator();
+
+        menuItem = new JMenuItem();
+        menuItem.setAction(new SaveAction(this, board));
+        file.add(menuItem);
+
+        menuItem = new JMenuItem();
+        menuItem.setAction(new LoadAction(this, board));
         file.add(menuItem);
 
         file.addSeparator();

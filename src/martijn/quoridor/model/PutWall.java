@@ -4,24 +4,60 @@ import martijn.quoridor.Config;
 
 public class PutWall implements Move {
 
-    private Position position;
+    private Position _position;
 
-    private Wall wall;
+    private Wall _wall;
 
     public PutWall(Position position, Wall wall) {
         if (position == null || wall == null) {
             throw new NullPointerException();
         }
-        this.position = position;
-        this.wall = wall;
+        _position = position;
+        _wall = wall;
     }
 
+    public PutWall(Notation notation, String move) {
+        char cx = move.charAt(0);
+        char cy = move.charAt(1);
+        String w = move.substring(2);
+        int x;
+        int y;
+        x = cx - 'a';
+        switch (notation) {
+        case LAMEK:
+            y = cy - '1';
+            break;
+        case GLENDENNING:
+            y = cy + '8';
+            break;
+        default:
+            x = cx - '0';
+            y = cy - '0';
+            break;
+        }
+        _position = new Position(x, y);
+        _wall = Wall.parse(w);
+    }
+    /*
+         public String notation() {
+        switch (Config.notation()) {
+        case LAMEK:
+            return "" + (char) ('a' + _position.getX()) + (char) ('1' + _position.getY()) + wall.notation();
+        case GLENDENNING:
+            return "" + (char) ('a' + _position.getX()) + (char) ('8' - _position.getY()) + wall.notation();
+        default:
+            return "" + (char) ('0' + _position.getX()) + (char) ('0' + _position.getY()) + wall.notation();
+        }
+    }
+
+     */
+
     public Position getPosition() {
-        return position;
+        return _position;
     }
 
     public Wall getWall() {
-        return wall;
+        return _wall;
     }
 
     /**
@@ -29,19 +65,19 @@ public class PutWall implements Move {
      * direction flipped.
      */
     public PutWall flip() {
-        return new PutWall(position, wall.flip());
+        return new PutWall(_position, _wall.flip());
     }
 
     @Override
     public void execute(Board board) {
-        board.setWall(position, wall);
+        board.setWall(_position, _wall);
         board.getTurn().takeWall();
     }
 
     @Override
     public void undo(Board board) {
         board.getTurn().giveWall();
-        board.setWall(position, null);
+        board.setWall(_position, null);
     }
 
     @Override
@@ -52,7 +88,7 @@ public class PutWall implements Move {
     @Override
     public boolean isLegal(Board board) {
         // Does position exist on board?
-        if (!board.containsWallPosition(position)) {
+        if (!board.containsWallPosition(_position)) {
             return false;
         }
 
@@ -62,7 +98,7 @@ public class PutWall implements Move {
         }
 
         // Is there already a wall at the position?
-        if (board.getWall(position) != null) {
+        if (board.getWall(_position) != null) {
             return false;
         }
 
@@ -73,22 +109,22 @@ public class PutWall implements Move {
 
         // Does the wall clash with existing walls nearby?
         Position p1, p2;
-        switch (wall) {
+        switch (_wall) {
         case HORIZONTAL:
-            p1 = position.west();
-            p2 = position.east();
+            p1 = _position.west();
+            p2 = _position.east();
             break;
         case VERTICAL:
-            p1 = position.north();
-            p2 = position.south();
+            p1 = _position.north();
+            p2 = _position.south();
             break;
         default:
             throw new InternalError();
         }
-        if (board.containsWallPosition(p1) && board.getWall(p1) == wall) {
+        if (board.containsWallPosition(p1) && board.getWall(p1) == _wall) {
             return false;
         }
-        if (board.containsWallPosition(p2) && board.getWall(p2) == wall) {
+        if (board.containsWallPosition(p2) && board.getWall(p2) == _wall) {
             return false;
         }
 
@@ -116,10 +152,13 @@ public class PutWall implements Move {
 
     @Override
     public String notation() {
-        if (Config.lamekNotation()) {
-            return "" + (char) ('a' + position.getX()) + (char) ('1' + position.getY()) + wall.notation();
-        } else {
-            return "" + (char) ('a' + position.getX()) + (char) ('8' - position.getY()) + wall.notation();
+        switch (Config.notation()) {
+        case LAMEK:
+            return "" + (char) ('a' + _position.getX()) + (char) ('1' + _position.getY()) + _wall.notation();
+        case GLENDENNING:
+            return "" + (char) ('a' + _position.getX()) + (char) ('8' - _position.getY()) + _wall.notation();
+        default:
+            return "" + (char) ('0' + _position.getX()) + (char) ('0' + _position.getY()) + _wall.notation();
         }
     }
 

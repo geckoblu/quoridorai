@@ -13,6 +13,7 @@ import javax.swing.JRadioButton;
 
 import martijn.quoridor.Config;
 import martijn.quoridor.I18N;
+import martijn.quoridor.model.Notation;
 
 @SuppressWarnings("serial")
 public class PropertiesPanel extends JPanel {
@@ -24,15 +25,25 @@ public class PropertiesPanel extends JPanel {
     public PropertiesPanel() {
         initUI();
 
-        if (Config.lamekNotation()) {
+        switch (Config.notation()) {
+        case LAMEK:
             lamekNotation.setSelected(true);
-        } else {
+            break;
+        case GLENDENNING:
             glendenningNotation.setSelected(true);
+            break;
+        default:
+            break;
         }
         ActionListener notationActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Config.lamekNotation(lamekNotation.isSelected());
+                if (lamekNotation.isSelected()) {
+                    Config.notation(Notation.LAMEK);
+                }
+                if (glendenningNotation.isSelected()) {
+                    Config.notation(Notation.GLENDENNING);
+                }
             }
         };
         lamekNotation.addActionListener(notationActionListener);
