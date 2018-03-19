@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import martijn.quoridor.Config;
 import martijn.quoridor.I18N;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
@@ -30,6 +31,7 @@ public class NewGameAction extends AbstractAction implements BoardListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         board.newGame();
+        Config.lastLoadFile(null);
     }
 
     @Override

@@ -263,7 +263,7 @@ public class Board {
      * Add the move to the history, without playing it.
      * @param move
      */
-    public void add(Move move) {
+    private void add(Move move) {
 
         move.execute(this);
 
@@ -273,6 +273,18 @@ public class Board {
         _history.push(move);
         _historyIndex++;
 
+    }
+
+    /**
+     * Add the moves to the history, without playing it.
+     * @param moves
+     */
+    public void add(Iterator<Move> moves) {
+        while(moves.hasNext()) {
+            Move move = moves.next();
+            add(move);
+        }
+        fireMoveExecuted();
     }
 
     public boolean canUndo() {
