@@ -15,7 +15,7 @@ import martijn.quoridor.ui.PropertiesPanel;
 @SuppressWarnings("serial")
 public class EditPropertiesAction extends AbstractAction {
 
-    Component parent;
+    Component _parent;
 
     public EditPropertiesAction(Component parent) {
         super();
@@ -25,7 +25,7 @@ public class EditPropertiesAction extends AbstractAction {
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
 
-        this.parent = parent;
+        this._parent = parent;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class EditPropertiesAction extends AbstractAction {
 
         String title = I18N.tr("PROPERTIES");
         Object[] options = { I18N.tr("CLOSE") };
-        JOptionPane.showOptionDialog(parent,
+        JOptionPane.showOptionDialog(_parent,
                                      message,
                                      title,
                                      JOptionPane.DEFAULT_OPTION,
@@ -44,6 +44,7 @@ public class EditPropertiesAction extends AbstractAction {
                                      options[0]);
 
         Config.save();
+        _parent.repaint();
     }
 
 }

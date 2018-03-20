@@ -52,8 +52,8 @@ public class HumanController extends Controller {
     }
 
     /**
-     * Converts from pixel coordinates to board coordinates. Returns
-     * {@code null} if something went wrong.
+     * Converts from pixel coordinates to board coordinates.
+     * Returns {@code null} if something went wrong.
      */
     private Point2D toBoardCoordinates(Point mouseLocation) {
         if (mouseLocation == null) {
@@ -67,7 +67,7 @@ public class HumanController extends Controller {
      * Updates the shadow based on the current mouse position.
      *
      * @param mousePosition
-     *            the mouse position in board coordinates.
+     *        the mouse position in board coordinates.
      */
     private void updateShadow(Point2D mousePosition) {
         if (mousePosition == null) {

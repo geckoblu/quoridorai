@@ -1,6 +1,8 @@
 package martijn.quoridor.ui;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import javax.swing.JScrollPane;
 import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.model.Board;
+import martijn.quoridor.model.PointOfView;
 import martijn.quoridor.model.Setup;
 import martijn.quoridor.ui.actions.RedoAction;
 import martijn.quoridor.ui.actions.RedoAllAction;
@@ -22,7 +25,7 @@ import martijn.quoridor.ui.actions.UndoAllAction;
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel {
 
-    private BoardCanvas canvas;
+    private BoardCanvas _boardCanvas;
 
     private Controller[] controllers;
 
@@ -33,7 +36,13 @@ public class GamePanel extends JPanel {
 
     public GamePanel(Board board, BrainFactory factory, StatusBar statusbar) {
 
-        canvas = new BoardCanvas(board);
+        _boardCanvas = new BoardCanvas(board);
+        _boardCanvas.addPropertyChangeListener("POINT_OF_VIEW", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+            }
+        });
 
         controllers = getControllers(factory);
         setup = new Setup(board, (HumanController) controllers[0], new Controller[] { controllers[0], controllers[1] });
@@ -52,9 +61,9 @@ public class GamePanel extends JPanel {
         factory.addBrains(brains);
 
         Controller[] controllers = new Controller[brains.size() + 1];
-        controllers[0] = new HumanController(canvas);
+        controllers[0] = new HumanController(_boardCanvas);
         for (int i = 0; i < brains.size(); i++) {
-            controllers[i + 1] = new BrainController(canvas, brains.get(i));
+            controllers[i + 1] = new BrainController(_boardCanvas, brains.get(i));
         }
         return controllers;
     }
@@ -64,7 +73,7 @@ public class GamePanel extends JPanel {
 
         JPanel p1 = new JPanel(new BorderLayout());
 
-        p1.add(canvas, BorderLayout.CENTER);
+        p1.add(_boardCanvas, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
         buttons.add(new JButton(new UndoAllAction(board)));
@@ -89,6 +98,10 @@ public class GamePanel extends JPanel {
         p2.add(p3, BorderLayout.CENTER);
 
         add(p2, BorderLayout.EAST);
+    }
+
+    void setPointOfView(PointOfView pointOfView) {
+        _boardCanvas.setPointOfView(pointOfView);
     }
 
 }

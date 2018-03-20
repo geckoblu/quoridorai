@@ -23,6 +23,7 @@ import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Jump;
 import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Player;
+import martijn.quoridor.model.PointOfView;
 import martijn.quoridor.model.Position;
 import martijn.quoridor.model.PutWall;
 import martijn.quoridor.model.Wall;
@@ -37,54 +38,89 @@ public class BoardCanvas extends JPanel implements BoardListener {
     private static final float WALL_THICKNESS = 2;
     private static final double PLAYER_RADIUS = CELL_SIZE - WALL_THICKNESS - 2;
 
-    private double scale;
-    private double boardWidth;
-    private double boardHeight;
-    private double cell_size;
+    private double _scale;
+    private double _boardWidth;
+    private double _boardHeight;
+    private double _cellSize;
+
+    private PointOfView _pointOfView = PointOfView.POV1;
 
     /** The board this canvas visualizes. */
-    private Board board;
+    private Board _board;
 
     /** The current shadow move. */
-    private Move shadow;
+    private Move _shadow;
 
     /** Creates a new QuoridorCanvas. */
     public BoardCanvas(Board board) {
-        this.board = board;
+        this._board = board;
         board.addBoardListener(this);
         // setBackground(Color.GREEN);
     }
 
-    private double getX(int x) {
+    /**
+     * Converts from board coordinates to pixel coordinates.
+     */
+    private double getX(int bx) {
         int dim = Config.showCoordinates() ? 1 : 0;
 
-        double delta = (getWidth() - boardWidth) / 2;
-        return (x + dim) * cell_size + delta;
-    }
+        double delta = (getWidth() - _boardWidth) / 2;
+        double x = (bx + dim) * _cellSize;
 
-    private double getY(int y) {
-        int dim = Config.showCoordinates() ? 1 : 0;
+        if (_pointOfView == PointOfView.POV2) {
+            x = _boardWidth - _cellSize - x;
+        }
 
-        double delta = (getHeight() - boardHeight) / 2;
-        return boardHeight - ((y + 1 + dim) * cell_size) + delta;
+        x = x + delta;
+
+        return x;
+
     }
 
     /**
-     * Converts from pixel coordinates to board coordinates. Returns
-     * {@code null} if something went wrong.
+     * Converts from board coordinates to pixel coordinates.
      */
-    public Point2D toBoardCoordinates(Point ml) {
-        if (ml == null) {
+    private double getY(int by) {
+        int dim = Config.showCoordinates() ? 1 : 0;
+
+        double delta = (getHeight() - _boardHeight) / 2;
+        double y = ((by + dim) * _cellSize);
+
+        if (_pointOfView == PointOfView.POV1) {
+            y = _boardHeight - y - _cellSize;
+        }
+
+        y = y + delta;
+
+        return y;
+    }
+
+    /**
+     * Converts from pixel coordinates to board coordinates.
+     * Returns {@code null} if something went wrong.
+     */
+    public Point2D toBoardCoordinates(Point mouseLocation) {
+        if (mouseLocation == null) {
             return null;
         }
 
         int dim = Config.showCoordinates() ? 1 : 0;
 
-        double delta = (getWidth() - boardWidth) / 2;
-        double x1 = (ml.x - delta) / cell_size - dim;
+        double deltaX = (getWidth() - _boardWidth) / 2;
+        double x1 = (mouseLocation.x - deltaX) / _cellSize - dim;
 
-        delta = (getHeight() - boardHeight) / 2;
-        double y1 = (boardHeight + delta - ml.y) / cell_size - dim; // -1;
+        if (_pointOfView == PointOfView.POV2) {
+            x1 = Board.SIZE - x1;
+        }
+
+        double deltaY = (getHeight() - _boardHeight) / 2;
+        double y1;
+        if (_pointOfView == PointOfView.POV1) {
+            y1 = (_boardHeight + deltaY - mouseLocation.y) / _cellSize - dim;
+        } else {
+            y1 = (mouseLocation.y - deltaY) / _cellSize - dim;
+        }
+
 
         Point2D.Double p = new Point2D.Double(x1, y1);
         return p;
@@ -98,23 +134,21 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
         int dim = Config.showCoordinates() ? 2 : 0;
 
         double bWidth = (Board.SIZE + dim) * CELL_SIZE;
         double bHeight = (Board.SIZE + dim) * CELL_SIZE;
-        scale = Math.min(getWidth() / bWidth, getHeight() / bHeight);
-        scale *= .95;
+        _scale = Math.min(getWidth() / bWidth, getHeight() / bHeight);
+        _scale *= .95;
 
-        cell_size = CELL_SIZE * scale;
-        boardWidth = bWidth * scale;
-        boardHeight = bHeight * scale;
+        _cellSize = CELL_SIZE * _scale;
+        _boardWidth = bWidth * _scale;
+        _boardHeight = bHeight * _scale;
 
         // g2.setColor(Color.RED);
-        // g2.draw(new Rectangle2D.Double((getWidth() - boardWidth) / 2,
-        // (getHeight() - boardHeight) / 2, boardWidth, boardHeight));
+        // g2.draw(new Rectangle2D.Double((getWidth() - _boardWidth) / 2, (getHeight() - _boardHeight) / 2, _boardWidth, _boardHeight));
 
         drawCells(g2);
 
@@ -124,7 +158,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
         for (int x = 0; x < Board.SIZE - 1; x++) {
             for (int y = 0; y < Board.SIZE - 1; y++) {
                 Position pos = new Position(x, y);
-                Wall wall = board.getWall(pos);
+                Wall wall = _board.getWall(pos);
                 if (wall != null) {
                     drawWall(g2, wall, pos, false);
                 }
@@ -132,43 +166,40 @@ public class BoardCanvas extends JPanel implements BoardListener {
         }
 
         // Draw players.
-        for (Player p : board.getPlayers()) {
+        for (Player p : _board.getPlayers()) {
             // System.out.println("BC " + p + " " + p.getPosition());
             drawPlayer(g2, p, p.getPosition(), false);
         }
 
         // Draw shadow.
         if (isShadowLegal()) {
-            if (shadow instanceof PutWall) {
-                PutWall pw = (PutWall) shadow;
+            if (_shadow instanceof PutWall) {
+                PutWall pw = (PutWall) _shadow;
                 drawWall(g2, pw.getWall(), pw.getPosition(), true);
-            } else if (shadow instanceof Jump) {
-                Jump j = (Jump) shadow;
-                drawPlayer(g2, board.getTurn(), j.getPosition(), true);
+            } else if (_shadow instanceof Jump) {
+                Jump j = (Jump) _shadow;
+                drawPlayer(g2, _board.getTurn(), j.getPosition(), true);
             }
         }
     }
 
     /** Draw a single cell **/
-    private void drawCell(Graphics2D g2, int x, int y) {
+    private void drawCell(Graphics2D g2, int bx, int by) {
 
-        double border = WALL_THICKNESS * scale;
-        double x1 = getX(x);
-        double y1 = getY(y);
+        double border = WALL_THICKNESS * _scale;
+        double x1 = getX(bx);
+        double y1 = getY(by);
 
         g2.setColor(Color.GRAY);
-        g2.draw(new Rectangle2D.Double(x1 + border / 2, y1 + border / 2, cell_size - border, cell_size
-                - border));
+        g2.draw(new Rectangle2D.Double(x1 + border / 2, y1 + border / 2, _cellSize - border, _cellSize - border));
 
     }
 
     /** Draw all the board cells **/
     private void drawCells(Graphics2D g2) {
-
-        g2.setColor(Color.GRAY);
-        for (int x = 0; x < Board.SIZE; x++) {
-            for (int y = 0; y < Board.SIZE; y++) {
-                drawCell(g2, x, y);
+        for (int bx = 0; bx < Board.SIZE; bx++) {
+            for (int by = 0; by < Board.SIZE; by++) {
+                drawCell(g2, bx, by);
             }
         }
     }
@@ -176,8 +207,8 @@ public class BoardCanvas extends JPanel implements BoardListener {
     /** Draw a single player. */
     private void drawPlayer(Graphics2D g2, Player p, Position pos, boolean shadow) {
 
-        double radius = PLAYER_RADIUS * scale;
-        double delta = (cell_size - radius) / 2;
+        double radius = PLAYER_RADIUS * _scale;
+        double delta = (_cellSize - radius) / 2;
         double x1 = getX(pos.getX()) + delta;
         double y1 = getY(pos.getY()) + delta;
 
@@ -211,53 +242,53 @@ public class BoardCanvas extends JPanel implements BoardListener {
         FontMetrics metrics = g2.getFontMetrics();
 
         // Draw X coordinates
-        for (int i = 0; i < Board.SIZE; i++) {
+        for (int bx = 0; bx < Board.SIZE; bx++) {
             String coord;
             switch (Config.notation()) {
             case LAMEK:
             case GLENDENNING:
-                coord = Character.toString((char) ('a' + i));
+                coord = Character.toString((char) ('a' + bx));
                 break;
             default:
-                coord = Character.toString((char) ('0' + i));
+                coord = Character.toString((char) ('0' + bx));
                 break;
             }
 
-            double deltaX = (cell_size - metrics.stringWidth(coord)) / 2;
-            double deltaY = cell_size - (cell_size - metrics.getHeight()) / 2;
-            double x1 = getX(i);
+            double deltaX = (_cellSize - metrics.stringWidth(coord)) / 2;
+            double deltaY = _cellSize - (_cellSize - metrics.getHeight()) / 2;
+            double x1 = getX(bx);
 
-            double y1 = getY(-1);
-            g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
+            double yAbove = getY(-1);
+            g2.drawString(coord, (int) (x1 + deltaX), (int) (yAbove + deltaY));
 
-            y1 = getY(Board.SIZE);
-            g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
+            double yBelow = getY(Board.SIZE);
+            g2.drawString(coord, (int) (x1 + deltaX), (int) (yBelow + deltaY));
         }
 
         // Draw Y coordinates
-        for (int i = 0; i < Board.SIZE; i++) {
+        for (int by = 0; by < Board.SIZE; by++) {
             String coord;
             switch (Config.notation()) {
             case LAMEK:
-                coord = Character.toString((char) ('1' + i));
+                coord = Character.toString((char) ('1' + by));
                 break;
             case GLENDENNING:
-                coord = Character.toString((char) ('9' - i));
+                coord = Character.toString((char) ('9' - by));
                 break;
             default:
-                coord = Character.toString((char) ('0' + i));
+                coord = Character.toString((char) ('0' + by));
                 break;
             }
 
-            double deltaX = (cell_size - metrics.stringWidth(coord)) / 2;
-            double deltaY = cell_size - (cell_size - metrics.getHeight()) / 2;
-            double y1 = getY(i);
+            double deltaX = (_cellSize - metrics.stringWidth(coord)) / 2;
+            double deltaY = _cellSize - (_cellSize - metrics.getHeight()) / 2;
+            double y1 = getY(by);
 
-            double x1 = getX(-1);
-            g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
+            double xLeft = getX(-1);
+            g2.drawString(coord, (int) (xLeft + deltaX), (int) (y1 + deltaY));
 
-            x1 = getX(Board.SIZE);
-            g2.drawString(coord, (int) (x1 + deltaX), (int) (y1 + deltaY));
+            double xRight = getX(Board.SIZE);
+            g2.drawString(coord, (int) (xRight + deltaX), (int) (y1 + deltaY));
         }
     }
 
@@ -266,27 +297,27 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
         double x1;
         double y1;
-        double border = WALL_THICKNESS * scale / 2;
+        double border = WALL_THICKNESS * _scale / 2;
 
         Stroke oldStroke = g2.getStroke();
         BasicStroke newStroke = new BasicStroke((float) (border));
         g2.setStroke(newStroke);
 
         float lineWidth = newStroke.getLineWidth() / 2;
-        double length = (cell_size) * 2 - border - lineWidth;
+        double length = (_cellSize) * 2 - border - lineWidth;
 
         g2.setColor(shadow ? new Color(0x7f000000, true) : Color.BLACK);
         Shape line;
 
         switch (wall) {
         case HORIZONTAL:
-            x1 = getX(pos.getX());
-            y1 = getY(pos.getY());
+            x1 = getX(pos.getX() + (_pointOfView == PointOfView.POV1 ? 0 : 1));
+            y1 = getY(pos.getY() + (_pointOfView == PointOfView.POV1 ? 0 : 1));
             line = new Line2D.Double(x1 + border + lineWidth / 2, y1, x1 + length, y1);
             break;
         case VERTICAL:
-            x1 = getX(pos.getX() + 1);
-            y1 = getY(pos.getY() + 1);
+            x1 = getX(pos.getX() + (_pointOfView == PointOfView.POV1 ? 1 : 0));
+            y1 = getY(pos.getY() + (_pointOfView == PointOfView.POV1 ? 1 : 0));
             line = new Line2D.Double(x1, y1 + border + lineWidth / 2, x1, y1 + length);
             break;
         default:
@@ -302,28 +333,39 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
     /** Returns the board this canvas visualizes. */
     public Board getBoard() {
-        return board;
+        return _board;
     }
 
     /** Returns the current shadow move. */
     public Move getShadow() {
-        return shadow;
+        return _shadow;
     }
 
     /** Sets the current shadow move. */
     public void setShadow(Move shadow) {
-        this.shadow = shadow;
+        this._shadow = shadow;
         repaint();
     }
 
     /** Returns whether the shadow is non-null and legal. */
     public boolean isShadowLegal() {
-        return shadow != null && shadow.isLegal(getBoard());
+        return _shadow != null && _shadow.isLegal(getBoard());
     }
 
     public void applyShadow() {
-        board.move(shadow);
+        _board.move(_shadow);
         setShadow(null);
+    }
+
+    public void setPointOfView(PointOfView pointOfView) {
+        PointOfView oldPointOfView = _pointOfView;
+        _pointOfView = pointOfView;
+        repaint();
+        firePropertyChange("POINT_OF_VIEW", oldPointOfView, _pointOfView);
+    }
+
+    public PointOfView getPointOfView() {
+        return _pointOfView;
     }
 
     /**
