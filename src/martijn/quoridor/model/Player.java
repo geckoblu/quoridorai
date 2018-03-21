@@ -15,8 +15,8 @@ public class Player {
 
     static {
         COLOR = new Color[2];
-        COLOR[0] = Color.decode("#809FFF");
-        COLOR[1] = Color.decode("#FF80FF");
+        COLOR[0] = Color.decode("#AE611A"); //Color.decode("#809FFF");
+        COLOR[1] = Color.decode("#3E1E0F"); //Color.decode("#FF80FF");
     }
 
     private final Board _board;

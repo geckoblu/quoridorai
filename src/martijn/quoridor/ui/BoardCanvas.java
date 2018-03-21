@@ -13,6 +13,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JPanel;
 
@@ -38,6 +39,12 @@ public class BoardCanvas extends JPanel implements BoardListener {
     private static final float WALL_THICKNESS = 2;
     private static final double PLAYER_RADIUS = CELL_SIZE - WALL_THICKNESS - 2;
 
+    private static final Color BACKGROUND_COLOR = Color.decode("#B0A092");
+    private static final Color CELL_COLOR = Color.decode("#A18E80"); //"#554b44");
+    private static final Color COORDINATES_COLOR = Color.decode("#554b44");
+    private static final Color WALL_COLOR = Color.decode("#3E1E0F"); //Color.decode("#554b44");
+
+
     private double _scale;
     private double _boardWidth;
     private double _boardHeight;
@@ -51,18 +58,19 @@ public class BoardCanvas extends JPanel implements BoardListener {
     /** The current shadow move. */
     private Move _shadow;
 
-    /** Creates a new QuoridorCanvas. */
+    /**
+     * Creates a new QuoridorCanvas.
+     * */
     public BoardCanvas(Board board) {
         this._board = board;
         board.addBoardListener(this);
-        // setBackground(Color.GREEN);
     }
 
     /**
      * Converts from board coordinates to pixel coordinates.
      */
     private double getX(int bx) {
-        int dim = Config.showCoordinates() ? 1 : 0;
+        double dim = Config.showCoordinates() ? 1 : 0.5;
 
         double delta = (getWidth() - _boardWidth) / 2;
         double x = (bx + dim) * _cellSize;
@@ -81,7 +89,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
      * Converts from board coordinates to pixel coordinates.
      */
     private double getY(int by) {
-        int dim = Config.showCoordinates() ? 1 : 0;
+        double dim = Config.showCoordinates() ? 1 : 0.5;
 
         double delta = (getHeight() - _boardHeight) / 2;
         double y = ((by + dim) * _cellSize);
@@ -104,7 +112,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
             return null;
         }
 
-        int dim = Config.showCoordinates() ? 1 : 0;
+        double dim = Config.showCoordinates() ? 1 : 0.5;
 
         double deltaX = (getWidth() - _boardWidth) / 2;
         double x1 = (mouseLocation.x - deltaX) / _cellSize - dim;
@@ -136,7 +144,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-        int dim = Config.showCoordinates() ? 2 : 0;
+        int dim = Config.showCoordinates() ? 2 : 1;
 
         double bWidth = (Board.SIZE + dim) * CELL_SIZE;
         double bHeight = (Board.SIZE + dim) * CELL_SIZE;
@@ -147,9 +155,10 @@ public class BoardCanvas extends JPanel implements BoardListener {
         _boardWidth = bWidth * _scale;
         _boardHeight = bHeight * _scale;
 
-        // g2.setColor(Color.RED);
-        // g2.draw(new Rectangle2D.Double((getWidth() - _boardWidth) / 2, (getHeight() - _boardHeight) / 2, _boardWidth, _boardHeight));
-
+        g2.setColor(BACKGROUND_COLOR);
+        double bx = (getWidth() - _boardWidth) / 2;
+        double by = (getHeight() - _boardHeight) / 2;
+        g2.fill(new RoundRectangle2D.Double(bx, by, _boardWidth, _boardHeight, 50.0, 50.0));
         drawCells(g2);
 
         drawCoordinates(g2);
@@ -190,8 +199,8 @@ public class BoardCanvas extends JPanel implements BoardListener {
         double x1 = getX(bx);
         double y1 = getY(by);
 
-        g2.setColor(Color.GRAY);
-        g2.draw(new Rectangle2D.Double(x1 + border / 2, y1 + border / 2, _cellSize - border, _cellSize - border));
+        g2.setColor(CELL_COLOR);
+        g2.fill(new Rectangle2D.Double(x1 + border / 2, y1 + border / 2, _cellSize - border, _cellSize - border));
 
     }
 
@@ -237,7 +246,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
             return;
         }
 
-        g2.setColor(Color.GRAY);
+        g2.setColor(COORDINATES_COLOR);
 
         FontMetrics metrics = g2.getFontMetrics();
 
@@ -306,7 +315,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
         float lineWidth = newStroke.getLineWidth() / 2;
         double length = (_cellSize) * 2 - border - lineWidth;
 
-        g2.setColor(shadow ? new Color(0x7f000000, true) : Color.BLACK);
+        g2.setColor(shadow ? Core.transparent(WALL_COLOR, 0x8f) : WALL_COLOR);
         Shape line;
 
         switch (wall) {
