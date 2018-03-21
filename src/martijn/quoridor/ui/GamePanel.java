@@ -6,11 +6,15 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
+import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
@@ -52,6 +56,8 @@ public class GamePanel extends JPanel {
         historyArea = new HistoryArea(board);
 
         initUI(board);
+
+        setKeyBindings(board);
 
         new SoundPlayer(board, setup);
     }
@@ -98,6 +104,23 @@ public class GamePanel extends JPanel {
         p2.add(p3, BorderLayout.CENTER);
 
         add(p2, BorderLayout.EAST);
+    }
+
+    private void setKeyBindings(Board board) {
+        InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = getActionMap();
+
+        im.put(KeyStroke.getKeyStroke("UP"), "UP");
+        am.put("UP", new UndoAllAction(board));
+
+        im.put(KeyStroke.getKeyStroke("DOWN"), "DOWN");
+        am.put("DOWN", new RedoAllAction(board));
+
+        im.put(KeyStroke.getKeyStroke("LEFT"), "LEFT");
+        am.put("LEFT", new UndoAction(board));
+
+        im.put(KeyStroke.getKeyStroke("RIGHT"), "RIGHT");
+        am.put("RIGHT", new RedoAction(board));
     }
 
     void setPointOfView(PointOfView pointOfView) {

@@ -79,7 +79,7 @@ public final class I18N {
                 System.err.println("No mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
             }
         } catch (MissingResourceException ex) {
-            // System.err.println(ex.getMessage());
+            System.err.println(ex.getMessage());
         }
 
         // Short description

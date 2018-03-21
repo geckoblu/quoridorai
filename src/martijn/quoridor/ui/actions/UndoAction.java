@@ -6,6 +6,7 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import martijn.quoridor.I18N;
 import martijn.quoridor.model.Board;
@@ -23,9 +24,13 @@ public class UndoAction extends AbstractAction implements BoardListener {
         // putValue(Action.NAME, action.name);
         putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
         putValue(Action.SHORT_DESCRIPTION, action.short_description);
+
         URL url = getClass().getResource("/icons/go-previous.png");
         ImageIcon icon = new ImageIcon(url);
         putValue(Action.LARGE_ICON_KEY, icon);
+
+        //putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke((char)KeyEvent.VK_LEFT));
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('u'));
 
         _board = board;
 
