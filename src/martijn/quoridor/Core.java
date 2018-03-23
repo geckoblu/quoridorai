@@ -1,7 +1,15 @@
 package martijn.quoridor;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
 
 /**
  * The Core provides the Logger and some utility methods.
@@ -35,4 +43,18 @@ public class Core {
         return new Color(rgb | a, true);
     }
 
+    public static void openHyperlink(Component parent, URL url) {
+        if(Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(url.toURI());
+            } catch (IOException | URISyntaxException ex) {
+                Core.LOGGER.log(Level.WARNING, "Some exception occurs", ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(parent,
+                    I18N.tr("PLEASE_VISIT") + ": " + url.toString(),
+                    I18N.tr("OPEN_HYPERLINK"),
+                    JOptionPane.PLAIN_MESSAGE);
+        }
+    }
 }

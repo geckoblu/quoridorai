@@ -1,5 +1,7 @@
 package martijn.quoridor;
 
+import java.util.logging.Level;
+
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -12,6 +14,8 @@ import martijn.quoridor.ui.ApplicationFrame;
  */
 public class QuoridorApplication {
 
+    public static String VERSION = "2.1";
+
 	/** Launches Quoridor with a {@link DefaultBrainFactory}. */
 	public static void launch() {
 		launch(new DefaultBrainFactory());
@@ -19,6 +23,8 @@ public class QuoridorApplication {
 
 	/** Launches Quoridor with the brains created by the specified factory. */
 	public static void launch(BrainFactory factory) {
+
+	    Core.LOGGER.setLevel(Level.WARNING);
 
 		final BrainFactory ffactory = factory;
 
@@ -30,7 +36,7 @@ public class QuoridorApplication {
 				ApplicationFrame f = new ApplicationFrame(ffactory);
 
 				//TODO reactivate this for center the application
-				// f.setLocationRelativeTo(null);
+				f.setLocationRelativeTo(null);
 				f.setVisible(true);
 			}
 		});

@@ -8,7 +8,7 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 
 import martijn.quoridor.I18N;
-import martijn.quoridor.ui.AboutCard;
+import martijn.quoridor.ui.AboutPanel;
 
 @SuppressWarnings("serial")
 public class AboutAction extends AbstractAction {
@@ -29,7 +29,7 @@ public class AboutAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         JOptionPane.showMessageDialog(_parent,
-                                      new AboutCard(),
+                                      new AboutPanel(),
                                       I18N.tr("ABOUT_QUORIDORAI"),
                                       JOptionPane.PLAIN_MESSAGE);
     }
