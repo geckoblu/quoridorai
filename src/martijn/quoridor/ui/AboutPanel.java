@@ -78,7 +78,7 @@ public class AboutPanel extends JPanel {
 
     /*
     public static void main(String[] args) {
-        Core.LOGGER.setLevel(Level.WARNING);
+        Core.LOGGER.setLevel(Level.INFO);
 
         JOptionPane.showMessageDialog(null, new AboutPanel(), I18N.tr("ABOUT_QUORIDORAI"),
                 JOptionPane.PLAIN_MESSAGE);

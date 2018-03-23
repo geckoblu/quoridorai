@@ -27,6 +27,7 @@ import martijn.quoridor.ui.actions.EditPropertiesAction;
 import martijn.quoridor.ui.actions.ExitAction;
 import martijn.quoridor.ui.actions.LoadAction;
 import martijn.quoridor.ui.actions.NewGameAction;
+import martijn.quoridor.ui.actions.RulesAction;
 import martijn.quoridor.ui.actions.SaveAction;
 
 @SuppressWarnings("serial")
@@ -164,6 +165,10 @@ public class ApplicationFrame extends JFrame {
         helpMenu.setMnemonic(i18nMenu.mnemonic);
 
         JMenuItem menuItem = new JMenuItem();
+        menuItem.setAction(new RulesAction(this));
+        helpMenu.add(menuItem);
+
+        menuItem = new JMenuItem();
         menuItem.setAction(new AboutAction(this));
         helpMenu.add(menuItem);
 
