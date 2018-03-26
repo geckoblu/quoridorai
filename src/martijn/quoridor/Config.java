@@ -10,68 +10,89 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import martijn.quoridor.model.Notation;
 
 public final class Config {
 
+    /*
+     * User properties
+     */
+
     public static final String SHOWCOORDINATES = "SHOWCOORDINATES";
     public static final String NOTATION = "NOTATION";
 
+    private static final String LOGLEVEL = "LOGLEVEL";
+
+    /*
+     * Cached properties
+     */
+
+    private static final String CACHE_LASTLOADPATH = "LAST_LOAD_PATH";
+
+    /*
+     * Singleton
+     */
+
     private static final Config config = new Config();
 
-    private final Properties prop = new Properties();
+    /*
+     * Instance variables
+     */
 
-    private final Properties cache = new Properties();
+    private final Properties _prop = new Properties();
+
+    private final Properties _cache = new Properties();
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+
     private Config() {
         File configFile = new File(getConfigFileName());
-
-        boolean loaded = false;
 
         if (configFile.exists()) {
             InputStream input = null;
             try {
                 input = new FileInputStream(configFile);
-                prop.load(input);
-                loaded = true;
+                _prop.load(input);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Core.log(Level.SEVERE, "Some exception occurs", ex);
             } finally {
                 if (input != null) {
                     try {
                         input.close();
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        Core.log(Level.SEVERE, "Some exception occurs", ex);
                     }
                 }
             }
         }
 
-        if (!loaded) { // use defaults
-            save();
-        }
+        Core.setLogLevel(logLevel());
+
+        Core.log(Level.INFO, "Loading properties file: {0}", configFile);
 
         File cacheFile = new File(getCacheFileName());
         if (cacheFile.exists()) {
             InputStream input = null;
             try {
                 input = new FileInputStream(cacheFile);
-                cache.load(input);
+                _cache.load(input);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Core.log(Level.SEVERE, "Some exception occurs", ex);
             } finally {
                 if (input != null) {
                     try {
                         input.close();
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        Core.log(Level.SEVERE, "Some exception occurs", ex);
                     }
                 }
             }
         }
+
+        Core.log(Level.INFO, "Loading cache file: {0}", cacheFile);
     }
 
     public static final void save() {
@@ -87,19 +108,21 @@ public final class Config {
         try {
             output = new FileOutputStream(configFile);
 
-            config.prop.store(output, null);
+            config._prop.store(output, null);
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Core.log(Level.SEVERE, "Some exception occurs", ex);
         } finally {
             if (output != null) {
                 try {
                     output.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Core.log(Level.SEVERE, "Some exception occurs", ex);
                 }
             }
         }
+
+        saveCache();
 
     }
 
@@ -116,16 +139,16 @@ public final class Config {
         try {
             output = new FileOutputStream(cacheFile);
 
-            config.cache.store(output, null);
+            config._cache.store(output, null);
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Core.log(Level.SEVERE, "Some exception occurs", ex);
         } finally {
             if (output != null) {
                 try {
                     output.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Core.log(Level.SEVERE, "Some exception occurs", ex);
                 }
             }
         }
@@ -194,14 +217,29 @@ public final class Config {
         return cacheHome;
     }
 
+    private final Level logLevel() {
+
+        Level logLevel = Level.WARNING; // default value
+
+        String value = _prop.getProperty(LOGLEVEL);
+
+        if (value == null) {
+            _prop.setProperty(LOGLEVEL, logLevel.getName());
+        } else {
+            logLevel = Level.parse(value);
+        }
+
+        return logLevel;
+    }
+
     public static final boolean showCoordinates() {
 
         boolean showCoordinates = true; // default value
 
-        String value = config.prop.getProperty(SHOWCOORDINATES);
+        String value = config._prop.getProperty(SHOWCOORDINATES);
 
         if (value == null) {
-            config.prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
+            config._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
         } else {
             showCoordinates = Boolean.parseBoolean(value);
         }
@@ -214,7 +252,7 @@ public final class Config {
         boolean oldValue = showCoordinates();
 
         if (showCoordinates != oldValue) {
-            config.prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
+            config._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
             config.pcs.firePropertyChange(SHOWCOORDINATES, oldValue, showCoordinates);
         }
 
@@ -224,10 +262,10 @@ public final class Config {
 
         Notation notation = Notation.LAMEK; // default value
 
-        String value = config.prop.getProperty(NOTATION);
+        String value = config._prop.getProperty(NOTATION);
 
         if (value == null) {
-            config.prop.setProperty(NOTATION, notation.toString());
+            config._prop.setProperty(NOTATION, notation.toString());
         } else {
             notation = Notation.parse(value);
         }
@@ -240,25 +278,23 @@ public final class Config {
         Notation oldValue = notation();
 
         if (notation != oldValue) {
-            config.prop.setProperty(NOTATION, notation.toString());
+            config._prop.setProperty(NOTATION, notation.toString());
             config.pcs.firePropertyChange(NOTATION, oldValue, notation);
         }
 
     }
 
-    /*
+    /**
      * Cached properties
      */
 
-    private static final String LAST_LOAD_PATH = "LAST_LOAD_PATH";
-
     public static final String lastLoadPath() {
-        return config.cache.getProperty(LAST_LOAD_PATH, ".");
+        return config._cache.getProperty(CACHE_LASTLOADPATH, ".");
     }
 
     public static final void lastLoadPath(String lastLoadPath) {
-        config.cache.setProperty(LAST_LOAD_PATH, lastLoadPath);
-        saveCache();
+        config._cache.setProperty(CACHE_LASTLOADPATH, lastLoadPath);
+        save();
     }
 
 

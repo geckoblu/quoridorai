@@ -113,16 +113,16 @@ public final class I18N {
             localFilename = localFilename + "." + extension;
         }
 
-        Core.LOGGER.log(Level.INFO, "Looking for " + localFilename);
+        Core.log(Level.INFO, "Looking for: {0}", localFilename);
         URL url = filename.getClass().getResource("/i18n/" + localFilename);
 
         if (url == null) {
-            Core.LOGGER.log(Level.INFO, "Looking for " + filename);
+            Core.log(Level.INFO, "Looking for: {0}", filename);
             url = filename.getClass().getResource("/i18n/" + filename);
         }
 
         if (url == null) {
-            Core.LOGGER.log(Level.WARNING, "Could not find file.");
+            Core.log(Level.WARNING, "Could not find file.");
 
         } else {
 
@@ -137,11 +137,11 @@ public final class I18N {
                 }
                 text = sb.toString();
             } catch (FileNotFoundException e) {
-                Core.LOGGER.log(Level.WARNING, "Could not find file.");
+                Core.log(Level.WARNING, "Could not find file.");
             } catch (IOException e) {
-                Core.LOGGER.log(Level.WARNING, "Could not read file.", e);
+                Core.log(Level.WARNING, "Could not read file.", e);
             } catch (URISyntaxException e1) {
-                Core.LOGGER.log(Level.SEVERE, "URISyntaxException", e1);
+                Core.log(Level.SEVERE, "URISyntaxException", e1);
         }
         }
         return text;

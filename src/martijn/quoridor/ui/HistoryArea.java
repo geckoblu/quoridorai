@@ -3,11 +3,13 @@ package martijn.quoridor.ui;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 
+import martijn.quoridor.Core;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Move;
@@ -66,8 +68,8 @@ public class HistoryArea extends JTextArea implements BoardListener {
                     int start = this.getLineStartOffset(line);
                     int end = this.getLineEndOffset(line);
                     this.getHighlighter().addHighlight(start, end, _painter);
-                } catch (BadLocationException e) {
-                    System.err.println(e);
+                } catch (BadLocationException ex) {
+                    Core.log(Level.WARNING, "Some exception occurs", ex);
                 }
             }
         }

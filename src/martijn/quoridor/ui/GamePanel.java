@@ -49,7 +49,7 @@ public class GamePanel extends JPanel {
         });
 
         controllers = getControllers(factory);
-        setup = new Setup(board, (HumanController) controllers[0], new Controller[] { controllers[0], controllers[3] });
+        setup = new Setup(board, (HumanController) controllers[0], new Controller[] { controllers[0], controllers[2] });
 
         gamestatusPanel = new GameStatus(setup, controllers, statusbar);
 

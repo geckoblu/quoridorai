@@ -18,6 +18,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
+import martijn.quoridor.Config;
 import martijn.quoridor.I18N;
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.model.Board;
@@ -176,6 +177,7 @@ public class ApplicationFrame extends JFrame {
     }
 
     public final void close() {
+        Config.save();
         dispose();
         System.exit(0);
     }

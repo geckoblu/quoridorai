@@ -2,9 +2,7 @@ package martijn.quoridor.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.logging.Level;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -44,12 +42,12 @@ public class RulesPanel extends JPanel {
         add(new JScrollPane(textPane), BorderLayout.CENTER);
     }
 
+    /*
     public static void main(String[] args) {
         Core.LOGGER.setLevel(Level.WARNING);
 
         JOptionPane.showMessageDialog(null, new RulesPanel(), I18N.tr("RULES"),
                 JOptionPane.PLAIN_MESSAGE);
     }
-    /*
     */
 }

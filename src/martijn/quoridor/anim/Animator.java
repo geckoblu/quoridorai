@@ -57,7 +57,7 @@ public class Animator implements Runnable {
             try {
                 job = queue.take();
             } catch (InterruptedException e) {
-                Core.LOGGER.log(Level.WARNING, this + " has died.", e);
+                Core.log(Level.WARNING, this + " has died.", e);
                 return;
             }
             synchronized (this) {

@@ -75,7 +75,7 @@ public class BrainController extends Controller {
                 try {
                     move = brain.getMove(getBoard().clone());
                 } catch (RuntimeException e) {
-                    Core.LOGGER.log(Level.WARNING, brain.getName() + " threw an unchecked Exception", e);
+                    Core.log(Level.WARNING, brain.getName() + " threw an unchecked Exception", e);
                     showError(brain.getName() + " threw an error",
                             "An error occurred while " + brain.getName() + " was computing its\nmove. "
                                     + "Please select a different brain for " + getBoard().getTurn() + ".");
@@ -83,15 +83,15 @@ public class BrainController extends Controller {
                 }
 
                 // Check whether move is valid.
-                if (move == null || !move.isLegal(getBoard())) {
+                if (move == null || move.isLegal(getBoard())) {
                     if (move == null) {
-                        Core.LOGGER.log(Level.WARNING, brain.getName() + " returned a null move.");
+                        Core.log(Level.WARNING, "\"{0}\" returned a null move.", brain.getName());
                     } else {
-                        Core.LOGGER.log(Level.WARNING, brain.getName() + " returned illegal move " + move
-                                + ".");
+                        Core.log(Level.WARNING, "\"{0}\" returned illegal move -> {1}. ", new Object[]{brain.getName(), move});
                     }
-                    showError(brain.getName() + " suggested illegal move", brain.getName()
-                            + " suggested a move that is illegal in " + "the current\nsituation. Please "
+                    showError("Illegal Move", "\"" + brain.getName()
+                            + "\" suggested a move that is illegal in "
+                            + "the current\nsituation. Please "
                             + "select a different brain for " + getBoard().getTurn() + ".");
                     return;
                 }

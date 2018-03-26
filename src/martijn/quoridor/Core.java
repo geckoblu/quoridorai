@@ -16,10 +16,40 @@ import javax.swing.JOptionPane;
  */
 public class Core {
 
-    /** The Logger used for logging errors and warnings. */
-    public static final Logger LOGGER = Logger.getLogger(Core.class.getName());
+    /**
+     * The Logger used for logging errors and warnings.
+     * */
+    private static final Logger LOGGER;
 
-    /** Returns the same color but with 50% transparency. */
+    static {
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s\t%2$s - %5$s%6$s%n");
+        LOGGER = Logger.getLogger(Core.class.getName());
+        LOGGER.setLevel(Level.WARNING);
+    }
+
+    public static final void setLogLevel(Level level) {
+        LOGGER.setLevel(level);
+    }
+
+    public static final void log(Level level, String msg, Throwable thrown) {
+        LOGGER.log(level, msg, thrown);
+    }
+
+    public static final void log(Level level, String msg) {
+        LOGGER.log(level, msg);
+    }
+
+    public static final void log(Level level, String msg, Object param1) {
+        LOGGER.log(level, msg, param1);
+    }
+
+    public static final void log(Level level, String msg, Object params[]) {
+        LOGGER.log(level, msg, params);
+    }
+
+    /**
+     * Returns the same color but with 50% transparency.
+     * */
     public static Color transparent(Color c) {
         return transparent(c, 0x4f);
     }
@@ -43,6 +73,11 @@ public class Core {
         return new Color(rgb | a, true);
     }
 
+    /**
+     * Opens the given URL in the desktop browser if possible,
+     * in a dialog box as fallback.
+     *
+     */
     public static void openHyperlink(Component parent, URL url) {
         if(Desktop.isDesktopSupported()) {
             try {
