@@ -50,7 +50,7 @@ public class AboutPanel extends JPanel {
         textPane.addHyperlinkListener(new HyperlinkListener() {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
-                if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     Core.openHyperlink(AboutPanel.this, e.getURL());
                 }
             }

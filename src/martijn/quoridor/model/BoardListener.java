@@ -10,9 +10,11 @@ public interface BoardListener {
      * Notification that a move (or more) has been executed and the state has
      * been changed.
      */
-    public void moveExecuted();
+    void moveExecuted();
 
-    /** Notification that a new game has started. */
-    public void newGame();
+    /**
+     * Notification that a new game has started.
+     */
+    void newGame();
 
 }

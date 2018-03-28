@@ -13,24 +13,24 @@ import martijn.quoridor.model.BoardListener;
 @SuppressWarnings("serial")
 public class NewGameAction extends AbstractAction implements BoardListener {
 
-    private Board board;
+    private final Board _board;
 
     public NewGameAction(Board board) {
         super();
 
         I18N.Action action = I18N.getAction("NEW_GAME");
         putValue(Action.NAME, action.name);
-        putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
-        putValue(Action.SHORT_DESCRIPTION, action.short_description);
+        putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
+        putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
-        this.board = board;
+        _board = board;
         update();
         board.addBoardListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        board.newGame();
+        _board.newGame();
         Config.lastLoadFile(null);
     }
 
@@ -45,7 +45,7 @@ public class NewGameAction extends AbstractAction implements BoardListener {
     }
 
     private void update() {
-        setEnabled(board.hasHistory());
+        setEnabled(_board.hasHistory());
     }
 
 }

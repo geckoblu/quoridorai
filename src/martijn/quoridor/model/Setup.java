@@ -59,20 +59,20 @@ public class Setup {
     }
 
     public Controller getController(Player player) {
-        return _controllers[player.index];
+        return _controllers[player._index];
     }
 
     public void setController(Player player, Controller controller) {
-        if (_controllers[player.index] != controller) {
-            _controllers[player.index].stopControlling(player.index);
-            _controllers[player.index] = controller;
-            controller.startControlling(player.index);
-            fireSetupChanged(player.index);
+        if (_controllers[player._index] != controller) {
+            _controllers[player._index].stopControlling(player._index);
+            _controllers[player._index] = controller;
+            controller.startControlling(player._index);
+            fireSetupChanged(player._index);
         }
     }
 
     public void pauseBrainController() {
-        for(int i= 0; i < Board.NPLAYERS; i++) {
+        for (int i = 0; i < Board.NPLAYERS; i++) {
             if (!_controllers[i].isHuman()) {
                 _controllers[i].pause();
                 _humanController.startControlling(i);
@@ -81,7 +81,7 @@ public class Setup {
     }
 
     public void restartBrainController() {
-        for(int i= 0; i < Board.NPLAYERS; i++) {
+        for (int i = 0; i < Board.NPLAYERS; i++) {
             if (!_controllers[i].isHuman()) {
                 _humanController.stopControlling(i);
                 _controllers[i].restart();

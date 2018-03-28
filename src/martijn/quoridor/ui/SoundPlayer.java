@@ -10,48 +10,48 @@ import martijn.quoridor.model.Setup;
 
 public class SoundPlayer implements BoardListener {
 
-    private Board board;
+    private Board _board;
 
-    private Setup setup;
+    private Setup _setup;
 
     /** The audio clip for executing a move. */
-    private AudioClip stone;
+    private AudioClip _stone;
 
     /** The audio clip for winning the game. */
-    private AudioClip yahoo;
+    private AudioClip _yahoo;
 
     /** The audio clip for losing the game. */
-    private AudioClip yahooSad;
+    private AudioClip _yahooSad;
 
     public SoundPlayer(Board board, Setup setup) {
-        this.board = board;
-        this.setup = setup;
+        this._board = board;
+        this._setup = setup;
         board.addBoardListener(this);
 
         // Load audio.
-        stone = Applet.newAudioClip(getClass().getResource("/sounds/stone.wav"));
-        yahoo = Applet.newAudioClip(getClass().getResource("/sounds/yahoo1.au"));
-        yahooSad = Applet.newAudioClip(getClass().getResource("/sounds/yahoo2.au"));
+        _stone = Applet.newAudioClip(getClass().getResource("/sounds/stone.wav"));
+        _yahoo = Applet.newAudioClip(getClass().getResource("/sounds/yahoo1.au"));
+        _yahooSad = Applet.newAudioClip(getClass().getResource("/sounds/yahoo2.au"));
     }
 
     @Override
     public void moveExecuted() {
-        stone.play();
-        if (board.isGameOver()) {
-            AudioClip yay = yahoo;
+        _stone.play();
+        if (_board.isGameOver()) {
+            AudioClip yay = _yahoo;
 
             // Determine winner.
-            Player winner = board.getWinner();
+            Player winner = _board.getWinner();
 
-            if (setup.getController(winner).isHuman()) {
+            if (_setup.getController(winner).isHuman()) {
                 // Maybe we need to play the sad yahoo.
-                for (Player p: board.getPlayers()) {
+                for (Player p: _board.getPlayers()) {
                     if (p == winner) {
                         continue;
                     }
-                    if (!setup.getController(p).isHuman()) {
+                    if (!_setup.getController(p).isHuman()) {
                         // We've found a non-human opponent.
-                        yay = yahooSad;
+                        yay = _yahooSad;
                         break;
                     }
                 }
@@ -63,7 +63,7 @@ public class SoundPlayer implements BoardListener {
 
     @Override
     public void newGame() {
-        stone.play();
+        _stone.play();
     }
 
 }

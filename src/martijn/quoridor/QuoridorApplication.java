@@ -12,33 +12,37 @@ import martijn.quoridor.ui.ApplicationFrame;
  */
 public class QuoridorApplication {
 
-    public static String VERSION = "2.1";
+    public static final String VERSION = "2.1";
 
-	/** Launches Quoridor with a {@link DefaultBrainFactory}. */
-	public static void launch() {
-		launch(new DefaultBrainFactory());
-	}
+    /**
+     * Launches Quoridor with a {@link DefaultBrainFactory}.
+     */
+    public static void launch() {
+        launch(new DefaultBrainFactory());
+    }
 
-	/** Launches Quoridor with the brains created by the specified factory. */
-	public static void launch(BrainFactory factory) {
+    /**
+     * Launches Quoridor with the brains created by the specified factory.
+     */
+    public static void launch(BrainFactory factory) {
 
-		final BrainFactory ffactory = factory;
+        final BrainFactory ffactory = factory;
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				UIManager.put("swing.boldMetal", false);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                UIManager.put("swing.boldMetal", false);
 
-				ApplicationFrame f = new ApplicationFrame(ffactory);
+                ApplicationFrame f = new ApplicationFrame(ffactory);
 
-				f.setLocationRelativeTo(null);
-				f.setVisible(true);
-			}
-		});
-	}
+                f.setLocationRelativeTo(null);
+                f.setVisible(true);
+            }
+        });
+    }
 
-	/** Launches Quoridor. */
-	public static void main(String[] args) {
+    /** Launches Quoridor. */
+    public static void main(String[] args) {
         launch();
     }
 

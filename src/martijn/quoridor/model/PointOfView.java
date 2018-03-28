@@ -5,7 +5,7 @@ public enum PointOfView {
     POV1, POV2;
 
     /*
-    public static final PointOfView parse(String notation) {
+    public static PointOfView parse(String notation) {
         notation = notation.toUpperCase();
 
         return valueOf(notation);

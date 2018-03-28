@@ -19,24 +19,24 @@ public class PlayerStatus {
 
     // Model.
 
-    private Setup setup;
+    private Setup _setup;
 
-    private Player player;
+    private Player _player;
 
-    private Controller[] controllers;
+    private Controller[] _controllers;
 
     // Components.
 
-    private PlayerIcon icon;
+    private PlayerIcon _icon;
 
-    private JComboBox<Controller> cmbController;
+    private JComboBox<Controller> _cmbController;
 
-    private JLabel walls;
+    private JLabel _walls;
 
     public PlayerStatus(Player player, Setup setup, Controller[] controllers) {
-        this.setup = setup;
-        this.player = player;
-        this.controllers = controllers;
+        this._setup = setup;
+        this._player = player;
+        this._controllers = controllers;
     }
 
     public JPanel getPlayerStatusPanel() {
@@ -50,23 +50,23 @@ public class PlayerStatus {
 
         // p.setBorder(BorderFactory.createEtchedBorder());
 
-        icon = new PlayerIcon(player);
+        _icon = new PlayerIcon(_player);
         gbc.gridx = 0;
         gbc.gridy = 0;
-        p.add(icon, gbc);
+        p.add(_icon, gbc);
 
         ControllerModel model = new ControllerModel();
-        setup.addSetupListener(model);
-        cmbController = new JComboBox<Controller>(model);
+        _setup.addSetupListener(model);
+        _cmbController = new JComboBox<Controller>(model);
         gbc.gridx = 1;
         gbc.gridy = 0;
-        p.add(cmbController, gbc);
+        p.add(_cmbController, gbc);
 
-        walls = new JLabel();
+        _walls = new JLabel();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        p.add(walls, gbc);
+        p.add(_walls, gbc);
 
         update();
 
@@ -74,13 +74,13 @@ public class PlayerStatus {
     }
 
     public void setPlayer(Player player) {
-        this.player = player;
-        icon.setPlayer(player);
+        this._player = player;
+        _icon.setPlayer(player);
     }
 
     void update() {
-        icon.update();
-        walls.setText(getWallText());
+        _icon.update();
+        _walls.setText(getWallText());
 
     }
 
@@ -88,10 +88,10 @@ public class PlayerStatus {
         StringBuffer buf = new StringBuffer();
 
         buf.append(I18N.tr("WALLS") + ": ");
-        if (player.getWallCount() == 0) {
+        if (_player.getWallCount() == 0) {
             buf.append("none");
         } else {
-            for (int i = 0; i < player.getWallCount(); i++) {
+            for (int i = 0; i < _player.getWallCount(); i++) {
                 buf.append('|');
                 if (i % 5 == 4) {
                     buf.append(' ');
@@ -108,22 +108,22 @@ public class PlayerStatus {
 
         @Override
         public Object getSelectedItem() {
-            return setup.getController(player);
+            return _setup.getController(_player);
         }
 
         @Override
         public void setSelectedItem(Object controller) {
-            setup.setController(player, (Controller) controller);
+            _setup.setController(_player, (Controller) controller);
         }
 
         @Override
         public Controller getElementAt(int index) {
-            return controllers[index];
+            return _controllers[index];
         }
 
         @Override
         public int getSize() {
-            return controllers.length;
+            return _controllers.length;
         }
 
         @Override

@@ -18,19 +18,19 @@ import martijn.quoridor.model.Notation;
 @SuppressWarnings("serial")
 public class PropertiesPanel extends JPanel {
 
-    private JRadioButton lamekNotation;
-    private JRadioButton glendenningNotation;
-    JCheckBox showCoordinates;
+    private JRadioButton _lamekNotation;
+    private JRadioButton _glendenningNotation;
+    private JCheckBox _showCoordinates;
 
     public PropertiesPanel() {
         initUI();
 
         switch (Config.notation()) {
         case LAMEK:
-            lamekNotation.setSelected(true);
+            _lamekNotation.setSelected(true);
             break;
         case GLENDENNING:
-            glendenningNotation.setSelected(true);
+            _glendenningNotation.setSelected(true);
             break;
         default:
             break;
@@ -38,22 +38,22 @@ public class PropertiesPanel extends JPanel {
         ActionListener notationActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (lamekNotation.isSelected()) {
+                if (_lamekNotation.isSelected()) {
                     Config.notation(Notation.LAMEK);
                 }
-                if (glendenningNotation.isSelected()) {
+                if (_glendenningNotation.isSelected()) {
                     Config.notation(Notation.GLENDENNING);
                 }
             }
         };
-        lamekNotation.addActionListener(notationActionListener);
-        glendenningNotation.addActionListener(notationActionListener);
+        _lamekNotation.addActionListener(notationActionListener);
+        _glendenningNotation.addActionListener(notationActionListener);
 
-        showCoordinates.setSelected(Config.showCoordinates());
-        showCoordinates.addActionListener(new ActionListener() {
+        _showCoordinates.setSelected(Config.showCoordinates());
+        _showCoordinates.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Config.showCoordinates(showCoordinates.isSelected());
+                Config.showCoordinates(_showCoordinates.isSelected());
             }
         });
     }
@@ -87,13 +87,13 @@ public class PropertiesPanel extends JPanel {
         c.gridy = 1;
         c.gridwidth = 1;
         ButtonGroup bg = new ButtonGroup();
-        lamekNotation = new JRadioButton("Lamek");
-        bg.add(lamekNotation);
-        add(lamekNotation, c);
-        glendenningNotation = new JRadioButton("Glendenning");
+        _lamekNotation = new JRadioButton("Lamek");
+        bg.add(_lamekNotation);
+        add(_lamekNotation, c);
+        _glendenningNotation = new JRadioButton("Glendenning");
         c.gridy = 2;
-        bg.add(glendenningNotation);
-        add(glendenningNotation, c);
+        bg.add(_glendenningNotation);
+        add(_glendenningNotation, c);
 
         c.gridx = 0;
         c.gridy = 3;
@@ -108,8 +108,8 @@ public class PropertiesPanel extends JPanel {
         c.gridx = 1;
         c.gridy = 5;
         c.gridwidth = 1;
-        showCoordinates = new JCheckBox(I18N.tr("SHOW_COORDINATES"));
-        add(showCoordinates, c);
+        _showCoordinates = new JCheckBox(I18N.tr("SHOW_COORDINATES"));
+        add(_showCoordinates, c);
     }
 
     // public static void main(String[] args) {

@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class DefaultBrainFactory implements BrainFactory {
 
+    @Override
     public void addBrains(List<Brain> brains) {
         brains.add(new DumbBrain());
         brains.add(createSmartBrain(2));

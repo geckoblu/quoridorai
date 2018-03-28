@@ -4,38 +4,38 @@ import static java.lang.Math.abs;
 
 public class Position implements Comparable<Position> {
 
-    private int x;
+    private final int _x;
 
-    private int y;
+    private final int _y;
 
     public Position(int x, int y) {
         super();
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
     }
 
     public int getX() {
-        return x;
+        return _x;
     }
 
     public int getY() {
-        return y;
+        return _y;
     }
 
     public Position north() {
-        return new Position(x, y + 1);
+        return new Position(_x, _y + 1);
     }
 
     public Position east() {
-        return new Position(x + 1, y);
+        return new Position(_x + 1, _y);
     }
 
     public Position south() {
-        return new Position(x, y - 1);
+        return new Position(_x, _y - 1);
     }
 
     public Position west() {
-        return new Position(x - 1, y);
+        return new Position(_x - 1, _y);
     }
 
     public Position move(Orientation orientation) {
@@ -56,30 +56,30 @@ public class Position implements Comparable<Position> {
     @Override
     public boolean equals(Object o) {
         Position that = (Position) o;
-        return this.x == that.x && this.y == that.y;
+        return this._x == that._x && this._y == that._y;
     }
 
     @Override
     public int compareTo(Position o) {
         Position that = o;
-        if (this.x != that.x) {
-            return this.x - that.x;
+        if (this._x != that._x) {
+            return this._x - that._x;
         } else {
-            return this.y - that.y;
+            return this._y - that._y;
         }
     }
 
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return "(" + _x + ", " + _y + ")";
     }
 
     public <E> E visit(E[][] matrix) {
-        return matrix[x][y];
+        return matrix[_x][_y];
     }
 
     public int manhattan(Position pos) {
-        return abs(pos.x - x) + abs(pos.y - y);
+        return abs(pos._x - _x) + abs(pos._y - _y);
     }
 
 }

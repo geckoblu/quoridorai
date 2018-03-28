@@ -13,6 +13,6 @@ public interface BrainFactory {
      * @param brains
      *            the list to append the created brains to.
      */
-    public void addBrains(List<Brain> brains);
+    void addBrains(List<Brain> brains);
 
 }

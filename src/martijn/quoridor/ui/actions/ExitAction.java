@@ -11,22 +11,22 @@ import martijn.quoridor.ui.ApplicationFrame;
 @SuppressWarnings("serial")
 public class ExitAction extends AbstractAction {
 
-    private final ApplicationFrame application;
+    private final ApplicationFrame _application;
 
     public ExitAction(ApplicationFrame application) {
         super();
 
         I18N.Action action = I18N.getAction("EXIT");
         putValue(Action.NAME, action.name);
-        putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
-        putValue(Action.SHORT_DESCRIPTION, action.short_description);
+        putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
+        putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
-        this.application = application;
+        this._application = application;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        application.close();
+        _application.close();
     }
 
 }

@@ -13,91 +13,103 @@ import java.util.logging.Level;
 
 public final class I18N {
 
-    public static final class Menu {
-        public String label;
-        public char mnemonic = ' ';
+    public static class Menu {
+        public final String label;
+        public final char mnemonic;
+
+        Menu(String label, char mnemonic) {
+            this.label = label;
+            this.mnemonic = mnemonic;
+        }
     }
 
-    public static final class Action {
-        public String name;
-        public int mnemonic_key = '\0';
-        public String short_description = null;
+    public static class Action {
+        public final String name;
+        public final int mnemonicKey;
+        public final String shortDescription;
+
+        Action(String name, int mnemonicKey, String shortDescription) {
+            this.name = name;
+            this.mnemonicKey = mnemonicKey;
+            this.shortDescription = shortDescription;
+        }
     }
 
-    // private static final I18N i18n = new I18N();
 
-    private static final ResourceBundle rb = ResourceBundle.getBundle("i18n.ResourceBundle");;
+    private static final ResourceBundle RB = ResourceBundle.getBundle("i18n.ResourceBundle");;
 
-    private I18N() {
-        // No instantiation allowed
-    }
+    /* Utility class, no instantiation allowed */
+    private I18N() { }
 
-    public static final String tr(String label) {
+    public static  String tr(String label) {
         try {
-            return rb.getString(label);
+            return RB.getString(label);
         } catch (MissingResourceException ex) {
             System.err.println(ex.getMessage());
             return "*" + label + "*";
         }
     }
 
-    public static final I18N.Menu getMenu(String key) {
+    public static I18N.Menu getMenu(String key) {
 
-        I18N.Menu menu = new I18N.Menu();
+        String label;
+        char mnemonic = ' ';
 
         try {
-            menu.label = rb.getString("MENU." + key + ".LABEL");
+            label = RB.getString("MENU." + key + ".LABEL");
         } catch (MissingResourceException ex) {
-            System.err.println(ex.getMessage());
-            menu.label = "*" + key + "*";
+            Core.log(Level.WARNING, "No label found for MENU." + key + ".LABEL");
+            label = "*" + key + "*";
         }
 
         try {
-            String mnem = rb.getString("MENU." + key + ".MNEMONIC");
+            String mnem = RB.getString("MENU." + key + ".MNEMONIC");
             if (mnem != null && mnem.length() == 1) {
-                menu.mnemonic = mnem.charAt(0);
+                mnemonic = mnem.charAt(0);
             } else {
-                System.err.println("No mnemonic found for MENU." + key + ".MNEMONIC");
+                Core.log(Level.FINE, "No valid mnemonic found for MENU." + key + ".MNEMONIC");
             }
         } catch (MissingResourceException ex) {
-            System.err.println(ex.getMessage());
+            Core.log(Level.FINE, "No mnemonic found for MENU." + key + ".MNEMONIC");
         }
 
-        return menu;
+        return new I18N.Menu(label, mnemonic);
     }
 
-    public static final I18N.Action getAction(String key) {
+    public static I18N.Action getAction(String key) {
 
-        I18N.Action action = new I18N.Action();
+        String name;
+        int mnemonicKey = '\0';
+        String shortDescription = "";
 
         // Name
         try {
-            action.name = rb.getString("ACTION." + key + ".NAME");
+            name = RB.getString("ACTION." + key + ".NAME");
         } catch (MissingResourceException ex) {
             System.err.println(ex.getMessage());
-            action.name = "*" + key + "*";
+            name = "*" + key + "*";
         }
 
         // Mnemonic Key
         try {
-            String mnem = rb.getString("ACTION." + key + ".MNEMONIC_KEY");
+            String mnem = RB.getString("ACTION." + key + ".MNEMONIC_KEY");
             if (mnem != null && mnem.length() == 1) {
-                action.mnemonic_key = mnem.charAt(0);
+                mnemonicKey = mnem.charAt(0);
             } else {
-                System.err.println("No mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
+                Core.log(Level.FINE, "No valid mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
             }
         } catch (MissingResourceException ex) {
-            System.err.println(ex.getMessage());
+            Core.log(Level.FINE, "No mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
         }
 
         // Short description
         try {
-            action.short_description = rb.getString("ACTION." + key + ".SHORT_DESCRIPTION");
+            shortDescription = RB.getString("ACTION." + key + ".SHORT_DESCRIPTION");
         } catch (MissingResourceException ex) {
             // Ignore
         }
 
-        return action;
+        return new I18N.Action(name, mnemonicKey, shortDescription);
     }
 
     public static String getTextFile(String filename) {
@@ -106,7 +118,7 @@ public final class I18N {
 
         int dot = filename.lastIndexOf('.');
         String base = (dot == -1) ? filename : filename.substring(0, dot);
-        String extension = (dot == -1) ? "" : filename.substring(dot+1);
+        String extension = (dot == -1) ? "" : filename.substring(dot + 1);
 
         String localFilename = base + "-" + language;
         if (dot > -1) {
@@ -126,7 +138,7 @@ public final class I18N {
 
         } else {
 
-            try(BufferedReader br = new BufferedReader(new FileReader(new File(url.toURI())))) {
+            try (BufferedReader br = new BufferedReader(new FileReader(new File(url.toURI())))) {
                 StringBuilder sb = new StringBuilder();
                 String line = br.readLine();
 

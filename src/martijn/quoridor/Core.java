@@ -14,7 +14,10 @@ import javax.swing.JOptionPane;
 /**
  * The Core provides the Logger and some utility methods.
  */
-public class Core {
+public final class Core {
+
+    /* Utility class, no instantiation allowed */
+    private Core() { }
 
     /**
      * The Logger used for logging errors and warnings.
@@ -27,23 +30,23 @@ public class Core {
         LOGGER.setLevel(Level.WARNING);
     }
 
-    public static final void setLogLevel(Level level) {
+    public static void setLogLevel(Level level) {
         LOGGER.setLevel(level);
     }
 
-    public static final void log(Level level, String msg, Throwable thrown) {
+    public static void log(Level level, String msg, Throwable thrown) {
         LOGGER.log(level, msg, thrown);
     }
 
-    public static final void log(Level level, String msg) {
+    public static void log(Level level, String msg) {
         LOGGER.log(level, msg);
     }
 
-    public static final void log(Level level, String msg, Object param1) {
+    public static void log(Level level, String msg, Object param1) {
         LOGGER.log(level, msg, param1);
     }
 
-    public static final void log(Level level, String msg, Object params[]) {
+    public static void log(Level level, String msg, Object[] params) {
         LOGGER.log(level, msg, params);
     }
 
@@ -79,7 +82,7 @@ public class Core {
      *
      */
     public static void openHyperlink(Component parent, URL url) {
-        if(Desktop.isDesktopSupported()) {
+        if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(url.toURI());
             } catch (IOException | URISyntaxException ex) {

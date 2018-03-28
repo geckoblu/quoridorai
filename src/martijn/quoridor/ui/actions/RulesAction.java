@@ -20,8 +20,8 @@ public class RulesAction extends AbstractAction {
 
         I18N.Action action = I18N.getAction("RULES");
         putValue(Action.NAME, action.name);
-        putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
-        putValue(Action.SHORT_DESCRIPTION, action.short_description);
+        putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
+        putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
         this._parent = parent;
     }

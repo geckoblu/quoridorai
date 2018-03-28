@@ -9,11 +9,11 @@ import martijn.quoridor.model.Move;
 
 public abstract class NegamaxBrain extends Brain {
 
-    private int depth;
+    private int _depth;
 
-    private boolean debug = false;
+    private boolean _debug = false;
 
-    private boolean deterministic = true;
+    private boolean _deterministic = true;
 
     public NegamaxBrain(int depth) {
         this(null, depth);
@@ -24,15 +24,15 @@ public abstract class NegamaxBrain extends Brain {
         if (depth < 1) {
             throw new IllegalArgumentException("Depth must be at least 1.");
         }
-        this.depth = depth;
+        this._depth = depth;
     }
 
     public void setDebug(boolean debug) {
-        this.debug = debug;
+        this._debug = debug;
     }
 
     public void setDeterministic(boolean deterministic) {
-        this.deterministic = deterministic;
+        this._deterministic = deterministic;
     }
 
     @Override
@@ -46,7 +46,7 @@ public abstract class NegamaxBrain extends Brain {
         List<RatedMove> moves = new LinkedList<RatedMove>();
         for (Move move : selectMoves(board)) {
             board.move(move);
-            int negamax = -negamax(board, depth - 1);
+            int negamax = -negamax(board, _depth - 1);
             debug(move + " @ " + (negamax - cur));
             moves.add(new RatedMove(move, negamax));
             board.undo();
@@ -57,7 +57,7 @@ public abstract class NegamaxBrain extends Brain {
 
         // Pick one of the moves.
         RatedMove move;
-        if (deterministic) {
+        if (_deterministic) {
             // Just pick the first one.
             move = moves.get(0);
         } else {
@@ -84,7 +84,7 @@ public abstract class NegamaxBrain extends Brain {
     }
 
     protected void debug(String s) {
-        if (debug) {
+        if (_debug) {
             System.out.println(s);
         }
     }

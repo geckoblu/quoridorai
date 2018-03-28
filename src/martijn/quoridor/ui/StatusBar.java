@@ -12,40 +12,40 @@ import martijn.quoridor.model.Player;
 @SuppressWarnings("serial")
 public class StatusBar extends JPanel {
 
-    private JLabel statusLabel;
-    private PlayerIcon playerIcon;
+    private JLabel _statusLabel;
+    private PlayerIcon _playerIcon;
 
     public StatusBar() {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.setBorder(BorderFactory.createEtchedBorder());
 
-        playerIcon = new PlayerIcon(Color.red);
-        this.add(playerIcon);
-        playerIcon.setVisible(false);
+        _playerIcon = new PlayerIcon(Color.red);
+        this.add(_playerIcon);
+        _playerIcon.setVisible(false);
 
-        statusLabel = new JLabel(" ");
-        this.add(statusLabel);
+        _statusLabel = new JLabel(" ");
+        this.add(_statusLabel);
     }
 
     public void setPlayerToMove(Player player) {
-        playerIcon.stopFlipping();
-        playerIcon.setPlayer(player);
-        playerIcon.setVisible(true);
-        statusLabel.setText("Turn to move.");
+        _playerIcon.stopFlipping();
+        _playerIcon.setPlayer(player);
+        _playerIcon.setVisible(true);
+        _statusLabel.setText("Turn to move.");
     }
 
     public void setPlayerThinking(Player player) {
-        playerIcon.stopFlipping();
-        playerIcon.setPlayer(player);
-        playerIcon.setVisible(true);
-        statusLabel.setText("Thinking ...");
+        _playerIcon.stopFlipping();
+        _playerIcon.setPlayer(player);
+        _playerIcon.setVisible(true);
+        _statusLabel.setText("Thinking ...");
     }
 
     public void setWinner(Player player) {
-        playerIcon.setPlayer(player);
-        playerIcon.setVisible(true);
-        playerIcon.startFlippingContinuously();
-        statusLabel.setText("Winner!");
+        _playerIcon.setPlayer(player);
+        _playerIcon.setVisible(true);
+        _playerIcon.startFlippingContinuously();
+        _statusLabel.setText("Winner!");
     }
 
 }

@@ -33,7 +33,7 @@ public class RulesPanel extends JPanel {
         textPane.addHyperlinkListener(new HyperlinkListener() {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
-                if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     Core.openHyperlink(RulesPanel.this, e.getURL());
                 }
             }

@@ -15,15 +15,15 @@ import martijn.quoridor.model.BoardListener;
 public class SaveAction extends AbstractAction implements BoardListener {
 
     private final Component _parent;
-    private Board _board;
+    private final Board _board;
 
     public SaveAction(Component parent, Board board) {
         super();
 
         I18N.Action action = I18N.getAction("SAVE");
         putValue(Action.NAME, action.name);
-        putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
-        putValue(Action.SHORT_DESCRIPTION, action.short_description);
+        putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
+        putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
         _parent = parent;
         _board = board;

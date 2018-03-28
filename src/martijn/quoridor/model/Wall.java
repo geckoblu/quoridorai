@@ -4,7 +4,7 @@ public enum Wall {
 
     HORIZONTAL, VERTICAL;
 
-    public static final Wall parse(String wall) {
+    public static Wall parse(String wall) {
         wall = wall.toUpperCase();
 
         if (wall.equals("H")) {

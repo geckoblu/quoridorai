@@ -21,15 +21,15 @@ public class Player {
 
     private final Board _board;
 
-    private Orientation orientation;
+    private Orientation _orientation;
 
-    private Position position;
+    private Position _position;
 
-    private String name;
+    private String _name;
 
-    private int nwalls;
+    private int _nwalls;
 
-    public final int index;
+    public final int _index;
 
     /**
      * Creates a new player.
@@ -49,12 +49,12 @@ public class Player {
         if (board == null) {
             throw new NullPointerException("Board is null.");
         }
-        this.index = index;
+        this._index = index;
         this._board = board;
-        this.orientation = orientation;
-        this.name = name;
-        this.nwalls = nwalls;
-        this.position = getInitialPosition(board, orientation);
+        this._orientation = orientation;
+        this._name = name;
+        this._nwalls = nwalls;
+        this._position = getInitialPosition(board, orientation);
     }
 
     /**
@@ -63,11 +63,11 @@ public class Player {
      */
     public Player(Board board, Player player) {
         this._board = board;
-        this.index = player.index;
-        this.name = player.name;
-        this.nwalls = player.nwalls;
-        this.orientation = player.orientation;
-        this.position = player.position;
+        this._index = player._index;
+        this._name = player._name;
+        this._nwalls = player._nwalls;
+        this._orientation = player._orientation;
+        this._position = player._position;
     }
 
     public static Position getInitialPosition(Board board, Orientation o) {
@@ -92,7 +92,7 @@ public class Player {
      * determines the player's starting position and goal positions.
      */
     public Orientation getOrientation() {
-        return orientation;
+        return _orientation;
     }
 
     /** Returns the board this player participates in. */
@@ -102,25 +102,25 @@ public class Player {
 
     /** Returns the number of walls this player owns. */
     public int getWallCount() {
-        return nwalls;
+        return _nwalls;
     }
 
     /** Takes a wall from this player. */
     public void takeWall() {
-        if (nwalls == 0) {
+        if (_nwalls == 0) {
             throw new IllegalStateException("Player has no walls left.");
         }
-        nwalls--;
+        _nwalls--;
     }
 
     /** Gives a wall to this player. */
     public void giveWall() {
-        nwalls++;
+        _nwalls++;
     }
 
     /** Returns whether the player wins if it reaches the specified position. */
     public boolean isGoal(Position p) {
-        switch (orientation) {
+        switch (_orientation) {
         case NORTH:
             return p.getY() == 0;
         case EAST:
@@ -146,17 +146,17 @@ public class Player {
 
     /** Returns the player's current position. */
     public Position getPosition() {
-        return position;
+        return _position;
     }
 
     /** Returns this player's color. */
     public Color getColor() {
-        return COLOR[index];
+        return COLOR[_index];
     }
 
     /** Sets the player's position. */
     public void setPosition(Position position) {
-        this.position = position;
+        this._position = position;
     }
 
     /**
@@ -233,12 +233,12 @@ public class Player {
 
     /** Returns this player's name. */
     public String getName() {
-        return name;
+        return _name;
     }
 
     /** Sets this player's name. */
     public void setName(String name) {
-        this.name = name;
+        this._name = name;
     }
 
     /** Returns this player's name. */

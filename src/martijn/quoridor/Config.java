@@ -35,7 +35,7 @@ public final class Config {
      * Singleton
      */
 
-    private static final Config config = new Config();
+    private static final Config CONFIG = new Config();
 
     /*
      * Instance variables
@@ -45,7 +45,7 @@ public final class Config {
 
     private final Properties _cache = new Properties();
 
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
 
 
     private Config() {
@@ -95,7 +95,7 @@ public final class Config {
         Core.log(Level.INFO, "Loading cache file: {0}", cacheFile);
     }
 
-    public static final void save() {
+    public static void save() {
         File configHome = new File(getConfigHome());
         if (!configHome.exists()) {
             configHome.mkdirs();
@@ -108,7 +108,7 @@ public final class Config {
         try {
             output = new FileOutputStream(configFile);
 
-            config._prop.store(output, null);
+            CONFIG._prop.store(output, null);
 
         } catch (IOException ex) {
             Core.log(Level.SEVERE, "Some exception occurs", ex);
@@ -126,7 +126,7 @@ public final class Config {
 
     }
 
-    private static final void saveCache() {
+    private static void saveCache() {
         File cacheHome = new File(getCacheHome());
         if (!cacheHome.exists()) {
             cacheHome.mkdirs();
@@ -139,7 +139,7 @@ public final class Config {
         try {
             output = new FileOutputStream(cacheFile);
 
-            config._cache.store(output, null);
+            CONFIG._cache.store(output, null);
 
         } catch (IOException ex) {
             Core.log(Level.SEVERE, "Some exception occurs", ex);
@@ -217,7 +217,7 @@ public final class Config {
         return cacheHome;
     }
 
-    private final Level logLevel() {
+    private Level logLevel() {
 
         Level logLevel = Level.WARNING; // default value
 
@@ -232,14 +232,14 @@ public final class Config {
         return logLevel;
     }
 
-    public static final boolean showCoordinates() {
+    public static boolean showCoordinates() {
 
         boolean showCoordinates = true; // default value
 
-        String value = config._prop.getProperty(SHOWCOORDINATES);
+        String value = CONFIG._prop.getProperty(SHOWCOORDINATES);
 
         if (value == null) {
-            config._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
+            CONFIG._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
         } else {
             showCoordinates = Boolean.parseBoolean(value);
         }
@@ -247,25 +247,25 @@ public final class Config {
         return showCoordinates;
     }
 
-    public static final void showCoordinates(boolean showCoordinates) {
+    public static void showCoordinates(boolean showCoordinates) {
 
         boolean oldValue = showCoordinates();
 
         if (showCoordinates != oldValue) {
-            config._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
-            config.pcs.firePropertyChange(SHOWCOORDINATES, oldValue, showCoordinates);
+            CONFIG._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
+            CONFIG._pcs.firePropertyChange(SHOWCOORDINATES, oldValue, showCoordinates);
         }
 
     }
 
-    public static final Notation notation() {
+    public static Notation notation() {
 
         Notation notation = Notation.LAMEK; // default value
 
-        String value = config._prop.getProperty(NOTATION);
+        String value = CONFIG._prop.getProperty(NOTATION);
 
         if (value == null) {
-            config._prop.setProperty(NOTATION, notation.toString());
+            CONFIG._prop.setProperty(NOTATION, notation.toString());
         } else {
             notation = Notation.parse(value);
         }
@@ -273,13 +273,13 @@ public final class Config {
         return notation;
     }
 
-    public static final void notation(Notation notation) {
+    public static void notation(Notation notation) {
 
         Notation oldValue = notation();
 
         if (notation != oldValue) {
-            config._prop.setProperty(NOTATION, notation.toString());
-            config.pcs.firePropertyChange(NOTATION, oldValue, notation);
+            CONFIG._prop.setProperty(NOTATION, notation.toString());
+            CONFIG._pcs.firePropertyChange(NOTATION, oldValue, notation);
         }
 
     }
@@ -288,23 +288,23 @@ public final class Config {
      * Cached properties
      */
 
-    public static final String lastLoadPath() {
-        return config._cache.getProperty(CACHE_LASTLOADPATH, ".");
+    public static String lastLoadPath() {
+        return CONFIG._cache.getProperty(CACHE_LASTLOADPATH, ".");
     }
 
-    public static final void lastLoadPath(String lastLoadPath) {
-        config._cache.setProperty(CACHE_LASTLOADPATH, lastLoadPath);
+    public static void lastLoadPath(String lastLoadPath) {
+        CONFIG._cache.setProperty(CACHE_LASTLOADPATH, lastLoadPath);
         save();
     }
 
 
     private static Path _lastLoadFile = null;
 
-    public static final Path lastLoadFile() {
+    public static Path lastLoadFile() {
         return _lastLoadFile;
     }
 
-    public static final void lastLoadFile(Path lastLoadFile) {
+    public static void lastLoadFile(Path lastLoadFile) {
         _lastLoadFile = lastLoadFile;
         if (lastLoadFile != null) {
             String lastLoadPath = lastLoadFile.getParent().toString();

@@ -12,21 +12,21 @@ import martijn.quoridor.Core;
 public class Animator implements Runnable {
 
     /** The thread that executes the play jobs. */
-    private Thread thread;
+    private final Thread _thread;
 
     /** The queue containing the play jobs to be run. */
-    private BlockingQueue<PlayJob> queue;
+    private BlockingQueue<PlayJob> _queue;
 
     /** The currently running play job. */
-    private PlayJob current;
+    private PlayJob _current;
 
     /** Creates a new animator. */
     public Animator() {
-        queue = new LinkedBlockingQueue<PlayJob>();
-        thread = new Thread(this, toString());
-        thread.setDaemon(true);
-        thread.setPriority(Thread.MAX_PRIORITY);
-        thread.start();
+        _queue = new LinkedBlockingQueue<PlayJob>();
+        _thread = new Thread(this, toString());
+        _thread.setDaemon(true);
+        _thread.setPriority(Thread.MAX_PRIORITY);
+        _thread.start();
     }
 
     /**
@@ -34,19 +34,19 @@ public class Animator implements Runnable {
      * is idle.
      */
     public synchronized PlayJob getCurrent() {
-        return current;
+        return _current;
     }
 
     /** Cancels the currently running play job, if there is one. */
     public synchronized void cancelCurrent() {
-        if (current != null) {
-            thread.interrupt();
+        if (_current != null) {
+            _thread.interrupt();
         }
     }
 
     /** Adds the play job to the queue to be run soon. */
     public void play(PlayJob job) {
-        queue.add(job);
+        _queue.add(job);
     }
 
     @Override
@@ -55,26 +55,26 @@ public class Animator implements Runnable {
             // Retrieve next play job.
             PlayJob job = null;
             try {
-                job = queue.take();
+                job = _queue.take();
             } catch (InterruptedException e) {
                 Core.log(Level.WARNING, this + " has died.", e);
                 return;
             }
             synchronized (this) {
-                current = job;
+                _current = job;
             }
 
             // Execute it.
             try {
-                current.execute();
+                _current.execute();
             } catch (InterruptedException e) {
-                current.getAnimation().animationStopped();
+                _current.getAnimation().animationStopped();
                 // The animation was cancelled.
             }
 
             // Mark as finished.
             synchronized (this) {
-                current = null;
+                _current = null;
             }
         }
     }

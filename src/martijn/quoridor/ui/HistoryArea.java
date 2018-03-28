@@ -19,7 +19,7 @@ public class HistoryArea extends JTextArea implements BoardListener {
 
     private Board _board;
 
-    DefaultHighlighter.DefaultHighlightPainter _painter;
+    private DefaultHighlighter.DefaultHighlightPainter _painter;
 
     public HistoryArea(Board board) {
         this._board = board;

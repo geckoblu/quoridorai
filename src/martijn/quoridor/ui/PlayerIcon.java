@@ -27,21 +27,19 @@ public class PlayerIcon extends JLabel implements Icon {
 
     private static final long BRAIN_DELAY = 2000;
 
-    private Color color;
+    private Color _color;
 
     // Animations.
 
-    private Animator animator;
+    private Animator _animator;
 
-    private double scale = 1;
-
-    private int alpha = 0x7f;
+    private double _scale = 1;
 
     public PlayerIcon(Color color) {
 
-        this.color = color;
+        _color = color;
 
-        animator = new Animator();
+        _animator = new Animator();
         setIcon(this);
     }
 
@@ -50,7 +48,7 @@ public class PlayerIcon extends JLabel implements Icon {
     }
 
     public void setPlayer(Player player) {
-        this.color = player.getColor();
+        this._color = player.getColor();
         repaint();
     }
 
@@ -76,10 +74,10 @@ public class PlayerIcon extends JLabel implements Icon {
 
         AffineTransform at = new AffineTransform();
         at.translate(x + 1 + w / 2.0, y + 1 + h / 2.0);
-        at.scale(scale, 1);
+        at.scale(_scale, 1);
         disc = at.createTransformedShape(disc);
 
-        Color fill = Core.transparent(color, 0xff);
+        Color fill = Core.transparent(_color, 0xff);
         Color stroke = Core.transparent(Color.BLACK, 0xff);
 
         g2.setColor(fill);
@@ -95,33 +93,28 @@ public class PlayerIcon extends JLabel implements Icon {
     // Animation.
 
     public void flipOnce() {
-        animator.play(PlayJob.playOnce(new Flip(), true));
+        _animator.play(PlayJob.playOnce(new Flip(), true));
     }
 
     public void startFlippingContinuously() {
-        animator.play(PlayJob.loop(new Flip(), true));
+        _animator.play(PlayJob.loop(new Flip(), true));
     }
 
     public void startFlippingSlowly() {
-        animator.play(new PlayJob(new Flip(), PlayJob.LOOP, BRAIN_DELAY, BRAIN_DELAY, true));
+        _animator.play(new PlayJob(new Flip(), PlayJob.LOOP, BRAIN_DELAY, BRAIN_DELAY, true));
     }
 
     public void stopFlipping() {
-        synchronized (animator) {
-            PlayJob current = animator.getCurrent();
+        synchronized (_animator) {
+            PlayJob current = _animator.getCurrent();
             if (current != null && current.getAnimation() instanceof Flip) {
-                animator.cancelCurrent();
+                _animator.cancelCurrent();
             }
         }
     }
 
     private void setScale(double scale) {
-        this.scale = scale;
-        repaint();
-    }
-
-    private void setAlpha(int alpha) {
-        this.alpha = alpha;
+        this._scale = scale;
         repaint();
     }
 

@@ -21,16 +21,16 @@ import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Notation;
 import martijn.quoridor.model.PutWall;
 
-public final class QgfUtils {
+public class QgfUtils {
 
     private static final String NL = System.getProperty("line.separator");
 
-    Component _parent;
-    Path _path;
-    Notation _notation;
-    List<Move> _moves;
+    private Component _parent;
+    private Path _path;
+    private Notation _notation;
+    private List<Move> _moves;
 
-    BufferedWriter _w;
+    private BufferedWriter _w;
 
     public QgfUtils(Component parent) {
         _parent = parent;

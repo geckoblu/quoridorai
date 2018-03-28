@@ -11,18 +11,18 @@ import martijn.quoridor.model.Move;
 
 public class BrainController extends Controller {
 
-    private Brain brain;
+    private Brain _brain;
 
-    private Thread thinker;
+    private Thread _thinker;
 
     /**
      * A number that identifies the current move for this controller. The
      * thinker thread uses it to check if it is still its turn when
      * {@link Brain#getMove(Board)} returns.
      */
-    private int controllerMove;
+    private int _controllerMove;
 
-    private long minimumThinkTime;
+    private long _minimumThinkTime;
 
     public BrainController(BoardCanvas canvas, Brain brain) {
         this(canvas, brain, 500);
@@ -30,24 +30,24 @@ public class BrainController extends Controller {
 
     private BrainController(BoardCanvas canvas, Brain brain, long minimumThinkTime) {
         super(canvas);
-        this.brain = brain;
-        this.minimumThinkTime = minimumThinkTime;
+        this._brain = brain;
+        this._minimumThinkTime = minimumThinkTime;
     }
 
     @Override
     protected synchronized void moveExpected() {
-        controllerMove++;
-        thinker = new Thread(new ThinkRunnable(controllerMove), brain.getName());
-        thinker.setDaemon(true);
-        thinker.setPriority(Thread.MIN_PRIORITY);
-        thinker.start();
+        _controllerMove++;
+        _thinker = new Thread(new ThinkRunnable(_controllerMove), _brain.getName());
+        _thinker.setDaemon(true);
+        _thinker.setPriority(Thread.MIN_PRIORITY);
+        _thinker.start();
     }
 
     @Override
     protected synchronized void moveCancelled() {
-        if (thinker != null) {
-            controllerMove++;
-            thinker.interrupt();
+        if (_thinker != null) {
+            _controllerMove++;
+            _thinker.interrupt();
         }
     }
 
@@ -58,10 +58,10 @@ public class BrainController extends Controller {
 
     private class ThinkRunnable implements Runnable {
 
-        private int thinkerMove;
+        private int _thinkerMove;
 
-        public ThinkRunnable(int thinkerMove) {
-            this.thinkerMove = thinkerMove;
+        ThinkRunnable(int thinkerMove) {
+            this._thinkerMove = thinkerMove;
         }
 
         @Override
@@ -73,11 +73,11 @@ public class BrainController extends Controller {
                 // Activate brain.
                 Move move;
                 try {
-                    move = brain.getMove(getBoard().clone());
+                    move = _brain.getMove(getBoard().clone());
                 } catch (RuntimeException e) {
-                    Core.log(Level.WARNING, brain.getName() + " threw an unchecked Exception", e);
-                    showError(brain.getName() + " threw an error",
-                            "An error occurred while " + brain.getName() + " was computing its\nmove. "
+                    Core.log(Level.WARNING, _brain.getName() + " threw an unchecked Exception", e);
+                    showError(_brain.getName() + " threw an error",
+                            "An error occurred while " + _brain.getName() + " was computing its\nmove. "
                                     + "Please select a different brain for " + getBoard().getTurn() + ".");
                     return;
                 }
@@ -85,11 +85,11 @@ public class BrainController extends Controller {
                 // Check whether move is valid.
                 if (move == null || move.isLegal(getBoard())) {
                     if (move == null) {
-                        Core.log(Level.WARNING, "\"{0}\" returned a null move.", brain.getName());
+                        Core.log(Level.WARNING, "\"{0}\" returned a null move.", _brain.getName());
                     } else {
-                        Core.log(Level.WARNING, "\"{0}\" returned illegal move -> {1}. ", new Object[]{brain.getName(), move});
+                        Core.log(Level.WARNING, "\"{0}\" returned illegal move -> {1}. ", new Object[]{_brain.getName(), move});
                     }
-                    showError("Illegal Move", "\"" + brain.getName()
+                    showError("Illegal Move", "\"" + _brain.getName()
                             + "\" suggested a move that is illegal in "
                             + "the current\nsituation. Please "
                             + "select a different brain for " + getBoard().getTurn() + ".");
@@ -97,14 +97,14 @@ public class BrainController extends Controller {
                 }
 
                 // Wait if necessary.
-                long wait = minimumThinkTime - (System.currentTimeMillis() - time);
+                long wait = _minimumThinkTime - (System.currentTimeMillis() - time);
                 if (wait > 0) {
                     Thread.sleep(wait);
                 }
 
                 // Move if it is still our turn.
                 synchronized (BrainController.this) {
-                    if (thinkerMove == controllerMove) {
+                    if (_thinkerMove == _controllerMove) {
                         move(move);
                     }
                 }
@@ -113,8 +113,8 @@ public class BrainController extends Controller {
                 return;
             } finally {
                 synchronized (BrainController.this) {
-                    if (thinker == Thread.currentThread()) {
-                        thinker = null;
+                    if (_thinker == Thread.currentThread()) {
+                        _thinker = null;
                     }
                 }
             }
@@ -127,7 +127,7 @@ public class BrainController extends Controller {
 
     @Override
     public String toString() {
-        return brain.getName();
+        return _brain.getName();
     }
 
 }

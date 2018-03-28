@@ -15,15 +15,15 @@ import martijn.quoridor.model.BoardListener;
 @SuppressWarnings("serial")
 public class UndoAction extends AbstractAction implements BoardListener {
 
-    private Board _board;
+    private final Board _board;
 
     public UndoAction(Board board) {
         super();
 
         I18N.Action action = I18N.getAction("UNDO");
         // putValue(Action.NAME, action.name);
-        putValue(Action.MNEMONIC_KEY, action.mnemonic_key);
-        putValue(Action.SHORT_DESCRIPTION, action.short_description);
+        putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
+        putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
         URL url = getClass().getResource("/icons/go-previous.png");
         ImageIcon icon = new ImageIcon(url);

@@ -8,13 +8,13 @@ import martijn.quoridor.model.Move;
  */
 public abstract class Brain {
 
-    private String name;
+    private String _name;
 
-    private String description;
+    private String _description;
 
-    private String author;
+    private String _author;
 
-    private String version;
+    private String _version;
 
     /** Creates a new Brain with the implementing class' simple name as name. */
     public Brain() {
@@ -31,44 +31,44 @@ public abstract class Brain {
         if (name.equals("")) {
             throw new IllegalArgumentException("Name is empty.");
         }
-        this.name = name;
+        this._name = name;
     }
 
     /** Returns this brain's name. */
     public String getName() {
-        return name;
+        return _name;
     }
 
     /** Returns the brain's description. */
     public String getDescription() {
-        return description;
+        return _description;
     }
 
     /** Sets the brain's description. */
     protected void setDescription(String description) {
-        this.description = description;
+        this._description = description;
     }
 
     /** Returns the brain's author. */
     public String getAuthor() {
-        return author;
+        return _author;
     }
 
     /** Sets the brain's author. */
     protected void setAuthor(String author) {
         assertIsOneLine(author);
-        this.author = author;
+        this._author = author;
     }
 
     /** Returns the brain's version. */
     public String getVersion() {
-        return version;
+        return _version;
     }
 
     /** Sets the brain's version. */
     protected void setVersion(String version) {
         assertIsOneLine(version);
-        this.version = version;
+        this._version = version;
     }
 
     /**

@@ -19,21 +19,21 @@ import martijn.quoridor.model.Wall;
 
 public class HumanController extends Controller {
 
-    private MouseMotionListener hoverListener;
+    private MouseMotionListener _hoverListener;
 
-    private MouseListener clickListener;
+    private MouseListener _clickListener;
 
     public HumanController(BoardCanvas canvas) {
         super(canvas);
-        hoverListener = new HoverListener();
-        clickListener = new ClickListener();
+        _hoverListener = new HoverListener();
+        _clickListener = new ClickListener();
     }
 
     @Override
     protected void moveExpected() {
         // Start user interaction.
-        getCanvas().addMouseMotionListener(hoverListener);
-        getCanvas().addMouseListener(clickListener);
+        getCanvas().addMouseMotionListener(_hoverListener);
+        getCanvas().addMouseListener(_clickListener);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class HumanController extends Controller {
     }
 
     private void removeListeners() {
-        getCanvas().removeMouseMotionListener(hoverListener);
-        getCanvas().removeMouseListener(clickListener);
+        getCanvas().removeMouseMotionListener(_hoverListener);
+        getCanvas().removeMouseListener(_clickListener);
     }
 
     @Override

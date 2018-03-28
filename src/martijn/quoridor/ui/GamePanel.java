@@ -31,12 +31,12 @@ public class GamePanel extends JPanel {
 
     private BoardCanvas _boardCanvas;
 
-    private Controller[] controllers;
+    private Controller[] _controllers;
 
-    private final Setup setup;
-    private final GameStatus gamestatusPanel;
+    private final Setup _setup;
+    private final GameStatus _gamestatusPanel;
 
-    private HistoryArea historyArea;
+    private HistoryArea _historyArea;
 
     public GamePanel(Board board, BrainFactory factory, StatusBar statusbar) {
 
@@ -48,18 +48,18 @@ public class GamePanel extends JPanel {
             }
         });
 
-        controllers = getControllers(factory);
-        setup = new Setup(board, (HumanController) controllers[0], new Controller[] { controllers[0], controllers[2] });
+        _controllers = getControllers(factory);
+        _setup = new Setup(board, (HumanController) _controllers[0], new Controller[] {_controllers[0], _controllers[2]});
 
-        gamestatusPanel = new GameStatus(setup, controllers, statusbar);
+        _gamestatusPanel = new GameStatus(_setup, _controllers, statusbar);
 
-        historyArea = new HistoryArea(board);
+        _historyArea = new HistoryArea(board);
 
         initUI(board);
 
         setKeyBindings(board);
 
-        new SoundPlayer(board, setup);
+        new SoundPlayer(board, _setup);
     }
 
     private Controller[] getControllers(BrainFactory factory) {
@@ -93,14 +93,14 @@ public class GamePanel extends JPanel {
         JPanel p2 = new JPanel(new BorderLayout());
         p2.setBorder(BorderFactory.createEtchedBorder());
 
-        p2.add(gamestatusPanel, BorderLayout.NORTH);
+        p2.add(_gamestatusPanel, BorderLayout.NORTH);
 
         JPanel p3 = new JPanel(new BorderLayout());
 
-        historyArea.setEditable(false);
+        _historyArea.setEditable(false);
 
         p3.add(new JLabel(" "), BorderLayout.NORTH);
-        p3.add(new JScrollPane(historyArea), BorderLayout.CENTER);
+        p3.add(new JScrollPane(_historyArea), BorderLayout.CENTER);
         p2.add(p3, BorderLayout.CENTER);
 
         add(p2, BorderLayout.EAST);

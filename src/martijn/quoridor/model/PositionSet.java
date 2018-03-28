@@ -2,26 +2,26 @@ package martijn.quoridor.model;
 
 public class PositionSet {
 
-    private boolean[][] flags;
+    private boolean[][] _flags;
 
     public PositionSet(Board board) {
         this(Board.SIZE, Board.SIZE);
     }
 
     public PositionSet(int width, int height) {
-        flags = new boolean[width][height];
+        _flags = new boolean[width][height];
     }
 
     public void add(Position pos) {
-        flags[pos.getX()][pos.getY()] = true;
+        _flags[pos.getX()][pos.getY()] = true;
     }
 
     public boolean contains(Position pos) {
-        return flags[pos.getX()][pos.getY()];
+        return _flags[pos.getX()][pos.getY()];
     }
 
     public void remove(Position pos) {
-        flags[pos.getX()][pos.getY()] = false;
+        _flags[pos.getX()][pos.getY()] = false;
     }
 
 }

@@ -4,22 +4,22 @@ import martijn.quoridor.model.Move;
 
 public class RatedMove implements Comparable<RatedMove> {
 
-    private Move move;
+    private Move _move;
 
-    private int rating;
+    private int _rating;
 
     public RatedMove(Move move, int rating) {
         super();
-        this.move = move;
-        this.rating = rating;
+        this._move = move;
+        this._rating = rating;
     }
 
     public Move getMove() {
-        return move;
+        return _move;
     }
 
     public int getRating() {
-        return rating;
+        return _rating;
     }
 
     @Override
@@ -28,18 +28,18 @@ public class RatedMove implements Comparable<RatedMove> {
             return false;
         }
         RatedMove rm = (RatedMove) o;
-        return move.equals(rm.move) && rating == rm.rating;
+        return _move.equals(rm._move) && _rating == rm._rating;
     }
 
     @Override
     public int compareTo(RatedMove o) {
         RatedMove rm = o;
-        return rm.rating - rating;
+        return rm._rating - _rating;
     }
 
     @Override
     public String toString() {
-        return move + " @ " + rating;
+        return _move + " @ " + _rating;
     }
 
 }

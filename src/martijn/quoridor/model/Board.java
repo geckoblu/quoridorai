@@ -277,10 +277,9 @@ public class Board {
 
     /**
      * Add the moves to the history, without playing it.
-     * @param moves
      */
     public void add(Iterator<Move> moves) {
-        while(moves.hasNext()) {
+        while (moves.hasNext()) {
             Move move = moves.next();
             add(move);
         }

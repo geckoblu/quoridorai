@@ -6,39 +6,39 @@ import java.util.Queue;
 
 public class GoalSeeker implements Comparator<Position> {
 
-    private Player player;
+    private Player _player;
 
-    private Orientation[][] from;
+    private Orientation[][] _from;
 
-    private int[][] distance;
+    private int[][] _distance;
 
-    private Orientation[] path;
+    private Orientation[] _path;
 
     public GoalSeeker(Player player) {
         if (player == null) {
             throw new NullPointerException("Player is null.");
         }
-        this.player = player;
+        this._player = player;
 
         if (player.isWinner()) {
             // Special case: we're already at a goal position.
-            path = new Orientation[0];
+            _path = new Orientation[0];
             return;
         }
 
         int w = Board.SIZE;
         int h = Board.SIZE;
-        from = new Orientation[w][h];
-        distance = new int[w][h];
+        _from = new Orientation[w][h];
+        _distance = new int[w][h];
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
-                distance[x][y] = Integer.MAX_VALUE;
+                _distance[x][y] = Integer.MAX_VALUE;
             }
         }
 
         Queue<Position> front = new PriorityQueue<Position>(8, this);
         Position pos = player.getPosition();
-        distance[pos.getX()][pos.getY()] = 0;
+        _distance[pos.getX()][pos.getY()] = 0;
         front.add(player.getPosition());
 
         int counter = 0;
@@ -55,14 +55,14 @@ public class GoalSeeker implements Comparator<Position> {
                 Position pos2 = pos.move(o);
                 int x2 = pos2.getX();
                 int y2 = pos2.getY();
-                if (distance[x2][y2] > distance[x][y] + 1) {
-                    distance[x2][y2] = distance[x][y] + 1;
-                    from[x2][y2] = o.opposite();
+                if (_distance[x2][y2] > _distance[x][y] + 1) {
+                    _distance[x2][y2] = _distance[x][y] + 1;
+                    _from[x2][y2] = o.opposite();
                     front.add(pos2);
 
                     if (player.isGoal(pos2)) {
                         // We've found a goal position. Build and return path.
-                        path = buildPath(pos2);
+                        _path = buildPath(pos2);
                         return;
                     }
                 }
@@ -71,21 +71,21 @@ public class GoalSeeker implements Comparator<Position> {
     }
 
     private Orientation[] buildPath(Position to) {
-        Orientation[] path = new Orientation[distance[to.getX()][to.getY()]];
+        Orientation[] path = new Orientation[_distance[to.getX()][to.getY()]];
         int i = path.length;
-        while (!to.equals(player.getPosition())) {
-            path[--i] = to.visit(from).opposite();
-            to = to.move(to.visit(from));
+        while (!to.equals(_player.getPosition())) {
+            path[--i] = to.visit(_from).opposite();
+            to = to.move(to.visit(_from));
         }
         return path;
     }
 
     public Orientation[] getPath() {
-        return path;
+        return _path;
     }
 
     private Board getBoard() {
-        return player.getBoard();
+        return _player.getBoard();
     }
 
     private int f(Position pos) {
@@ -93,12 +93,12 @@ public class GoalSeeker implements Comparator<Position> {
     }
 
     private int g(Position pos) {
-        return distance[pos.getX()][pos.getY()];
+        return _distance[pos.getX()][pos.getY()];
     }
 
     private int h(Position pos) {
         Position goal;
-        switch (player.getOrientation()) {
+        switch (_player.getOrientation()) {
         case NORTH:
             goal = new Position(pos.getX(), 0);
             break;

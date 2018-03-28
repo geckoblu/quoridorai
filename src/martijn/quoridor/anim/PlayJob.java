@@ -5,38 +5,38 @@ public class PlayJob {
     public static final int LOOP = -1;
 
     /** The animation to play. */
-    private Animation animation;
+    private Animation _animation;
 
     /** The number of times the animation should be played. */
-    private int times;
+    private int _times;
 
     /**
      * The number of milliseconds that should pass before the animation is
      * played for the first time.
      */
-    private long delayBefore;
+    private long _delayBefore;
 
     /**
      * The number of milliseconds that should pass between the various
      * animations.
      */
-    private long delayBetween;
+    private long _delayBetween;
 
     /**
      * Whether the individual animations should be played forwards or backwards.
      */
-    private boolean forward;
+    private boolean _forward;
 
     /** Creates a new play job. */
     public PlayJob(Animation animation, int times, long delayBefore, long delayBetween, boolean forward) {
         if (animation == null) {
             throw new NullPointerException("Animation is null.");
         }
-        this.animation = animation;
-        this.times = times;
-        this.delayBefore = delayBefore;
-        this.delayBetween = delayBetween;
-        this.forward = forward;
+        this._animation = animation;
+        this._times = times;
+        this._delayBefore = delayBefore;
+        this._delayBetween = delayBetween;
+        this._forward = forward;
     }
 
     /** Creates a play job plays the animation once. */
@@ -52,27 +52,27 @@ public class PlayJob {
     }
 
     public Animation getAnimation() {
-        return animation;
+        return _animation;
     }
 
     public long getDelayBefore() {
-        return delayBefore;
+        return _delayBefore;
     }
 
     public long getDelayBetween() {
-        return delayBetween;
+        return _delayBetween;
     }
 
     public boolean isForward() {
-        return forward;
+        return _forward;
     }
 
     public int getTimes() {
-        return times;
+        return _times;
     }
 
     public boolean loops() {
-        return times == LOOP;
+        return _times == LOOP;
     }
 
     /**
@@ -82,11 +82,11 @@ public class PlayJob {
      * interrupting the thread is the only way to stop it.
      */
     public void execute() throws InterruptedException {
-        for (int i = 0; i < times || loops(); i++) {
-            Thread.sleep(i == 0 ? delayBefore : delayBetween);
-            playOnce(forward);
+        for (int i = 0; i < _times || loops(); i++) {
+            Thread.sleep(i == 0 ? _delayBefore : _delayBetween);
+            playOnce(_forward);
         }
-        animation.animationStopped();
+        _animation.animationStopped();
     }
 
     /**
@@ -96,14 +96,14 @@ public class PlayJob {
      *            whether the animation should be played forward.
      */
     private void playOnce(boolean forward) throws InterruptedException {
-        int n = animation.getFrameCount();
+        int n = _animation.getFrameCount();
         for (int i = 0; i < n; i++) {
             int frame = forward ? i : n - i - 1;
-            animation.showFrame(frame);
+            _animation.showFrame(frame);
             if (Thread.interrupted()) {
                 throw new InterruptedException("Play job interrupted.");
             }
-            Thread.sleep(animation.getFrameDisplayTime(frame));
+            Thread.sleep(_animation.getFrameDisplayTime(frame));
         }
     }
 

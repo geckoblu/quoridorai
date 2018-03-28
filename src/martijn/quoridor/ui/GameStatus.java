@@ -15,15 +15,15 @@ import martijn.quoridor.model.SetupListener;
 @SuppressWarnings("serial")
 public class GameStatus extends JPanel implements BoardListener, SetupListener {
 
-    private PlayerStatus[] lines;
+    private PlayerStatus[] _lines;
 
-    private Setup setup;
-    private StatusBar statusbar;
+    private Setup _setup;
+    private StatusBar _statusbar;
 
     public GameStatus(Setup setup, Controller[] controllers, StatusBar statusbar) {
 
-        this.setup = setup;
-        this.statusbar = statusbar;
+        this._setup = setup;
+        this._statusbar = statusbar;
 
         createGUI(controllers);
 
@@ -40,11 +40,11 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
 
-        lines = new PlayerStatus[Board.NPLAYERS];
+        _lines = new PlayerStatus[Board.NPLAYERS];
         for (int i = 0; i < Board.NPLAYERS; i++) {
-            lines[i] = new PlayerStatus(getBoard().getPlayer(i), setup, controllers);
+            _lines[i] = new PlayerStatus(getBoard().getPlayer(i), _setup, controllers);
             gbc.gridy = i;
-            add(lines[i].getPlayerStatusPanel(), gbc);
+            add(_lines[i].getPlayerStatusPanel(), gbc);
         }
 
         update();
@@ -52,21 +52,21 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
     }
 
     private void update() {
-        for (PlayerStatus s : lines) {
+        for (PlayerStatus s : _lines) {
             s.update();
         }
 
         Player activePlayer = getBoard().getTurn();
         if (getBoard().isGameOver()) {
             activePlayer = getBoard().getWinner();
-            statusbar.setWinner(activePlayer);
+            _statusbar.setWinner(activePlayer);
         } else {
 
-            Controller controller = setup.getController(activePlayer);
+            Controller controller = _setup.getController(activePlayer);
             if (controller.isHuman() || controller.isPaused()) {
-                statusbar.setPlayerToMove(activePlayer);
+                _statusbar.setPlayerToMove(activePlayer);
             } else {
-                statusbar.setPlayerThinking(activePlayer);
+                _statusbar.setPlayerThinking(activePlayer);
             }
         }
     }
@@ -83,7 +83,7 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
     @Override
     public void newGame() {
         for (int i = 0; i < Board.NPLAYERS; i++) {
-            lines[i].setPlayer(getBoard().getPlayer(i));
+            _lines[i].setPlayer(getBoard().getPlayer(i));
         }
         update();
     }
@@ -98,7 +98,7 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
     }
 
     private Board getBoard() {
-        return setup.getBoard();
+        return _setup.getBoard();
     }
 
 }
