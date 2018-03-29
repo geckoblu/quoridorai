@@ -59,15 +59,15 @@ public class Setup {
     }
 
     public Controller getController(Player player) {
-        return _controllers[player._index];
+        return _controllers[player.index];
     }
 
     public void setController(Player player, Controller controller) {
-        if (_controllers[player._index] != controller) {
-            _controllers[player._index].stopControlling(player._index);
-            _controllers[player._index] = controller;
-            controller.startControlling(player._index);
-            fireSetupChanged(player._index);
+        if (_controllers[player.index] != controller) {
+            _controllers[player.index].stopControlling(player.index);
+            _controllers[player.index] = controller;
+            controller.startControlling(player.index);
+            fireSetupChanged(player.index);
         }
     }
 

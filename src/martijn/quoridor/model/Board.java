@@ -179,6 +179,7 @@ public class Board {
             throw new InternalError();
         }
 
+      //CHECKSTYLE.OFF: SimplifyBooleanReturn - Easier to read
         if (containsWallPosition(wallPosition1) && getWall(wallPosition1) == wall) {
             // The wall at position 1 blocks.
             return true;
@@ -189,6 +190,7 @@ public class Board {
             // Nothing blocks.
             return false;
         }
+      //CHECKSTYLE.ON: SimplifyBooleanReturn
     }
 
     // Players.

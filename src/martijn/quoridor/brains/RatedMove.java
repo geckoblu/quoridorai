@@ -1,5 +1,7 @@
 package martijn.quoridor.brains;
 
+import java.util.Objects;
+
 import martijn.quoridor.model.Move;
 
 public class RatedMove implements Comparable<RatedMove> {
@@ -40,6 +42,11 @@ public class RatedMove implements Comparable<RatedMove> {
     @Override
     public String toString() {
         return _move + " @ " + _rating;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_move, _rating);
     }
 
 }

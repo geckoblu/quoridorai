@@ -29,7 +29,7 @@ public class Player {
 
     private int _nwalls;
 
-    public final int _index;
+    public final int index;
 
     /**
      * Creates a new player.
@@ -49,7 +49,7 @@ public class Player {
         if (board == null) {
             throw new NullPointerException("Board is null.");
         }
-        this._index = index;
+        this.index = index;
         this._board = board;
         this._orientation = orientation;
         this._name = name;
@@ -63,7 +63,7 @@ public class Player {
      */
     public Player(Board board, Player player) {
         this._board = board;
-        this._index = player._index;
+        this.index = player.index;
         this._name = player._name;
         this._nwalls = player._nwalls;
         this._orientation = player._orientation;
@@ -151,7 +151,7 @@ public class Player {
 
     /** Returns this player's color. */
     public Color getColor() {
-        return COLOR[_index];
+        return COLOR[index];
     }
 
     /** Sets the player's position. */

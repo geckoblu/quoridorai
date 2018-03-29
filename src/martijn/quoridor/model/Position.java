@@ -2,6 +2,8 @@ package martijn.quoridor.model;
 
 import static java.lang.Math.abs;
 
+import java.util.Objects;
+
 public class Position implements Comparable<Position> {
 
     private final int _x;
@@ -72,6 +74,11 @@ public class Position implements Comparable<Position> {
     @Override
     public String toString() {
         return "(" + _x + ", " + _y + ")";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_x, _y);
     }
 
     public <E> E visit(E[][] matrix) {

@@ -32,7 +32,7 @@ public final class Config {
     /*
      * Singleton
      */
-    private static final Config CONFIG = new Config();
+    private static final Config THIS = new Config();
 
 
     /*
@@ -41,6 +41,8 @@ public final class Config {
     private final Properties _prop = new Properties();
     private final Properties _cache = new Properties();
     private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
+
+    private Path _lastLoadFile = null;
 
 
     private Config() {
@@ -101,7 +103,7 @@ public final class Config {
         try {
             output = new FileOutputStream(configFile);
 
-            CONFIG._prop.store(output, null);
+            THIS._prop.store(output, null);
 
         } catch (IOException ex) {
             Core.log(Level.SEVERE, "Some exception occurs", ex);
@@ -132,7 +134,7 @@ public final class Config {
         try {
             output = new FileOutputStream(cacheFile);
 
-            CONFIG._cache.store(output, null);
+            THIS._cache.store(output, null);
 
         } catch (IOException ex) {
             Core.log(Level.SEVERE, "Some exception occurs", ex);
@@ -214,10 +216,10 @@ public final class Config {
 
         boolean showCoordinates = true; // default value
 
-        String value = CONFIG._prop.getProperty(SHOWCOORDINATES);
+        String value = THIS._prop.getProperty(SHOWCOORDINATES);
 
         if (value == null) {
-            CONFIG._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
+            THIS._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
         } else {
             showCoordinates = Boolean.parseBoolean(value);
         }
@@ -230,8 +232,8 @@ public final class Config {
         boolean oldValue = showCoordinates();
 
         if (showCoordinates != oldValue) {
-            CONFIG._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
-            CONFIG._pcs.firePropertyChange(SHOWCOORDINATES, oldValue, showCoordinates);
+            THIS._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
+            THIS._pcs.firePropertyChange(SHOWCOORDINATES, oldValue, showCoordinates);
         }
 
     }
@@ -240,10 +242,10 @@ public final class Config {
 
         Notation notation = Notation.LAMEK; // default value
 
-        String value = CONFIG._prop.getProperty(NOTATION);
+        String value = THIS._prop.getProperty(NOTATION);
 
         if (value == null) {
-            CONFIG._prop.setProperty(NOTATION, notation.toString());
+            THIS._prop.setProperty(NOTATION, notation.toString());
         } else {
             notation = Notation.parse(value);
         }
@@ -256,8 +258,8 @@ public final class Config {
         Notation oldValue = notation();
 
         if (notation != oldValue) {
-            CONFIG._prop.setProperty(NOTATION, notation.toString());
-            CONFIG._pcs.firePropertyChange(NOTATION, oldValue, notation);
+            THIS._prop.setProperty(NOTATION, notation.toString());
+            THIS._pcs.firePropertyChange(NOTATION, oldValue, notation);
         }
 
     }
@@ -267,23 +269,21 @@ public final class Config {
      */
 
     public static String lastLoadPath() {
-        return CONFIG._cache.getProperty(CACHE_LASTLOADPATH, ".");
+        return THIS._cache.getProperty(CACHE_LASTLOADPATH, ".");
     }
 
     public static void lastLoadPath(String lastLoadPath) {
-        CONFIG._cache.setProperty(CACHE_LASTLOADPATH, lastLoadPath);
+        THIS._cache.setProperty(CACHE_LASTLOADPATH, lastLoadPath);
         save();
     }
 
 
-    private static Path _lastLoadFile = null;
-
     public static Path lastLoadFile() {
-        return _lastLoadFile;
+        return THIS._lastLoadFile;
     }
 
     public static void lastLoadFile(Path lastLoadFile) {
-        _lastLoadFile = lastLoadFile;
+        THIS._lastLoadFile = lastLoadFile;
         if (lastLoadFile != null) {
             String lastLoadPath = lastLoadFile.getParent().toString();
             lastLoadPath(lastLoadPath);

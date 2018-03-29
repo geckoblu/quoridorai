@@ -6,7 +6,9 @@ import javax.swing.JOptionPane;
 
 import martijn.quoridor.Core;
 import martijn.quoridor.brains.Brain;
+//CHECKSTYLE.OFF: UnusedImports - This import is added by Eclipse for the JavaDoc of _controllerMove
 import martijn.quoridor.model.Board;
+//CHECKSTYLE.ON: UnusedImports
 import martijn.quoridor.model.Move;
 
 public class BrainController extends Controller {
