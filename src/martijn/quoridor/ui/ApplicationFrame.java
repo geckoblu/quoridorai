@@ -17,10 +17,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.UIManager;
 
 import martijn.quoridor.Config;
 import martijn.quoridor.I18N;
 import martijn.quoridor.brains.BrainFactory;
+import martijn.quoridor.brains.DefaultBrainFactory;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.PointOfView;
 import martijn.quoridor.ui.actions.AboutAction;
@@ -34,9 +36,15 @@ import martijn.quoridor.ui.actions.SaveAction;
 @SuppressWarnings("serial")
 public class ApplicationFrame extends JFrame {
 
+    public static final String VERSION = "2.1";
+
     private GamePanel _gamePanel;
 
-    public ApplicationFrame(BrainFactory factory) {
+    public ApplicationFrame() {
+
+        UIManager.put("swing.boldMetal", false);
+
+        BrainFactory factory = new DefaultBrainFactory();
 
         initUI(factory);
 

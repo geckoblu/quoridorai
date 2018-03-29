@@ -19,32 +19,27 @@ public final class Config {
     /*
      * User properties
      */
-
     public static final String SHOWCOORDINATES = "SHOWCOORDINATES";
     public static final String NOTATION = "NOTATION";
 
-    private static final String LOGLEVEL = "LOGLEVEL";
 
     /*
      * Cached properties
      */
-
     private static final String CACHE_LASTLOADPATH = "LAST_LOAD_PATH";
+
 
     /*
      * Singleton
      */
-
     private static final Config CONFIG = new Config();
+
 
     /*
      * Instance variables
      */
-
     private final Properties _prop = new Properties();
-
     private final Properties _cache = new Properties();
-
     private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
 
 
@@ -69,9 +64,7 @@ public final class Config {
             }
         }
 
-        Core.setLogLevel(logLevel());
-
-        Core.log(Level.INFO, "Loading properties file: {0}", configFile);
+        Core.log(Level.CONFIG, "Loading properties file: {0}", configFile);
 
         File cacheFile = new File(getCacheFileName());
         if (cacheFile.exists()) {
@@ -92,7 +85,7 @@ public final class Config {
             }
         }
 
-        Core.log(Level.INFO, "Loading cache file: {0}", cacheFile);
+        Core.log(Level.CONFIG, "Loading cache file: {0}", cacheFile);
     }
 
     public static void save() {
@@ -215,21 +208,6 @@ public final class Config {
         String cacheHome = getXdgCachegHome() + File.separator + "quoridorai";
 
         return cacheHome;
-    }
-
-    private Level logLevel() {
-
-        Level logLevel = Level.WARNING; // default value
-
-        String value = _prop.getProperty(LOGLEVEL);
-
-        if (value == null) {
-            _prop.setProperty(LOGLEVEL, logLevel.getName());
-        } else {
-            logLevel = Level.parse(value);
-        }
-
-        return logLevel;
     }
 
     public static boolean showCoordinates() {

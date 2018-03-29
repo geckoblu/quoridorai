@@ -15,7 +15,6 @@ import javax.swing.event.HyperlinkListener;
 
 import martijn.quoridor.Core;
 import martijn.quoridor.I18N;
-import martijn.quoridor.QuoridorApplication;
 
 @SuppressWarnings("serial")
 public class AboutPanel extends JPanel {
@@ -42,7 +41,7 @@ public class AboutPanel extends JPanel {
         } else {
             URL url = getClass().getResource("/icons/quoridor.png");
             txt = txt.replace("%SRC_ICON%", url.toString());
-            txt = txt.replace("%VERSION%", QuoridorApplication.VERSION);
+            txt = txt.replace("%VERSION%", ApplicationFrame.VERSION);
         }
 
         textPane.setText(txt);

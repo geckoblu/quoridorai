@@ -6,6 +6,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,7 +18,8 @@ import javax.swing.JOptionPane;
 public final class Core {
 
     /* Utility class, no instantiation allowed */
-    private Core() { }
+    private Core() {
+    }
 
     /**
      * The Logger used for logging errors and warnings.
@@ -26,12 +28,25 @@ public final class Core {
 
     static {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s\t%2$s - %5$s%6$s%n");
-        LOGGER = Logger.getLogger(Core.class.getName());
-        LOGGER.setLevel(Level.WARNING);
-    }
 
-    public static void setLogLevel(Level level) {
-        LOGGER.setLevel(level);
+        LOGGER = Logger.getLogger(Core.class.getName());
+        LOGGER.setUseParentHandlers(false);
+
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
+        LOGGER.addHandler(handler);
+
+        String loglevel = System.getProperty("loglevel");
+        if (loglevel != null) {
+            try {
+                Level level = Level.parse(loglevel.toUpperCase());
+                LOGGER.setLevel(level);
+                LOGGER.log(Level.CONFIG, "Setting log level to " + level);
+            } catch (Exception ex) {
+               LOGGER.log(Level.WARNING, "Error setting level via -Dloglevel - " + ex.getMessage());
+            }
+        }
+
     }
 
     public static void log(Level level, String msg, Throwable thrown) {
@@ -77,8 +92,8 @@ public final class Core {
     }
 
     /**
-     * Opens the given URL in the desktop browser if possible,
-     * in a dialog box as fallback.
+     * Opens the given URL in the desktop browser if possible, in a dialog box
+     * as fallback.
      *
      */
     public static void openHyperlink(Component parent, URL url) {
@@ -89,10 +104,8 @@ public final class Core {
                 Core.LOGGER.log(Level.WARNING, "Some exception occurs", ex);
             }
         } else {
-            JOptionPane.showMessageDialog(parent,
-                    I18N.tr("PLEASE_VISIT") + ": " + url.toString(),
-                    I18N.tr("OPEN_HYPERLINK"),
-                    JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(parent, I18N.tr("PLEASE_VISIT") + ": " + url.toString(),
+                    I18N.tr("OPEN_HYPERLINK"), JOptionPane.PLAIN_MESSAGE);
         }
     }
 }
