@@ -19,8 +19,9 @@ public final class Config {
     /*
      * User properties
      */
-    public static final String SHOWCOORDINATES = "SHOWCOORDINATES";
-    public static final String NOTATION = "NOTATION";
+    private static final String NOTATION = "NOTATION";
+    private static final String SHOWCOORDINATES = "SHOWCOORDINATES";
+    private static final String PLAYSOUNDS = "PLAYSOUNDS";
 
 
     /*
@@ -234,6 +235,32 @@ public final class Config {
         if (showCoordinates != oldValue) {
             THIS._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
             THIS._pcs.firePropertyChange(SHOWCOORDINATES, oldValue, showCoordinates);
+        }
+
+    }
+
+    public static boolean playSounds() {
+
+        boolean playSounds = true; // default value
+
+        String value = THIS._prop.getProperty(PLAYSOUNDS);
+
+        if (value == null) {
+            THIS._prop.setProperty(PLAYSOUNDS, Boolean.toString(playSounds));
+        } else {
+            playSounds = Boolean.parseBoolean(value);
+        }
+
+        return playSounds;
+    }
+
+    public static void playSounds(boolean playSounds) {
+
+        boolean oldValue = playSounds();
+
+        if (playSounds != oldValue) {
+            THIS._prop.setProperty(PLAYSOUNDS, Boolean.toString(playSounds));
+            THIS._pcs.firePropertyChange(PLAYSOUNDS, oldValue, playSounds);
         }
 
     }

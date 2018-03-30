@@ -3,6 +3,7 @@ package martijn.quoridor.ui;
 import java.applet.Applet;
 import java.applet.AudioClip;
 
+import martijn.quoridor.Config;
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.BoardListener;
 import martijn.quoridor.model.Player;
@@ -36,6 +37,11 @@ public class SoundPlayer implements BoardListener {
 
     @Override
     public void moveExecuted() {
+
+        if (!Config.playSounds()) {
+            return;
+        }
+
         _stone.play();
         if (_board.isGameOver()) {
             AudioClip yay = _yahoo;
@@ -45,7 +51,7 @@ public class SoundPlayer implements BoardListener {
 
             if (_setup.getController(winner).isHuman()) {
                 // Maybe we need to play the sad yahoo.
-                for (Player p: _board.getPlayers()) {
+                for (Player p : _board.getPlayers()) {
                     if (p == winner) {
                         continue;
                     }
@@ -63,7 +69,9 @@ public class SoundPlayer implements BoardListener {
 
     @Override
     public void newGame() {
-        _stone.play();
+        if (Config.playSounds()) {
+            _stone.play();
+        }
     }
 
 }

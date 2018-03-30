@@ -42,7 +42,7 @@ public final class I18N {
         try {
             return RB.getString(label);
         } catch (MissingResourceException ex) {
-            System.err.println(ex.getMessage());
+            Core.LOGGER.log(Level.WARNING, ex.getMessage());
             return "*" + label + "*";
         }
     }
@@ -83,7 +83,7 @@ public final class I18N {
         try {
             name = RB.getString("ACTION." + key + ".NAME");
         } catch (MissingResourceException ex) {
-            System.err.println(ex.getMessage());
+            Core.LOGGER.log(Level.WARNING, ex.getMessage());
             name = "*" + key + "*";
         }
 
@@ -124,12 +124,12 @@ public final class I18N {
 
         String fn = "/i18n/" + localFilename;
 
-        Core.LOGGER.log(Level.INFO, "Looking for: {0}", fn);
+        Core.LOGGER.log(Level.CONFIG, "Looking for: {0}", fn);
         InputStream is = I18N.class.getResourceAsStream(fn);
 
         if (is == null) {
             fn = "/i18n/" + filename;
-            Core.LOGGER.log(Level.INFO, "Looking for: {0}", fn);
+            Core.LOGGER.log(Level.CONFIG, "Looking for: {0}", fn);
             is = I18N.class.getResourceAsStream(fn);
 
             if (is == null) {

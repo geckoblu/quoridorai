@@ -21,6 +21,7 @@ public class PropertiesPanel extends JPanel {
     private JRadioButton _lamekNotation;
     private JRadioButton _glendenningNotation;
     private JCheckBox _showCoordinates;
+    private JCheckBox _playSounds;
 
     public PropertiesPanel() {
         initUI();
@@ -56,6 +57,14 @@ public class PropertiesPanel extends JPanel {
                 Config.showCoordinates(_showCoordinates.isSelected());
             }
         });
+
+        _playSounds.setSelected(Config.playSounds());
+        _playSounds.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Config.playSounds(_playSounds.isSelected());
+            }
+        });
     }
 
     private void initUI() {
@@ -63,6 +72,9 @@ public class PropertiesPanel extends JPanel {
 
         GridBagConstraints c = new GridBagConstraints();
 
+        // --------------------------------------
+        // NOTATION
+        // --------------------------------------
         c.gridx = 2;
         c.gridy = 0;
         c.gridwidth = 1;
@@ -95,6 +107,9 @@ public class PropertiesPanel extends JPanel {
         bg.add(_glendenningNotation);
         add(_glendenningNotation, c);
 
+        // --------------------------------------
+        // COORDINATES
+        // --------------------------------------
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 2;
@@ -110,42 +125,57 @@ public class PropertiesPanel extends JPanel {
         c.gridwidth = 1;
         _showCoordinates = new JCheckBox(I18N.tr("SHOW_COORDINATES"));
         add(_showCoordinates, c);
+
+        // --------------------------------------
+        // SOUNDS
+        // --------------------------------------
+        c.gridx = 0;
+        c.gridy = 6;
+        c.gridwidth = 2;
+        add(new JLabel(" "), c); // dummy
+
+        c.gridx = 0;
+        c.gridy = 7;
+        c.gridwidth = 2;
+        add(new JLabel("<html><b>" + I18N.tr("SOUNDS") + ":</b></html>"), c);
+
+        c.gridx = 1;
+        c.gridy = 8;
+        c.gridwidth = 1;
+        _playSounds = new JCheckBox(I18N.tr("PLAY_SOUNDS"));
+        add(_playSounds, c);
     }
 
-    // public static void main(String[] args) {
-    // SwingUtilities.invokeLater(new Runnable() {
-    // @Override
-    // public void run() {
-    // UIManager.put("swing.boldMetal", false);
-    //
-    // try {
-    // UIManager.setLookAndFeel(UIManager
-    // .getSystemLookAndFeelClassName());
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    //
-    // JPanel p = new JPanel();
-    // JPanel contentPane = new JPanel();
-    // contentPane.add(p);
-    // JFrame parent = new JFrame();
-    // parent.setContentPane(contentPane);
-    // parent.setSize(400, 300);
-    // parent.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    // parent.setVisible(true);
-    //
-    // JPanel message = new PropertiesPanel();
-    //
-    // // JOptionPane.showConfirmDialog(f, message,
-    // // "Default made dialog", JOptionPane.YES_NO_OPTION);
-    // Object[] options = {"Close"};
-    // JOptionPane.showOptionDialog(parent, message, "Properties",
-    // JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-    // null, options, options[0]);
-    //
-    // System.exit(0);
-    //
-    // }
-    // });
-    // }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                UIManager.put("swing.boldMetal", false);
+//
+//                try {
+//                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                JPanel p = new JPanel();
+//                JPanel contentPane = new JPanel();
+//                contentPane.add(p);
+//                JFrame parent = new JFrame();
+//                parent.setContentPane(contentPane);
+//                parent.setSize(400, 300);
+//                parent.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//                parent.setVisible(true);
+//
+//                JPanel message = new PropertiesPanel();
+//
+//                Object[] options = { "Close" };
+//                JOptionPane.showOptionDialog(parent, message, "Properties", JOptionPane.DEFAULT_OPTION,
+//                        JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//
+//                System.exit(0);
+//
+//            }
+//        });
+//    }
 }

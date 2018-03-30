@@ -33,7 +33,7 @@ public class EditPropertiesAction extends AbstractAction {
         JPanel message = new PropertiesPanel();
 
         String title = I18N.tr("PROPERTIES");
-        Object[] options = {I18N.tr("CLOSE")};
+        Object[] options = { I18N.tr("CLOSE") };
         JOptionPane.showOptionDialog(_parent,
                                      message,
                                      title,
