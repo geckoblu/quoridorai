@@ -305,7 +305,7 @@ public class Board {
         if (_setup != null) { // _setup is null in cloned boards
             _setup.pauseBrainController();
         }
-        undo(_history.size());
+        undo(_historyIndex);
     }
 
     /** Undoes the last {@code number} moves. */
