@@ -1,12 +1,9 @@
 package martijn.quoridor;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -35,13 +32,13 @@ public final class I18N {
         }
     }
 
-
     private static final ResourceBundle RB = ResourceBundle.getBundle("i18n.ResourceBundle");;
 
     /* Utility class, no instantiation allowed */
-    private I18N() { }
+    private I18N() {
+    }
 
-    public static  String tr(String label) {
+    public static String tr(String label) {
         try {
             return RB.getString(label);
         } catch (MissingResourceException ex) {
@@ -125,37 +122,44 @@ public final class I18N {
             localFilename = localFilename + "." + extension;
         }
 
-        Core.LOGGER.log(Level.INFO, "Looking for: {0}", localFilename);
-        URL url = filename.getClass().getResource("/i18n/" + localFilename);
+        String fn = "/i18n/" + localFilename;
 
-        if (url == null) {
-            Core.LOGGER.log(Level.INFO, "Looking for: {0}", filename);
-            url = filename.getClass().getResource("/i18n/" + filename);
+        Core.LOGGER.log(Level.INFO, "Looking for: {0}", fn);
+        InputStream is = I18N.class.getResourceAsStream(fn);
+
+        if (is == null) {
+            fn = "/i18n/" + filename;
+            Core.LOGGER.log(Level.INFO, "Looking for: {0}", fn);
+            is = I18N.class.getResourceAsStream(fn);
+
+            if (is == null) {
+                Core.LOGGER.log(Level.SEVERE, "Could not find file: {0}", filename);
+                return text;
+            }
         }
 
-        if (url == null) {
-            Core.LOGGER.log(Level.WARNING, "Could not find file.");
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-        } else {
+        StringBuilder sb = new StringBuilder();
+        try {
+            String line = br.readLine();
 
-            try (BufferedReader br = new BufferedReader(new FileReader(new File(url.toURI())))) {
-                StringBuilder sb = new StringBuilder();
-                String line = br.readLine();
-
-                while (line != null) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
-                    line = br.readLine();
-                }
-                text = sb.toString();
-            } catch (FileNotFoundException e) {
-                Core.LOGGER.log(Level.WARNING, "Could not find file.");
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            Core.LOGGER.log(Level.SEVERE, "Could not read file.", e);
+        } finally {
+            try {
+                br.close();
             } catch (IOException e) {
-                Core.LOGGER.log(Level.WARNING, "Could not read file.", e);
-            } catch (URISyntaxException e1) {
-                Core.LOGGER.log(Level.SEVERE, "URISyntaxException", e1);
+                Core.LOGGER.log(Level.WARNING, "Problem closing BufferedReader.", e);
+            }
         }
-        }
+        text = sb.toString();
+
         return text;
     }
 
