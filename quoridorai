@@ -1,0 +1,3 @@
+#!/bin/sh
+
+java -jar ${HOME}/.local/lib/quoridorai/quoridorai-2.1.jar

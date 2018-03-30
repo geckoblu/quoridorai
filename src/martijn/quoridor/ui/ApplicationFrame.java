@@ -61,7 +61,7 @@ public class ApplicationFrame extends JFrame {
         setSize(750, 600);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        URL url = getClass().getResource("/icons/quoridor.png");
+        URL url = getClass().getResource("/icons/quoridorai.png");
         Image icon = Toolkit.getDefaultToolkit().getImage(url);
         setIconImage(icon);
 
