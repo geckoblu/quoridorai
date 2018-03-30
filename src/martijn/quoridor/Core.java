@@ -24,7 +24,7 @@ public final class Core {
     /**
      * The Logger used for logging errors and warnings.
      * */
-    private static final Logger LOGGER;
+    public static final Logger LOGGER;
 
     static {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s\t%2$s - %5$s%6$s%n");
@@ -47,22 +47,6 @@ public final class Core {
             }
         }
 
-    }
-
-    public static void log(Level level, String msg, Throwable thrown) {
-        LOGGER.log(level, msg, thrown);
-    }
-
-    public static void log(Level level, String msg) {
-        LOGGER.log(level, msg);
-    }
-
-    public static void log(Level level, String msg, Object param1) {
-        LOGGER.log(level, msg, param1);
-    }
-
-    public static void log(Level level, String msg, Object[] params) {
-        LOGGER.log(level, msg, params);
     }
 
     /**

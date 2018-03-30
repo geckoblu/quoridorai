@@ -54,19 +54,19 @@ public final class Config {
                 input = new FileInputStream(configFile);
                 _prop.load(input);
             } catch (IOException ex) {
-                Core.log(Level.SEVERE, "Some exception occurs", ex);
+                Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
             } finally {
                 if (input != null) {
                     try {
                         input.close();
                     } catch (IOException ex) {
-                        Core.log(Level.SEVERE, "Some exception occurs", ex);
+                        Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
                     }
                 }
             }
         }
 
-        Core.log(Level.CONFIG, "Loading properties file: {0}", configFile);
+        Core.LOGGER.log(Level.CONFIG, "Loading properties file: {0}", configFile);
 
         File cacheFile = new File(getCacheFileName());
         if (cacheFile.exists()) {
@@ -75,19 +75,19 @@ public final class Config {
                 input = new FileInputStream(cacheFile);
                 _cache.load(input);
             } catch (IOException ex) {
-                Core.log(Level.SEVERE, "Some exception occurs", ex);
+                Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
             } finally {
                 if (input != null) {
                     try {
                         input.close();
                     } catch (IOException ex) {
-                        Core.log(Level.SEVERE, "Some exception occurs", ex);
+                        Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
                     }
                 }
             }
         }
 
-        Core.log(Level.CONFIG, "Loading cache file: {0}", cacheFile);
+        Core.LOGGER.log(Level.CONFIG, "Loading cache file: {0}", cacheFile);
     }
 
     public static void save() {
@@ -106,13 +106,13 @@ public final class Config {
             THIS._prop.store(output, null);
 
         } catch (IOException ex) {
-            Core.log(Level.SEVERE, "Some exception occurs", ex);
+            Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
         } finally {
             if (output != null) {
                 try {
                     output.close();
                 } catch (IOException ex) {
-                    Core.log(Level.SEVERE, "Some exception occurs", ex);
+                    Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
                 }
             }
         }
@@ -137,13 +137,13 @@ public final class Config {
             THIS._cache.store(output, null);
 
         } catch (IOException ex) {
-            Core.log(Level.SEVERE, "Some exception occurs", ex);
+            Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
         } finally {
             if (output != null) {
                 try {
                     output.close();
                 } catch (IOException ex) {
-                    Core.log(Level.SEVERE, "Some exception occurs", ex);
+                    Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
                 }
             }
         }

@@ -77,7 +77,7 @@ public class BrainController extends Controller {
                 try {
                     move = _brain.getMove(getBoard().clone());
                 } catch (RuntimeException e) {
-                    Core.log(Level.WARNING, _brain.getName() + " threw an unchecked Exception", e);
+                    Core.LOGGER.log(Level.WARNING, _brain.getName() + " threw an unchecked Exception", e);
                     showError(_brain.getName() + " threw an error",
                             "An error occurred while " + _brain.getName() + " was computing its\nmove. "
                                     + "Please select a different brain for " + getBoard().getTurn() + ".");
@@ -85,11 +85,11 @@ public class BrainController extends Controller {
                 }
 
                 // Check whether move is valid.
-                if (move == null || move.isLegal(getBoard())) {
+                if (move == null || !move.isLegal(getBoard())) {
                     if (move == null) {
-                        Core.log(Level.WARNING, "\"{0}\" returned a null move.", _brain.getName());
+                        Core.LOGGER.log(Level.WARNING, "\"{0}\" returned a null move.", _brain.getName());
                     } else {
-                        Core.log(Level.WARNING, "\"{0}\" returned illegal move -> {1}. ", new Object[]{_brain.getName(), move});
+                        Core.LOGGER.log(Level.WARNING, "\"{0}\" returned illegal move -> {1}. ", new Object[]{_brain.getName(), move});
                     }
                     showError("Illegal Move", "\"" + _brain.getName()
                             + "\" suggested a move that is illegal in "

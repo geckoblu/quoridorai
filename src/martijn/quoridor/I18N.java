@@ -58,7 +58,7 @@ public final class I18N {
         try {
             label = RB.getString("MENU." + key + ".LABEL");
         } catch (MissingResourceException ex) {
-            Core.log(Level.WARNING, "No label found for MENU." + key + ".LABEL");
+            Core.LOGGER.log(Level.WARNING, "No label found for MENU." + key + ".LABEL");
             label = "*" + key + "*";
         }
 
@@ -67,10 +67,10 @@ public final class I18N {
             if (mnem != null && mnem.length() == 1) {
                 mnemonic = mnem.charAt(0);
             } else {
-                Core.log(Level.FINE, "No valid mnemonic found for MENU." + key + ".MNEMONIC");
+                Core.LOGGER.log(Level.FINE, "No valid mnemonic found for MENU." + key + ".MNEMONIC");
             }
         } catch (MissingResourceException ex) {
-            Core.log(Level.FINE, "No mnemonic found for MENU." + key + ".MNEMONIC");
+            Core.LOGGER.log(Level.FINE, "No mnemonic found for MENU." + key + ".MNEMONIC");
         }
 
         return new I18N.Menu(label, mnemonic);
@@ -96,10 +96,10 @@ public final class I18N {
             if (mnem != null && mnem.length() == 1) {
                 mnemonicKey = mnem.charAt(0);
             } else {
-                Core.log(Level.FINE, "No valid mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
+                Core.LOGGER.log(Level.FINE, "No valid mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
             }
         } catch (MissingResourceException ex) {
-            Core.log(Level.FINE, "No mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
+            Core.LOGGER.log(Level.FINE, "No mnemonic found for ACTION." + key + ".MNEMONIC_KEY");
         }
 
         // Short description
@@ -125,16 +125,16 @@ public final class I18N {
             localFilename = localFilename + "." + extension;
         }
 
-        Core.log(Level.INFO, "Looking for: {0}", localFilename);
+        Core.LOGGER.log(Level.INFO, "Looking for: {0}", localFilename);
         URL url = filename.getClass().getResource("/i18n/" + localFilename);
 
         if (url == null) {
-            Core.log(Level.INFO, "Looking for: {0}", filename);
+            Core.LOGGER.log(Level.INFO, "Looking for: {0}", filename);
             url = filename.getClass().getResource("/i18n/" + filename);
         }
 
         if (url == null) {
-            Core.log(Level.WARNING, "Could not find file.");
+            Core.LOGGER.log(Level.WARNING, "Could not find file.");
 
         } else {
 
@@ -149,11 +149,11 @@ public final class I18N {
                 }
                 text = sb.toString();
             } catch (FileNotFoundException e) {
-                Core.log(Level.WARNING, "Could not find file.");
+                Core.LOGGER.log(Level.WARNING, "Could not find file.");
             } catch (IOException e) {
-                Core.log(Level.WARNING, "Could not read file.", e);
+                Core.LOGGER.log(Level.WARNING, "Could not read file.", e);
             } catch (URISyntaxException e1) {
-                Core.log(Level.SEVERE, "URISyntaxException", e1);
+                Core.LOGGER.log(Level.SEVERE, "URISyntaxException", e1);
         }
         }
         return text;

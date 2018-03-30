@@ -69,7 +69,7 @@ public class HistoryArea extends JTextArea implements BoardListener {
                     int end = this.getLineEndOffset(line);
                     this.getHighlighter().addHighlight(start, end, _painter);
                 } catch (BadLocationException ex) {
-                    Core.log(Level.WARNING, "Some exception occurs", ex);
+                    Core.LOGGER.log(Level.WARNING, "Some exception occurs", ex);
                 }
             }
         }
