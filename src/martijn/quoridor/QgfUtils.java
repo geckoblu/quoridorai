@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +25,6 @@ public class QgfUtils {
     private static final String NL = System.getProperty("line.separator");
 
     private Component _parent;
-    private Path _path;
     private Notation _notation;
     private List<Move> _moves;
 
@@ -40,14 +38,14 @@ public class QgfUtils {
         return load(null);
     }
 
-    public Iterator<Move> load(Path fileToLoad) {
+    private Iterator<Move> load(File fileToLoad) {
 
         if (fileToLoad == null) {
 
             File lastLoadPath;
-            Path lastLoadFile = Config.lastLoadFile();
+            File lastLoadFile = Config.lastLoadFile();
             if (lastLoadFile != null) {
-                lastLoadPath = lastLoadFile.toFile();
+                lastLoadPath = lastLoadFile;
             } else {
                 lastLoadPath = new File(Config.lastLoadPath());
             }
@@ -56,12 +54,12 @@ public class QgfUtils {
             FileNameExtensionFilter filter = new FileNameExtensionFilter("QGF Files", "txt");
             chooser.setFileFilter(filter);
             if (lastLoadFile != null) {
-                chooser.setSelectedFile(lastLoadFile.toFile());
+                chooser.setSelectedFile(lastLoadFile);
             }
 
             int returnVal = chooser.showOpenDialog(_parent);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                fileToLoad = chooser.getSelectedFile().toPath();
+                fileToLoad = chooser.getSelectedFile();
                 Config.lastLoadFile(fileToLoad);
             } else {
                 return null;
@@ -75,7 +73,7 @@ public class QgfUtils {
             JOptionPane.showMessageDialog(_parent, message, "ERROR", JOptionPane.ERROR_MESSAGE);
             return null;
         } catch (LoadException e1) {
-            String message = I18N.tr("ERROR_PARSING") + ": " + _path.getFileName() + "\n" + e1.getMessage();
+            String message = I18N.tr("ERROR_PARSING") + ": " + fileToLoad + "\n" + e1.getMessage();
             JOptionPane.showMessageDialog(_parent, message, "ERROR", JOptionPane.ERROR_MESSAGE);
             return null;
         } catch (IOException e1) {
@@ -87,12 +85,11 @@ public class QgfUtils {
 
     }
 
-    private void parseQgf(Path path) throws IOException {
+    private void parseQgf(File path) throws IOException {
 
-        _path = path;
         _moves = new ArrayList<Move>();
 
-        List<String> lines = Files.readAllLines(path);
+        List<String> lines = Files.readAllLines(path.toPath());
 
         if (lines.size() < 2) {
             throw new LoadException("File too short");
@@ -195,28 +192,31 @@ public class QgfUtils {
         save(null, moves);
     }
 
-    private void save(Path fileToSave, Iterator<Move> moves) {
+    public void save(File fileToSave, Iterator<Move> moves) {
 
         if (fileToSave == null) {
 
             File lastLoadPath;
-            Path lastLoadFile = Config.lastLoadFile();
+            File lastLoadFile = Config.lastLoadFile();
             if (lastLoadFile != null) {
-                lastLoadPath = lastLoadFile.toFile();
+                lastLoadPath = lastLoadFile;
             } else {
                 lastLoadPath = new File(Config.lastLoadPath());
             }
 
             JFileChooser chooser = new JFileChooser(lastLoadPath);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("QGF Files", "txt");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("QGF Files (txt)", "txt");
             chooser.setFileFilter(filter);
             if (lastLoadFile != null) {
-                chooser.setSelectedFile(lastLoadFile.toFile());
+                chooser.setSelectedFile(lastLoadFile);
             }
 
             int returnVal = chooser.showSaveDialog(_parent);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                fileToSave = chooser.getSelectedFile().toPath();
+                String filename = chooser.getSelectedFile().getPath();
+
+                filename = removeExtension(filename) + ".txt";
+                fileToSave = new File(filename);
                 Config.lastLoadFile(fileToSave);
             } else {
                 return;
@@ -231,10 +231,10 @@ public class QgfUtils {
 
     }
 
-    private void saveQgf(Path fileToSave, Iterator<Move> moves) throws IOException {
+    private void saveQgf(File fileToSave, Iterator<Move> moves) throws IOException {
 
         try {
-            _w = new BufferedWriter(new FileWriter(fileToSave.toFile()));
+            _w = new BufferedWriter(new FileWriter(fileToSave));
 
             writenl("# QGF V[1.0]");
 
@@ -279,6 +279,16 @@ public class QgfUtils {
     private void writenl(String str) throws IOException {
         _w.write(str);
         _w.write(NL);
+    }
+
+    private String removeExtension(final String filename) {
+
+        final int extensionPos = filename.lastIndexOf('.');
+        if (extensionPos == -1) {
+            return filename;
+        } else {
+            return filename.substring(0, extensionPos);
+        }
     }
 
     @SuppressWarnings("serial")

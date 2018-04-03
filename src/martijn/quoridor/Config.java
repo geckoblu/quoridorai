@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -43,7 +42,7 @@ public final class Config {
     private final Properties _cache = new Properties();
     private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
 
-    private Path _lastLoadFile = null;
+    private File _lastLoadFile = null;
 
 
     private Config() {
@@ -305,11 +304,11 @@ public final class Config {
     }
 
 
-    public static Path lastLoadFile() {
+    public static File lastLoadFile() {
         return THIS._lastLoadFile;
     }
 
-    public static void lastLoadFile(Path lastLoadFile) {
+    public static void lastLoadFile(File lastLoadFile) {
         THIS._lastLoadFile = lastLoadFile;
         if (lastLoadFile != null) {
             String lastLoadPath = lastLoadFile.getParent().toString();
