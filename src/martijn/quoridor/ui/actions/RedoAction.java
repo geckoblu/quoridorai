@@ -8,16 +8,16 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import martijn.quoridor.I18N;
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.SetupListener;
 
 @SuppressWarnings("serial")
-public class RedoAction extends AbstractAction implements BoardListener, SetupListener {
+public class RedoAction extends AbstractAction implements GameListener, SetupListener {
 
-    private final Board _board;
+    private final GameModel _gameModel;
 
-    public RedoAction(Board board) {
+    public RedoAction(GameModel gameModel) {
         super();
 
         I18N.Action action = I18N.getAction("REDO");
@@ -28,16 +28,16 @@ public class RedoAction extends AbstractAction implements BoardListener, SetupLi
         ImageIcon icon = new ImageIcon(url);
         putValue(Action.LARGE_ICON_KEY, icon);
 
-        _board = board;
+        _gameModel = gameModel;
 
         update();
 
-        _board.addBoardListener(this);
+        _gameModel.addGameListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        _board.redo();
+        _gameModel.redo();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class RedoAction extends AbstractAction implements BoardListener, SetupLi
     }
 
     private void update() {
-        setEnabled(_board.canRedo());
+        setEnabled(_gameModel.canRedo());
     }
 
     @Override

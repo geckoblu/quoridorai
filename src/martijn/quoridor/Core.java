@@ -17,9 +17,7 @@ import javax.swing.JOptionPane;
  */
 public final class Core {
 
-    /* Utility class, no instantiation allowed */
-    private Core() {
-    }
+    private static Component _rootComponent;
 
     /**
      * The Logger used for logging errors and warnings.
@@ -47,6 +45,10 @@ public final class Core {
             }
         }
 
+    }
+
+    /* Utility class, no instantiation allowed */
+    private Core() {
     }
 
     /**
@@ -91,5 +93,13 @@ public final class Core {
             JOptionPane.showMessageDialog(parent, I18N.tr("PLEASE_VISIT") + ": " + url.toString(),
                     I18N.tr("OPEN_HYPERLINK"), JOptionPane.PLAIN_MESSAGE);
         }
+    }
+
+    public static void setRootCompnent(Component rootComponent) {
+        _rootComponent = rootComponent;
+    }
+
+    public static Component getRootComponent() {
+        return _rootComponent;
     }
 }

@@ -18,7 +18,8 @@ import javax.swing.KeyStroke;
 
 import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
-import martijn.quoridor.model.Board;
+import martijn.quoridor.brains.DefaultBrainFactory;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.PointOfView;
 import martijn.quoridor.model.Setup;
 import martijn.quoridor.ui.actions.RedoAction;
@@ -29,6 +30,8 @@ import martijn.quoridor.ui.actions.UndoAllAction;
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel {
 
+    private GameModel _gameModel;
+
     private BoardCanvas _boardCanvas;
 
     private Controller[] _controllers;
@@ -38,9 +41,11 @@ public class GamePanel extends JPanel {
 
     private HistoryArea _historyArea;
 
-    public GamePanel(Board board, BrainFactory factory, StatusBar statusbar) {
+    public GamePanel(GameModel gameModel) {
 
-        _boardCanvas = new BoardCanvas(board);
+        _gameModel = gameModel;
+
+        _boardCanvas = new BoardCanvas(_gameModel);
         _boardCanvas.addPropertyChangeListener("POINT_OF_VIEW", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -48,33 +53,35 @@ public class GamePanel extends JPanel {
             }
         });
 
-        _controllers = getControllers(factory);
-        _setup = new Setup(board, (HumanController) _controllers[0], new Controller[] {_controllers[0], _controllers[2]});
+        _controllers = getControllers();
+        _setup = new Setup(_gameModel.getBoard(), (HumanController) _controllers[0], new Controller[] {_controllers[0], _controllers[2]});
 
-        _gamestatusPanel = new GameStatus(_setup, _controllers, statusbar);
+        _gamestatusPanel = new GameStatus(_setup, _controllers);
 
-        _historyArea = new HistoryArea(board);
+        _historyArea = new HistoryArea(_gameModel);
 
-        initUI(board);
+        initUI();
 
-        setKeyBindings(board);
+        setKeyBindings();
 
-        new SoundPlayer(board, _setup);
+        new SoundPlayer(_gameModel, _setup);
     }
 
-    private Controller[] getControllers(BrainFactory factory) {
+    private Controller[] getControllers() {
+        BrainFactory factory = new DefaultBrainFactory();
+
         List<Brain> brains = new ArrayList<Brain>();
         factory.addBrains(brains);
 
         Controller[] controllers = new Controller[brains.size() + 1];
-        controllers[0] = new HumanController(_boardCanvas);
+        controllers[0] = new HumanController(_gameModel.getBoard(), _boardCanvas);
         for (int i = 0; i < brains.size(); i++) {
-            controllers[i + 1] = new BrainController(_boardCanvas, brains.get(i));
+            controllers[i + 1] = new BrainController(_gameModel.getBoard(), brains.get(i));
         }
         return controllers;
     }
 
-    private void initUI(Board board) {
+    private void initUI() {
         setLayout(new BorderLayout());
 
         JPanel p1 = new JPanel(new BorderLayout());
@@ -82,10 +89,10 @@ public class GamePanel extends JPanel {
         p1.add(_boardCanvas, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
-        buttons.add(new JButton(new UndoAllAction(board)));
-        buttons.add(new JButton(new UndoAction(board)));
-        buttons.add(new JButton(new RedoAction(board)));
-        buttons.add(new JButton(new RedoAllAction(board)));
+        buttons.add(new JButton(new UndoAllAction(_gameModel)));
+        buttons.add(new JButton(new UndoAction(_gameModel)));
+        buttons.add(new JButton(new RedoAction(_gameModel)));
+        buttons.add(new JButton(new RedoAllAction(_gameModel)));
         p1.add(buttons, BorderLayout.SOUTH);
 
         add(p1, BorderLayout.CENTER);
@@ -106,21 +113,21 @@ public class GamePanel extends JPanel {
         add(p2, BorderLayout.EAST);
     }
 
-    private void setKeyBindings(Board board) {
+    private void setKeyBindings() {
         InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap am = getActionMap();
 
         im.put(KeyStroke.getKeyStroke("UP"), "UP");
-        am.put("UP", new UndoAllAction(board));
+        am.put("UP", new UndoAllAction(_gameModel));
 
         im.put(KeyStroke.getKeyStroke("DOWN"), "DOWN");
-        am.put("DOWN", new RedoAllAction(board));
+        am.put("DOWN", new RedoAllAction(_gameModel));
 
         im.put(KeyStroke.getKeyStroke("LEFT"), "LEFT");
-        am.put("LEFT", new UndoAction(board));
+        am.put("LEFT", new UndoAction(_gameModel));
 
         im.put(KeyStroke.getKeyStroke("RIGHT"), "RIGHT");
-        am.put("RIGHT", new RedoAction(board));
+        am.put("RIGHT", new RedoAction(_gameModel));
     }
 
     void setPointOfView(PointOfView pointOfView) {

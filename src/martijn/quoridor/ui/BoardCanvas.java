@@ -20,7 +20,8 @@ import javax.swing.JPanel;
 import martijn.quoridor.Config;
 import martijn.quoridor.Core;
 import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Jump;
 import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Player;
@@ -33,7 +34,7 @@ import martijn.quoridor.model.Wall;
  * A JPanel that draws a Quoridor state and a shadow move.
  */
 @SuppressWarnings("serial")
-public class BoardCanvas extends JPanel implements BoardListener {
+public class BoardCanvas extends JPanel implements GameListener {
 
     private static final double CELL_SIZE = 10;
     private static final float WALL_THICKNESS = 2;
@@ -53,7 +54,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
     private PointOfView _pointOfView = PointOfView.POV1;
 
     /** The board this canvas visualizes. */
-    private Board _board;
+    private GameModel _gameModel;
 
     /** The current shadow move. */
     private Move _shadow;
@@ -61,9 +62,9 @@ public class BoardCanvas extends JPanel implements BoardListener {
     /**
      * Creates a new QuoridorCanvas.
      * */
-    public BoardCanvas(Board board) {
-        this._board = board;
-        board.addBoardListener(this);
+    public BoardCanvas(GameModel gameModel) {
+        _gameModel = gameModel;
+        _gameModel.addGameListener(this);
     }
 
     /**
@@ -163,11 +164,13 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
         drawCoordinates(g2);
 
+        Board board = _gameModel.getBoard();
+
         // Draw walls.
         for (int x = 0; x < Board.SIZE - 1; x++) {
             for (int y = 0; y < Board.SIZE - 1; y++) {
                 Position pos = new Position(x, y);
-                Wall wall = _board.getWall(pos);
+                Wall wall = board.getWall(pos);
                 if (wall != null) {
                     drawWall(g2, wall, pos, false);
                 }
@@ -175,7 +178,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
         }
 
         // Draw players.
-        for (Player p : _board.getPlayers()) {
+        for (Player p : board.getPlayers()) {
             // System.out.println("BC " + p + " " + p.getPosition());
             drawPlayer(g2, p, p.getPosition(), false);
         }
@@ -187,7 +190,7 @@ public class BoardCanvas extends JPanel implements BoardListener {
                 drawWall(g2, pw.getWall(), pw.getPosition(), true);
             } else if (_shadow instanceof Jump) {
                 Jump j = (Jump) _shadow;
-                drawPlayer(g2, _board.getTurn(), j.getPosition(), true);
+                drawPlayer(g2, board.getTurn(), j.getPosition(), true);
             }
         }
     }
@@ -338,12 +341,6 @@ public class BoardCanvas extends JPanel implements BoardListener {
         g2.setStroke(oldStroke);
     }
 
-    // Getters and setters.
-
-    /** Returns the board this canvas visualizes. */
-    public Board getBoard() {
-        return _board;
-    }
 
     /** Returns the current shadow move. */
     public Move getShadow() {
@@ -358,11 +355,11 @@ public class BoardCanvas extends JPanel implements BoardListener {
 
     /** Returns whether the shadow is non-null and legal. */
     public boolean isShadowLegal() {
-        return _shadow != null && _shadow.isLegal(getBoard());
+        return _shadow != null && _shadow.isLegal(_gameModel.getBoard());
     }
 
     public void applyShadow() {
-        _board.move(_shadow);
+        _gameModel.getBoard().move(_shadow);
         setShadow(null);
     }
 

@@ -8,15 +8,15 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import martijn.quoridor.I18N;
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 
 @SuppressWarnings("serial")
-public class UndoAllAction extends AbstractAction implements BoardListener {
+public class UndoAllAction extends AbstractAction implements GameListener {
 
-    private final Board _board;
+    private final GameModel _gameModel;
 
-    public UndoAllAction(Board board) {
+    public UndoAllAction(GameModel gameModel) {
         super();
 
         I18N.Action action = I18N.getAction("UNDO_ALL");
@@ -27,16 +27,16 @@ public class UndoAllAction extends AbstractAction implements BoardListener {
         ImageIcon icon = new ImageIcon(url);
         putValue(Action.LARGE_ICON_KEY, icon);
 
-        _board = board;
+        _gameModel = gameModel;
 
         update();
 
-        _board.addBoardListener(this);
+        _gameModel.addGameListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        _board.undoAll();
+        _gameModel.undoAll();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class UndoAllAction extends AbstractAction implements BoardListener {
     }
 
     private void update() {
-        setEnabled(_board.canUndo());
+        setEnabled(_gameModel.canUndo());
     }
 
 }

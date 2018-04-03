@@ -9,15 +9,15 @@ import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 import martijn.quoridor.I18N;
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 
 @SuppressWarnings("serial")
-public class UndoAction extends AbstractAction implements BoardListener {
+public class UndoAction extends AbstractAction implements GameListener {
 
-    private final Board _board;
+    private final GameModel _gameModel;
 
-    public UndoAction(Board board) {
+    public UndoAction(GameModel gameModel) {
         super();
 
         I18N.Action action = I18N.getAction("UNDO");
@@ -32,16 +32,16 @@ public class UndoAction extends AbstractAction implements BoardListener {
         //putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke((char)KeyEvent.VK_LEFT));
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('u'));
 
-        _board = board;
+        _gameModel = gameModel;
 
         update();
 
-        _board.addBoardListener(this);
+        _gameModel.addGameListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        _board.undo();
+        _gameModel.undo();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class UndoAction extends AbstractAction implements BoardListener {
     }
 
     private void update() {
-        setEnabled(_board.canUndo());
+        setEnabled(_gameModel.canUndo());
     }
 
 }

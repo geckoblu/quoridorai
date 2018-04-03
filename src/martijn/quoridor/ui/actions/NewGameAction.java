@@ -7,15 +7,15 @@ import javax.swing.Action;
 
 import martijn.quoridor.Config;
 import martijn.quoridor.I18N;
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 
 @SuppressWarnings("serial")
-public class NewGameAction extends AbstractAction implements BoardListener {
+public class NewGameAction extends AbstractAction implements GameListener {
 
-    private final Board _board;
+    private final GameModel _gameModel;
 
-    public NewGameAction(Board board) {
+    public NewGameAction(GameModel board) {
         super();
 
         I18N.Action action = I18N.getAction("NEW_GAME");
@@ -23,14 +23,14 @@ public class NewGameAction extends AbstractAction implements BoardListener {
         putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
         putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
-        _board = board;
+        _gameModel = board;
         update();
-        board.addBoardListener(this);
+        board.addGameListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        _board.newGame();
+        _gameModel.newGame();
         Config.lastLoadFile(null);
     }
 
@@ -45,7 +45,7 @@ public class NewGameAction extends AbstractAction implements BoardListener {
     }
 
     private void update() {
-        setEnabled(_board.hasHistory());
+        setEnabled(_gameModel.hasHistory());
     }
 
 }

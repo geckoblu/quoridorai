@@ -23,8 +23,11 @@ public class HumanController extends Controller {
 
     private MouseListener _clickListener;
 
-    public HumanController(BoardCanvas canvas) {
-        super(canvas);
+    private BoardCanvas _boardCanvas;
+
+    public HumanController(Board board, BoardCanvas boardCanvas) {
+        super(board);
+        _boardCanvas = boardCanvas;
         _hoverListener = new HoverListener();
         _clickListener = new ClickListener();
     }
@@ -32,8 +35,8 @@ public class HumanController extends Controller {
     @Override
     protected void moveExpected() {
         // Start user interaction.
-        getCanvas().addMouseMotionListener(_hoverListener);
-        getCanvas().addMouseListener(_clickListener);
+        _boardCanvas.addMouseMotionListener(_hoverListener);
+        _boardCanvas.addMouseListener(_clickListener);
     }
 
     @Override
@@ -42,8 +45,8 @@ public class HumanController extends Controller {
     }
 
     private void removeListeners() {
-        getCanvas().removeMouseMotionListener(_hoverListener);
-        getCanvas().removeMouseListener(_clickListener);
+        _boardCanvas.removeMouseMotionListener(_hoverListener);
+        _boardCanvas.removeMouseListener(_clickListener);
     }
 
     @Override
@@ -60,7 +63,7 @@ public class HumanController extends Controller {
             return null;
         }
 
-        return getCanvas().toBoardCoordinates(mouseLocation);
+        return _boardCanvas.toBoardCoordinates(mouseLocation);
     }
 
     /**
@@ -71,7 +74,7 @@ public class HumanController extends Controller {
      */
     private void updateShadow(Point2D mousePosition) {
         if (mousePosition == null) {
-            getCanvas().setShadow(null);
+            _boardCanvas.setShadow(null);
             return;
         }
 
@@ -91,7 +94,7 @@ public class HumanController extends Controller {
             Position pos = new Position(x / 2, y / 2);
             Move move = new Jump(pos);
             if (move.isLegal(board)) {
-                getCanvas().setShadow(move);
+                _boardCanvas.setShadow(move);
             }
             return;
         }
@@ -112,20 +115,20 @@ public class HumanController extends Controller {
 
         for (Move move : moves) {
             if (move.isLegal(board)) {
-                getCanvas().setShadow(move);
+                _boardCanvas.setShadow(move);
                 return;
             }
         }
 
         // No valid move found for the current mouse position.
-        getCanvas().setShadow(null);
+        _boardCanvas.setShadow(null);
     }
 
     /** Applies the shadow and ends the turn, if possible. */
     private void applyShadow() {
-        if (getCanvas().isShadowLegal()) {
+        if (_boardCanvas.isShadowLegal()) {
             removeListeners();
-            move(getCanvas().getShadow());
+            move(_boardCanvas.getShadow());
         }
     }
 
@@ -149,7 +152,7 @@ public class HumanController extends Controller {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            getCanvas().requestFocus();
+            _boardCanvas.requestFocus();
             if (e.getButton() == MouseEvent.BUTTON1 && !e.isControlDown()) {
                 applyShadow();
             }
@@ -158,7 +161,7 @@ public class HumanController extends Controller {
 
         @Override
         public void mouseExited(MouseEvent arg0) {
-            getCanvas().setShadow(null);
+            _boardCanvas.setShadow(null);
         }
 
     }

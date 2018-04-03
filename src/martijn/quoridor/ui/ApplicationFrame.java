@@ -20,10 +20,9 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.UIManager;
 
 import martijn.quoridor.Config;
+import martijn.quoridor.Core;
 import martijn.quoridor.I18N;
-import martijn.quoridor.brains.BrainFactory;
-import martijn.quoridor.brains.DefaultBrainFactory;
-import martijn.quoridor.model.Board;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.PointOfView;
 import martijn.quoridor.ui.actions.AboutAction;
 import martijn.quoridor.ui.actions.EditPropertiesAction;
@@ -38,15 +37,16 @@ public class ApplicationFrame extends JFrame {
 
     public static final String VERSION = "2.1";
 
+    private GameModel _gameModel;
     private GamePanel _gamePanel;
 
     public ApplicationFrame() {
 
         UIManager.put("swing.boldMetal", false);
 
-        BrainFactory factory = new DefaultBrainFactory();
+        Core.setRootCompnent(this);
 
-        initUI(factory);
+        initUI();
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -56,7 +56,7 @@ public class ApplicationFrame extends JFrame {
         });
     }
 
-    private void initUI(BrainFactory factory) {
+    private void initUI() {
         setTitle("QuoridorAI");
         setSize(750, 600);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -65,47 +65,46 @@ public class ApplicationFrame extends JFrame {
         Image icon = Toolkit.getDefaultToolkit().getImage(url);
         setIconImage(icon);
 
-        Board board = new Board();
+        _gameModel = new GameModel();
 
-
-        StatusBar statusbar = new StatusBar();
+        StatusBar statusbar = new StatusBar(_gameModel);
         add(statusbar, BorderLayout.SOUTH);
 
-        _gamePanel = new GamePanel(board, factory, statusbar);
+        _gamePanel = new GamePanel(_gameModel);
         add(_gamePanel, BorderLayout.CENTER);
 
-        createMenuBar(board);
+        createMenuBar();
     }
 
-    private void createMenuBar(Board board) {
+    private void createMenuBar() {
 
         JMenuBar menubar = new JMenuBar();
 
-        createFileMenu(menubar, board);
+        createFileMenu(menubar);
         createViewMenu(menubar);
         createHelpMenu(menubar);
 
         setJMenuBar(menubar);
     }
 
-    private void createFileMenu(JMenuBar menubar, Board board) {
+    private void createFileMenu(JMenuBar menubar) {
 
         I18N.Menu i18nMenu = I18N.getMenu("FILE");
         JMenu fileMenu = new JMenu(i18nMenu.label);
         fileMenu.setMnemonic(i18nMenu.mnemonic);
 
         JMenuItem menuItem = new JMenuItem();
-        menuItem.setAction(new NewGameAction(board));
+        menuItem.setAction(new NewGameAction(_gameModel));
         fileMenu.add(menuItem);
 
         fileMenu.addSeparator();
 
         menuItem = new JMenuItem();
-        menuItem.setAction(new SaveAction(this, board));
+        menuItem.setAction(new SaveAction(this, _gameModel));
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem();
-        menuItem.setAction(new LoadAction(this, board));
+        menuItem.setAction(new LoadAction(this, _gameModel));
         fileMenu.add(menuItem);
 
         fileMenu.addSeparator();

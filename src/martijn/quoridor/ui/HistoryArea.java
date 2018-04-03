@@ -10,20 +10,20 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 
 import martijn.quoridor.Core;
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Move;
 
 @SuppressWarnings("serial")
-public class HistoryArea extends JTextArea implements BoardListener {
+public class HistoryArea extends JTextArea implements GameListener {
 
-    private Board _board;
+    private GameModel _gameModel;
 
     private DefaultHighlighter.DefaultHighlightPainter _painter;
 
-    public HistoryArea(Board board) {
-        this._board = board;
-        _board.addBoardListener(this);
+    public HistoryArea(GameModel gameModel) {
+        _gameModel = gameModel;
+        _gameModel.addGameListener(this);
 
         _painter = new DefaultHighlighter.DefaultHighlightPainter(new Color(232, 242, 254));
 
@@ -37,7 +37,7 @@ public class HistoryArea extends JTextArea implements BoardListener {
 
         StringBuffer sb = new StringBuffer();
 
-        Iterator<Move> history = _board.getHistory();
+        Iterator<Move> history = _gameModel.getHistory();
         int i = 0;
         while (history.hasNext()) {
             i++;
@@ -60,8 +60,8 @@ public class HistoryArea extends JTextArea implements BoardListener {
         }
         setText(sb.toString());
 
-        if (_board.hasHistory()) {
-            int historyIndex = _board.getHistoryIndex();
+        if (_gameModel.hasHistory()) {
+            int historyIndex = _gameModel.getHistoryIndex();
             if (historyIndex > 0) {
                 int line = (historyIndex - 1) / 2;
                 try {

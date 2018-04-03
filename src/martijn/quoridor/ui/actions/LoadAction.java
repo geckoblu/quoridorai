@@ -9,16 +9,16 @@ import javax.swing.Action;
 
 import martijn.quoridor.I18N;
 import martijn.quoridor.QgfUtils;
-import martijn.quoridor.model.Board;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Move;
 
 @SuppressWarnings("serial")
 public class LoadAction extends AbstractAction {
 
     private final Component _parent;
-    private final Board _board;
+    private final GameModel _gameModel;
 
-    public LoadAction(Component parent, Board board) {
+    public LoadAction(Component parent, GameModel gameModel) {
         super();
 
         I18N.Action action = I18N.getAction("LOAD");
@@ -27,7 +27,7 @@ public class LoadAction extends AbstractAction {
         putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
         _parent = parent;
-        _board = board;
+        _gameModel = gameModel;
 
     }
 
@@ -39,8 +39,8 @@ public class LoadAction extends AbstractAction {
 
         Iterator<Move> moves = qgfutils.load();
         if (moves != null) {
-            _board.newGame();
-            _board.add(moves);
+            _gameModel.newGame();
+            _gameModel.add(moves);
         }
 
     }

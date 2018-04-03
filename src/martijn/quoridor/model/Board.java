@@ -21,9 +21,9 @@ public class Board {
     private LinkedList<Move> _history;
     private int _historyIndex;
 
-    private List<BoardListener> _listeners; // not used in cloned boards
+    private List<GameListener> _listeners; // not used in cloned boards
 
-    private Setup _setup; // not used in cloned boards
+    public Setup _setup;
 
     // Initialization.
 
@@ -33,7 +33,7 @@ public class Board {
         _players = new Player[NPLAYERS];
         _history = new LinkedList<Move>();
         _historyIndex = 0;
-        _listeners = new LinkedList<BoardListener>();
+        _listeners = new LinkedList<GameListener>();
 
         newGame();
     }
@@ -73,24 +73,24 @@ public class Board {
     }
 
     /** Causes the listener to be notified of subsequent board events. */
-    public void addBoardListener(BoardListener l) {
+    public void addBoardListener(GameListener l) {
         _listeners.add(l);
     }
 
     /** Causes the listener to no longer be notified of subsequent board events. */
-    public void removeBoardListener(BoardListener l) {
+    public void removeBoardListener(GameListener l) {
         _listeners.remove(l);
     }
 
     private void fireNewGame() {
-        for (BoardListener l : _listeners) {
+        for (GameListener l : _listeners) {
             l.newGame();
         }
     }
 
     private void fireMoveExecuted() {
         if (_listeners != null) { // null in cloned board
-            for (BoardListener l : _listeners) {
+            for (GameListener l : _listeners) {
                 l.moveExecuted();
             }
         }

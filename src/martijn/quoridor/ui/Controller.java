@@ -4,15 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
 import martijn.quoridor.model.Move;
 
 /**
  * A Controller controls a specific player.
  */
-public abstract class Controller implements BoardListener {
-
-    private BoardCanvas _canvas;
+public abstract class Controller implements GameListener {
 
     /** Which player is this Controller controlling (Player 1 or Player 2 or both or none)**/
     private List<Integer> _controlling;
@@ -21,23 +19,17 @@ public abstract class Controller implements BoardListener {
 
     private boolean _paused = false;
 
+    Board _board;
+
     /** Creates a new Controller. */
-    public Controller(BoardCanvas canvas) {
-        if (canvas == null) {
-            throw new NullPointerException("Canvas is null.");
-        }
-        _canvas = canvas;
+    public Controller(Board board) {
         _controlling = new LinkedList<Integer>();
-        getBoard().addBoardListener(this);
+        _board = board;
+        _board.addBoardListener(this);
     }
 
-    protected BoardCanvas getCanvas() {
-        return _canvas;
-    }
-
-    /** Returns the board. */
-    protected Board getBoard() {
-        return _canvas.getBoard();
+    Board getBoard() {
+        return _board;
     }
 
     /**

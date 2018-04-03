@@ -8,16 +8,16 @@ import javax.swing.Action;
 
 import martijn.quoridor.I18N;
 import martijn.quoridor.QgfUtils;
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 
 @SuppressWarnings("serial")
-public class SaveAction extends AbstractAction implements BoardListener {
+public class SaveAction extends AbstractAction implements GameListener {
 
     private final Component _parent;
-    private final Board _board;
+    private final GameModel _gameModel;
 
-    public SaveAction(Component parent, Board board) {
+    public SaveAction(Component parent, GameModel gameModel) {
         super();
 
         I18N.Action action = I18N.getAction("SAVE");
@@ -26,18 +26,18 @@ public class SaveAction extends AbstractAction implements BoardListener {
         putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
         _parent = parent;
-        _board = board;
+        _gameModel = gameModel;
 
         update();
 
-        _board.addBoardListener(this);
+        _gameModel.addGameListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         QgfUtils qgfutils = new QgfUtils(_parent);
 
-        qgfutils.save(_board.getHistory());
+        qgfutils.save(_gameModel.getHistory());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SaveAction extends AbstractAction implements BoardListener {
     }
 
     private void update() {
-        setEnabled(_board.hasHistory());
+        setEnabled(_gameModel.hasHistory());
     }
 
 }

@@ -7,23 +7,20 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 
 import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
-import martijn.quoridor.model.Player;
+import martijn.quoridor.model.GameListener;
 import martijn.quoridor.model.Setup;
 import martijn.quoridor.model.SetupListener;
 
 @SuppressWarnings("serial")
-public class GameStatus extends JPanel implements BoardListener, SetupListener {
+public class GameStatus extends JPanel implements GameListener, SetupListener {
 
     private PlayerStatus[] _lines;
 
     private Setup _setup;
-    private StatusBar _statusbar;
 
-    public GameStatus(Setup setup, Controller[] controllers, StatusBar statusbar) {
+    public GameStatus(Setup setup, Controller[] controllers) {
 
-        this._setup = setup;
-        this._statusbar = statusbar;
+        _setup = setup;
 
         createGUI(controllers);
 
@@ -54,20 +51,6 @@ public class GameStatus extends JPanel implements BoardListener, SetupListener {
     private void update() {
         for (PlayerStatus s : _lines) {
             s.update();
-        }
-
-        Player activePlayer = getBoard().getTurn();
-        if (getBoard().isGameOver()) {
-            activePlayer = getBoard().getWinner();
-            _statusbar.setWinner(activePlayer);
-        } else {
-
-            Controller controller = _setup.getController(activePlayer);
-            if (controller.isHuman() || controller.isPaused()) {
-                _statusbar.setPlayerToMove(activePlayer);
-            } else {
-                _statusbar.setPlayerThinking(activePlayer);
-            }
         }
     }
 

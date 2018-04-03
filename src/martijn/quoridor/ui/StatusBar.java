@@ -7,17 +7,24 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Player;
 
 @SuppressWarnings("serial")
-public class StatusBar extends JPanel {
+public final class StatusBar extends JPanel implements GameListener {
 
-    private JLabel _statusLabel;
-    private PlayerIcon _playerIcon;
+    private final JLabel _statusLabel;
+    private final PlayerIcon _playerIcon;
 
-    public StatusBar() {
+    private final GameModel _gameModel;
+
+    public StatusBar(GameModel gameModel) {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.setBorder(BorderFactory.createEtchedBorder());
+
+        _gameModel = gameModel;
+        _gameModel.addGameListener(this);
 
         _playerIcon = new PlayerIcon(Color.red);
         this.add(_playerIcon);
@@ -46,6 +53,33 @@ public class StatusBar extends JPanel {
         _playerIcon.setVisible(true);
         _playerIcon.startFlippingContinuously();
         _statusLabel.setText("Winner!");
+    }
+
+    private void update() {
+
+        Player activePlayer = _gameModel.getTurn();
+        if (_gameModel.isGameOver()) {
+            activePlayer = _gameModel.getWinner();
+            this.setWinner(activePlayer);
+        } else {
+
+            Controller controller = _gameModel.getBoard()._setup.getController(activePlayer);
+            if (controller.isHuman() || controller.isPaused()) {
+                this.setPlayerToMove(activePlayer);
+            } else {
+                this.setPlayerThinking(activePlayer);
+            }
+        }
+    }
+
+    @Override
+    public void moveExecuted() {
+        update();
+    }
+
+    @Override
+    public void newGame() {
+        update();
     }
 
 }

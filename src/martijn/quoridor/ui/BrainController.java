@@ -26,12 +26,12 @@ public class BrainController extends Controller {
 
     private long _minimumThinkTime;
 
-    public BrainController(BoardCanvas canvas, Brain brain) {
-        this(canvas, brain, 500);
+    public BrainController(Board board, Brain brain) {
+        this(board, brain, 500);
     }
 
-    private BrainController(BoardCanvas canvas, Brain brain, long minimumThinkTime) {
-        super(canvas);
+    private BrainController(Board board, Brain brain, long minimumThinkTime) {
+        super(board);
         this._brain = brain;
         this._minimumThinkTime = minimumThinkTime;
     }
@@ -124,7 +124,7 @@ public class BrainController extends Controller {
     }
 
     private void showError(String title, String message) {
-        JOptionPane.showMessageDialog(getCanvas(), message, title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(Core.getRootComponent(), message, title, JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
