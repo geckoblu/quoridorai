@@ -8,27 +8,26 @@ import javax.swing.JPanel;
 
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.GameListener;
-import martijn.quoridor.model.Setup;
-import martijn.quoridor.model.SetupListener;
+import martijn.quoridor.model.GameModel;
 
 @SuppressWarnings("serial")
-public class GameStatus extends JPanel implements GameListener, SetupListener {
+public class GameStatus extends JPanel implements GameListener {
 
-    private PlayerStatus[] _lines;
+    private PlayerStatusPanel[] _lines;
 
-    private Setup _setup;
+    private final GameModel _gameModel;
 
-    public GameStatus(Setup setup, Controller[] controllers) {
+    public GameStatus(GameModel gameModel) {
 
-        _setup = setup;
+        _gameModel = gameModel;
 
-        createGUI(controllers);
+        createGUI();
 
-        setup.addSetupListener(this);
-        getBoard().addBoardListener(this);
+        //setup.addSetupListener(this);
+        _gameModel.addGameListener(this);
     }
 
-    private void createGUI(Controller[] controllers) {
+    private void createGUI() {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -37,11 +36,11 @@ public class GameStatus extends JPanel implements GameListener, SetupListener {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
 
-        _lines = new PlayerStatus[Board.NPLAYERS];
+        _lines = new PlayerStatusPanel[Board.NPLAYERS];
         for (int i = 0; i < Board.NPLAYERS; i++) {
-            _lines[i] = new PlayerStatus(getBoard().getPlayer(i), _setup, controllers);
+            _lines[i] = new PlayerStatusPanel(i, _gameModel);
             gbc.gridy = i;
-            add(_lines[i].getPlayerStatusPanel(), gbc);
+            add(_lines[i], gbc);
         }
 
         update();
@@ -49,39 +48,14 @@ public class GameStatus extends JPanel implements GameListener, SetupListener {
     }
 
     private void update() {
-        for (PlayerStatus s : _lines) {
+        for (PlayerStatusPanel s : _lines) {
             s.update();
         }
     }
 
-    /**
-     * BoardListener
-     */
-
-    @Override
-    public void moveExecuted() {
+    @Override // BoardListener
+    public void boardChanged() {
         update();
-    }
-
-    @Override
-    public void newGame() {
-        for (int i = 0; i < Board.NPLAYERS; i++) {
-            _lines[i].setPlayer(getBoard().getPlayer(i));
-        }
-        update();
-    }
-
-    /**
-     * SetupListener
-     */
-
-    @Override
-    public void setupChanged(int player) {
-        update();
-    }
-
-    private Board getBoard() {
-        return _setup.getBoard();
     }
 
 }

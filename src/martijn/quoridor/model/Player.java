@@ -11,6 +11,8 @@ import java.util.TreeSet;
  */
 public class Player {
 
+    private static final int INITIAL_NWALLS = 10;
+
     private static final Color[] COLOR;
 
     static {
@@ -21,15 +23,13 @@ public class Player {
 
     private final Board _board;
 
-    private Orientation _orientation;
+    private final Orientation _orientation;
+
+    public final int index;
 
     private Position _position;
 
-    private String _name;
-
     private int _nwalls;
-
-    public final int index;
 
     /**
      * Creates a new player.
@@ -38,42 +38,33 @@ public class Player {
      *            The board this player is part of.
      * @param orientation
      *            The player's orientation. See {@link #getOrientation()}.
-     * @param name
-     *            The player's name.
-     * @param nwalls
-     *            The number of walls this player owns initially.
-     * @param color
-     *            The player's color.
      */
-    public Player(int index, Board board, Orientation orientation, String name, int nwalls, Color color) {
-        if (board == null) {
-            throw new NullPointerException("Board is null.");
-        }
+    public Player(int index, Board board, Orientation orientation) {
         this.index = index;
         this._board = board;
         this._orientation = orientation;
-        this._name = name;
-        this._nwalls = nwalls;
-        this._position = getInitialPosition(board, orientation);
+        this._nwalls = INITIAL_NWALLS;
+        this._position = getInitialPosition();
     }
 
     /**
-     * Creates a player on the specified board that is a clone of the specified
-     * player.
+     * Creates a player on the specified board that is a clone of the specified player.
      */
     public Player(Board board, Player player) {
         this._board = board;
         this.index = player.index;
-        this._name = player._name;
         this._nwalls = player._nwalls;
         this._orientation = player._orientation;
         this._position = player._position;
     }
 
-    public static Position getInitialPosition(Board board, Orientation o) {
+    /**
+     * Gets the initial player position on this board
+     */
+    private Position getInitialPosition() {
         int x = Board.SIZE / 2;
         int y = Board.SIZE / 2;
-        switch (o) {
+        switch (_orientation) {
         case NORTH:
             return new Position(x, Board.SIZE - 1);
         case EAST:
@@ -95,17 +86,23 @@ public class Player {
         return _orientation;
     }
 
-    /** Returns the board this player participates in. */
+    /**
+     * Returns the board this player participates in.
+     */
     public Board getBoard() {
         return _board;
     }
 
-    /** Returns the number of walls this player owns. */
+    /**
+     * Returns the number of walls this player owns.
+     */
     public int getWallCount() {
         return _nwalls;
     }
 
-    /** Takes a wall from this player. */
+    /**
+     * Takes a wall from this player.
+     */
     public void takeWall() {
         if (_nwalls == 0) {
             throw new IllegalStateException("Player has no walls left.");
@@ -113,12 +110,16 @@ public class Player {
         _nwalls--;
     }
 
-    /** Gives a wall to this player. */
+    /**
+     * Gives a wall to this player.
+     */
     public void giveWall() {
         _nwalls++;
     }
 
-    /** Returns whether the player wins if it reaches the specified position. */
+    /**
+     * Returns whether the player wins if it reaches the specified position.
+     */
     public boolean isGoal(Position p) {
         switch (_orientation) {
         case NORTH:
@@ -134,27 +135,37 @@ public class Player {
         }
     }
 
-    /** Returns whether this player has won. */
+    /**
+     * Returns whether this player has won.
+     */
     public boolean isWinner() {
         return isGoal(getPosition());
     }
 
-    /** Returns whether it's this player's turn. */
+    /**
+     * Returns whether it's this player's turn.
+     */
     public boolean isTurn() {
         return _board.getTurn() == this;
     }
 
-    /** Returns the player's current position. */
+    /**
+     * Returns the player's current position.
+     */
     public Position getPosition() {
         return _position;
     }
 
-    /** Returns this player's color. */
+    /**
+     * Returns this player's color.
+     */
     public Color getColor() {
         return COLOR[index];
     }
 
-    /** Sets the player's position. */
+    /**
+     * Sets the player's position.
+     */
     public void setPosition(Position position) {
         this._position = position;
     }
@@ -231,20 +242,9 @@ public class Player {
         return legal;
     }
 
-    /** Returns this player's name. */
-    public String getName() {
-        return _name;
-    }
-
-    /** Sets this player's name. */
-    public void setName(String name) {
-        this._name = name;
-    }
-
-    /** Returns this player's name. */
     @Override
     public String toString() {
-        return getName();
+        return "Player " + index;
     }
 
 }

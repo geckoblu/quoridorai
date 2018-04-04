@@ -5,6 +5,7 @@ import java.util.List;
 
 import martijn.quoridor.model.Board;
 import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Move;
 
 /**
@@ -19,17 +20,17 @@ public abstract class Controller implements GameListener {
 
     private boolean _paused = false;
 
-    Board _board;
+    private final GameModel _gameModel;
 
     /** Creates a new Controller. */
-    public Controller(Board board) {
+    public Controller(GameModel gameModel) {
         _controlling = new LinkedList<Integer>();
-        _board = board;
-        _board.addBoardListener(this);
+        _gameModel = gameModel;
+        _gameModel.addGameListener(this);
     }
 
     Board getBoard() {
-        return _board;
+        return _gameModel.getBoard();
     }
 
     /**
@@ -60,14 +61,8 @@ public abstract class Controller implements GameListener {
         return _paused;
     }
 
-    @Override
-    public void moveExecuted() {
-        stopExpecting();
-        wake();
-    }
-
-    @Override
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         stopExpecting();
         wake();
     }
@@ -124,7 +119,7 @@ public abstract class Controller implements GameListener {
 
     protected void move(Move move) {
         _expecting = false;
-        getBoard().move(move);
+        _gameModel.move(move);
     }
 
     /** Returns whether the controller is human. */

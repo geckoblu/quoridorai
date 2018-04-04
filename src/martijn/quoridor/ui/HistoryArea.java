@@ -75,15 +75,8 @@ public class HistoryArea extends JTextArea implements GameListener {
         }
     }
 
-    @Override
-    // BoardListener
-    public void moveExecuted() {
-        update();
-    }
-
-    @Override
-    // BoardListener
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         update();
     }
 

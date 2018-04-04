@@ -359,7 +359,7 @@ public class BoardCanvas extends JPanel implements GameListener {
     }
 
     public void applyShadow() {
-        _gameModel.getBoard().move(_shadow);
+        _gameModel.move(_shadow);
         setShadow(null);
     }
 
@@ -374,17 +374,8 @@ public class BoardCanvas extends JPanel implements GameListener {
         return _pointOfView;
     }
 
-    /**
-     * BoardListener
-     */
-    @Override
-    public void moveExecuted() {
-        setShadow(null);
-        repaint();
-    }
-
-    @Override
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         setShadow(null);
         repaint();
     }

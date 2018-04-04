@@ -1,8 +1,5 @@
 package martijn.quoridor.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import martijn.quoridor.ui.Controller;
 import martijn.quoridor.ui.HumanController;
 
@@ -11,46 +8,21 @@ import martijn.quoridor.ui.HumanController;
  */
 public class Setup {
 
-    private final Board _board;
     private Controller[] _controllers;
     private final HumanController _humanController;
 
-    private List<SetupListener> _listeners;
-
-    public Setup(Board board, HumanController humanController, Controller[] controllers) {
+    public Setup(HumanController humanController, Controller[] controllers) {
         if (controllers.length != Board.NPLAYERS) {
             throw new IllegalArgumentException("Player number mismatch.");
         }
 
-        _board = board;
-        _board.setSetup(this);
-
         _humanController = humanController;
 
         _controllers = controllers;
-        _listeners = new LinkedList<SetupListener>();
 
         // Activate controllers.
         for (int i = 0; i < controllers.length; i++) {
             controllers[i].startControlling(i);
-        }
-    }
-
-    public Board getBoard() {
-        return _board;
-    }
-
-    public void addSetupListener(SetupListener l) {
-        _listeners.add(l);
-    }
-
-    public void removeSetupListener(SetupListener l) {
-        _listeners.remove(l);
-    }
-
-    protected void fireSetupChanged(int player) {
-        for (SetupListener l : _listeners) {
-            l.setupChanged(player);
         }
     }
 
@@ -67,7 +39,6 @@ public class Setup {
             _controllers[player.index].stopControlling(player.index);
             _controllers[player.index] = controller;
             controller.startControlling(player.index);
-            fireSetupChanged(player.index);
         }
     }
 

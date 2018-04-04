@@ -40,13 +40,8 @@ public class SaveAction extends AbstractAction implements GameListener {
         qgfutils.save(_gameModel.getHistory());
     }
 
-    @Override
-    public void moveExecuted() {
-        update();
-    }
-
-    @Override
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         update();
     }
 

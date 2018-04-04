@@ -3,8 +3,6 @@ package martijn.quoridor.ui;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
@@ -16,12 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
-import martijn.quoridor.brains.Brain;
-import martijn.quoridor.brains.BrainFactory;
-import martijn.quoridor.brains.DefaultBrainFactory;
 import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.PointOfView;
-import martijn.quoridor.model.Setup;
 import martijn.quoridor.ui.actions.RedoAction;
 import martijn.quoridor.ui.actions.RedoAllAction;
 import martijn.quoridor.ui.actions.UndoAction;
@@ -30,16 +24,11 @@ import martijn.quoridor.ui.actions.UndoAllAction;
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel {
 
-    private GameModel _gameModel;
+    private final GameModel _gameModel;
 
-    private BoardCanvas _boardCanvas;
-
-    private Controller[] _controllers;
-
-    private final Setup _setup;
+    private final BoardCanvas _boardCanvas;
     private final GameStatus _gamestatusPanel;
-
-    private HistoryArea _historyArea;
+    private final HistoryArea _historyArea;
 
     public GamePanel(GameModel gameModel) {
 
@@ -53,10 +42,9 @@ public class GamePanel extends JPanel {
             }
         });
 
-        _controllers = getControllers();
-        _setup = new Setup(_gameModel.getBoard(), (HumanController) _controllers[0], new Controller[] {_controllers[0], _controllers[2]});
+        _gameModel.initControllers(_boardCanvas);
 
-        _gamestatusPanel = new GameStatus(_setup, _controllers);
+        _gamestatusPanel = new GameStatus(_gameModel);
 
         _historyArea = new HistoryArea(_gameModel);
 
@@ -64,22 +52,12 @@ public class GamePanel extends JPanel {
 
         setKeyBindings();
 
-        new SoundPlayer(_gameModel, _setup);
+        new SoundPlayer(_gameModel);
+
+        _gameModel.newGame();
     }
 
-    private Controller[] getControllers() {
-        BrainFactory factory = new DefaultBrainFactory();
 
-        List<Brain> brains = new ArrayList<Brain>();
-        factory.addBrains(brains);
-
-        Controller[] controllers = new Controller[brains.size() + 1];
-        controllers[0] = new HumanController(_gameModel.getBoard(), _boardCanvas);
-        for (int i = 0; i < brains.size(); i++) {
-            controllers[i + 1] = new BrainController(_gameModel.getBoard(), brains.get(i));
-        }
-        return controllers;
-    }
 
     private void initUI() {
         setLayout(new BorderLayout());

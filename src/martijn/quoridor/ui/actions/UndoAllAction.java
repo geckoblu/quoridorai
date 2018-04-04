@@ -39,13 +39,8 @@ public class UndoAllAction extends AbstractAction implements GameListener {
         _gameModel.undoAll();
     }
 
-    @Override
-    public void moveExecuted() {
-        update();
-    }
-
-    @Override
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         update();
     }
 

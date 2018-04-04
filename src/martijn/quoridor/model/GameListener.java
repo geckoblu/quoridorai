@@ -1,20 +1,15 @@
 package martijn.quoridor.model;
 
 /**
- * A BoardListener registered on a Board is notified of any state changes the
- * Board goes through.
+ * A GameListener registered on a Game is notified of any state changes
+ * the Game goes through.
  */
 public interface GameListener {
 
     /**
-     * Notification that a move (or more) has been executed and the state has
-     * been changed.
+     * Notification that a move (or more) has been executed
+     * and the state has been changed.
      */
-    void moveExecuted();
-
-    /**
-     * Notification that a new game has started.
-     */
-    void newGame();
+    void boardChanged();
 
 }

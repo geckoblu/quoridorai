@@ -34,13 +34,8 @@ public class NewGameAction extends AbstractAction implements GameListener {
         Config.lastLoadFile(null);
     }
 
-    @Override
-    public void moveExecuted() {
-        update();
-    }
-
-    @Override
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         update();
     }
 

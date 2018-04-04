@@ -7,13 +7,10 @@ import martijn.quoridor.Config;
 import martijn.quoridor.model.GameListener;
 import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Player;
-import martijn.quoridor.model.Setup;
 
 public class SoundPlayer implements GameListener {
 
     private GameModel _gameModel;
-
-    private Setup _setup;
 
     /** The audio clip for executing a move. */
     private AudioClip _stone;
@@ -24,9 +21,8 @@ public class SoundPlayer implements GameListener {
     /** The audio clip for losing the game. */
     private AudioClip _yahooSad;
 
-    public SoundPlayer(GameModel gameModel, Setup setup) {
+    public SoundPlayer(GameModel gameModel) {
         _gameModel = gameModel;
-        _setup = setup;
         gameModel.addGameListener(this);
 
         // Load audio.
@@ -35,8 +31,12 @@ public class SoundPlayer implements GameListener {
         _yahooSad = Applet.newAudioClip(getClass().getResource("/sounds/yahoo2.au"));
     }
 
-    @Override
-    public void moveExecuted() {
+    @Override // BoardListener
+    public void boardChanged() {
+        playSound();
+    }
+
+    private void playSound() {
 
         if (!Config.playSounds()) {
             return;
@@ -49,13 +49,13 @@ public class SoundPlayer implements GameListener {
             // Determine winner.
             Player winner = _gameModel.getWinner();
 
-            if (_setup.getController(winner).isHuman()) {
+            if (_gameModel.getController(winner).isHuman()) {
                 // Maybe we need to play the sad yahoo.
                 for (Player p : _gameModel.getPlayers()) {
                     if (p == winner) {
                         continue;
                     }
-                    if (!_setup.getController(p).isHuman()) {
+                    if (!_gameModel.getController(p).isHuman()) {
                         // We've found a non-human opponent.
                         yay = _yahooSad;
                         break;
@@ -64,13 +64,6 @@ public class SoundPlayer implements GameListener {
             }
 
             yay.play();
-        }
-    }
-
-    @Override
-    public void newGame() {
-        if (Config.playSounds()) {
-            _stone.play();
         }
     }
 

@@ -8,6 +8,7 @@ import martijn.quoridor.Core;
 import martijn.quoridor.brains.Brain;
 //CHECKSTYLE.OFF: UnusedImports - This import is added by Eclipse for the JavaDoc of _controllerMove
 import martijn.quoridor.model.Board;
+import martijn.quoridor.model.GameModel;
 //CHECKSTYLE.ON: UnusedImports
 import martijn.quoridor.model.Move;
 
@@ -26,12 +27,12 @@ public class BrainController extends Controller {
 
     private long _minimumThinkTime;
 
-    public BrainController(Board board, Brain brain) {
-        this(board, brain, 500);
+    public BrainController(GameModel gameModel, Brain brain) {
+        this(gameModel, brain, 500);
     }
 
-    private BrainController(Board board, Brain brain, long minimumThinkTime) {
-        super(board);
+    private BrainController(GameModel gameModel, Brain brain, long minimumThinkTime) {
+        super(gameModel);
         this._brain = brain;
         this._minimumThinkTime = minimumThinkTime;
     }

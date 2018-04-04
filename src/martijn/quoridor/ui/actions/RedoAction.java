@@ -10,10 +10,9 @@ import javax.swing.ImageIcon;
 import martijn.quoridor.I18N;
 import martijn.quoridor.model.GameListener;
 import martijn.quoridor.model.GameModel;
-import martijn.quoridor.model.SetupListener;
 
 @SuppressWarnings("serial")
-public class RedoAction extends AbstractAction implements GameListener, SetupListener {
+public class RedoAction extends AbstractAction implements GameListener {
 
     private final GameModel _gameModel;
 
@@ -40,23 +39,13 @@ public class RedoAction extends AbstractAction implements GameListener, SetupLis
         _gameModel.redo();
     }
 
-    @Override
-    public void moveExecuted() {
-        update();
-    }
-
-    @Override
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         update();
     }
 
     private void update() {
         setEnabled(_gameModel.canRedo());
-    }
-
-    @Override
-    public void setupChanged(int player) {
-        update();
     }
 
 }

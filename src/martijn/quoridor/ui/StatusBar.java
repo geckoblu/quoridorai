@@ -20,6 +20,7 @@ public final class StatusBar extends JPanel implements GameListener {
     private final GameModel _gameModel;
 
     public StatusBar(GameModel gameModel) {
+
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.setBorder(BorderFactory.createEtchedBorder());
 
@@ -32,6 +33,7 @@ public final class StatusBar extends JPanel implements GameListener {
 
         _statusLabel = new JLabel(" ");
         this.add(_statusLabel);
+
     }
 
     public void setPlayerToMove(Player player) {
@@ -63,7 +65,7 @@ public final class StatusBar extends JPanel implements GameListener {
             this.setWinner(activePlayer);
         } else {
 
-            Controller controller = _gameModel.getBoard()._setup.getController(activePlayer);
+            Controller controller = _gameModel.getController(activePlayer);
             if (controller.isHuman() || controller.isPaused()) {
                 this.setPlayerToMove(activePlayer);
             } else {
@@ -72,13 +74,8 @@ public final class StatusBar extends JPanel implements GameListener {
         }
     }
 
-    @Override
-    public void moveExecuted() {
-        update();
-    }
-
-    @Override
-    public void newGame() {
+    @Override // BoardListener
+    public void boardChanged() {
         update();
     }
 

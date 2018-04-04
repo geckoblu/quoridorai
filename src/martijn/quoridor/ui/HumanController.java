@@ -11,6 +11,7 @@ import java.util.List;
 
 import martijn.quoridor.I18N;
 import martijn.quoridor.model.Board;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Jump;
 import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Position;
@@ -25,8 +26,8 @@ public class HumanController extends Controller {
 
     private BoardCanvas _boardCanvas;
 
-    public HumanController(Board board, BoardCanvas boardCanvas) {
-        super(board);
+    public HumanController(GameModel gameModel, BoardCanvas boardCanvas) {
+        super(gameModel);
         _boardCanvas = boardCanvas;
         _hoverListener = new HoverListener();
         _clickListener = new ClickListener();
