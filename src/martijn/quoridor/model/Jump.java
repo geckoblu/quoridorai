@@ -80,7 +80,7 @@ public class Jump implements Move {
 
     @Override
     public String notation() {
-        switch (Config.notation()) {
+        switch (Config.getNotation()) {
         case LAMEK:
             return "" + (char) ('a' + _newPosition.getX()) + (char) ('1' + _newPosition.getY());
         case GLENDENNING:

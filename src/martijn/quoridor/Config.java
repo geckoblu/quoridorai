@@ -20,15 +20,11 @@ public final class Config {
      */
     private static final String NOTATION = "NOTATION";
     private static final String SHOWCOORDINATES = "SHOWCOORDINATES";
+    private static final String LASTLOADPATH = "LAST_LOAD_PATH";
     private static final String PLAYSOUNDS = "PLAYSOUNDS";
     private static final String BRAIN = "BRAIN";
 
-    /*
-     * Cached properties
-     */
-    private static final String CACHE_LASTLOADPATH = "LAST_LOAD_PATH";
-
-    /*
+    /**
      * Singleton
      */
     private static final Config THIS = new Config();
@@ -37,7 +33,6 @@ public final class Config {
      * Instance variables
      */
     private final Properties _prop = new Properties();
-    private final Properties _cache = new Properties();
     private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
 
     private File _lastLoadFile = null;
@@ -65,26 +60,6 @@ public final class Config {
 
         Core.LOGGER.log(Level.CONFIG, "Loading properties file: {0}", configFile);
 
-        File cacheFile = new File(getCacheFileName());
-        if (cacheFile.exists()) {
-            InputStream input = null;
-            try {
-                input = new FileInputStream(cacheFile);
-                _cache.load(input);
-            } catch (IOException ex) {
-                Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
-            } finally {
-                if (input != null) {
-                    try {
-                        input.close();
-                    } catch (IOException ex) {
-                        Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
-                    }
-                }
-            }
-        }
-
-        Core.LOGGER.log(Level.CONFIG, "Loading cache file: {0}", cacheFile);
     }
 
     public static void save() {
@@ -101,37 +76,6 @@ public final class Config {
             output = new FileOutputStream(configFile);
 
             THIS._prop.store(output, null);
-
-        } catch (IOException ex) {
-            Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
-        } finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (IOException ex) {
-                    Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
-                }
-            }
-        }
-
-        saveCache();
-
-    }
-
-    private static void saveCache() {
-        File cacheHome = new File(getCacheHome());
-        if (!cacheHome.exists()) {
-            cacheHome.mkdirs();
-        }
-
-        File cacheFile = new File(getCacheFileName());
-
-        OutputStream output = null;
-
-        try {
-            output = new FileOutputStream(cacheFile);
-
-            THIS._cache.store(output, null);
 
         } catch (IOException ex) {
             Core.LOGGER.log(Level.SEVERE, "Some exception occurs", ex);
@@ -178,38 +122,7 @@ public final class Config {
         return configHome;
     }
 
-    private static String getCacheFileName() {
-        String cacheFileName = getCacheHome() + File.separator + "quoridorai.properties";
-
-        return cacheFileName;
-    }
-
-    private static String getXdgCachegHome() {
-        Map<String, String> environment = System.getenv();
-
-        String xdgCacheHome = environment.get("XDG_CACHE_HOME");
-
-        if (xdgCacheHome == null || xdgCacheHome.trim().length() == 0) {
-
-            String home = environment.get("HOME");
-
-            if (home == null || home.trim().length() == 0) {
-                home = System.getProperty("user.home");
-            }
-
-            xdgCacheHome = home + File.separator + ".cache";
-        }
-
-        return xdgCacheHome;
-    }
-
-    private static String getCacheHome() {
-        String cacheHome = getXdgCachegHome() + File.separator + "quoridorai";
-
-        return cacheHome;
-    }
-
-    public static boolean showCoordinates() {
+    public static boolean getShowCoordinates() {
 
         boolean showCoordinates = true; // default value
 
@@ -224,9 +137,9 @@ public final class Config {
         return showCoordinates;
     }
 
-    public static void showCoordinates(boolean showCoordinates) {
+    public static void setShowCoordinates(boolean showCoordinates) {
 
-        boolean oldValue = showCoordinates();
+        boolean oldValue = getShowCoordinates();
 
         if (showCoordinates != oldValue) {
             THIS._prop.setProperty(SHOWCOORDINATES, Boolean.toString(showCoordinates));
@@ -235,7 +148,7 @@ public final class Config {
 
     }
 
-    public static boolean playSounds() {
+    public static boolean getPlaySounds() {
 
         boolean playSounds = true; // default value
 
@@ -250,9 +163,9 @@ public final class Config {
         return playSounds;
     }
 
-    public static void playSounds(boolean playSounds) {
+    public static void getPlaySounds(boolean playSounds) {
 
-        boolean oldValue = playSounds();
+        boolean oldValue = getPlaySounds();
 
         if (playSounds != oldValue) {
             THIS._prop.setProperty(PLAYSOUNDS, Boolean.toString(playSounds));
@@ -261,7 +174,7 @@ public final class Config {
 
     }
 
-    public static Notation notation() {
+    public static Notation getNotation() {
 
         Notation notation = Notation.LAMEK; // default value
 
@@ -276,9 +189,9 @@ public final class Config {
         return notation;
     }
 
-    public static void notation(Notation notation) {
+    public static void setNotation(Notation notation) {
 
-        Notation oldValue = notation();
+        Notation oldValue = getNotation();
 
         if (notation != oldValue) {
             THIS._prop.setProperty(NOTATION, notation.toString());
@@ -296,10 +209,10 @@ public final class Config {
             brainName = "SMARTBRAIN 2";
         }
 
-        String value = THIS._cache.getProperty(BRAIN + player);
+        String value = THIS._prop.getProperty(BRAIN + player);
 
         if (value == null) {
-            THIS._cache.setProperty(BRAIN + player, "" + brainName);
+            THIS._prop.setProperty(BRAIN + player, "" + brainName);
         } else {
             brainName = value;
         }
@@ -312,33 +225,29 @@ public final class Config {
         String oldValue = getBrain(player);
 
         if (brainName != oldValue) {
-            THIS._cache.setProperty(BRAIN + player, brainName);
+            THIS._prop.setProperty(BRAIN + player, brainName);
         }
 
     }
 
-    /**
-     * Cached properties
-     */
-
-    public static String lastLoadPath() {
-        return THIS._cache.getProperty(CACHE_LASTLOADPATH, ".");
+    public static String getLastLoadPath() {
+        return THIS._prop.getProperty(LASTLOADPATH, ".");
     }
 
-    public static void lastLoadPath(String lastLoadPath) {
-        THIS._cache.setProperty(CACHE_LASTLOADPATH, lastLoadPath);
+    public static void setLastLoadPath(String lastLoadPath) {
+        THIS._prop.setProperty(LASTLOADPATH, lastLoadPath);
         save();
     }
 
-    public static File lastLoadFile() {
+    public static File getLastLoadFile() {
         return THIS._lastLoadFile;
     }
 
-    public static void lastLoadFile(File lastLoadFile) {
+    public static void setLastLoadFile(File lastLoadFile) {
         THIS._lastLoadFile = lastLoadFile;
         if (lastLoadFile != null) {
             String lastLoadPath = lastLoadFile.getParent().toString();
-            lastLoadPath(lastLoadPath);
+            setLastLoadPath(lastLoadPath);
         }
     }
 

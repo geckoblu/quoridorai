@@ -38,7 +38,7 @@ public class SoundPlayer implements GameListener {
 
     private void playSound() {
 
-        if (!Config.playSounds()) {
+        if (!Config.getPlaySounds()) {
             return;
         }
 

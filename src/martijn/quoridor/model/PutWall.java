@@ -152,7 +152,7 @@ public class PutWall implements Move {
 
     @Override
     public String notation() {
-        switch (Config.notation()) {
+        switch (Config.getNotation()) {
         case LAMEK:
             return "" + (char) ('a' + _position.getX()) + (char) ('1' + _position.getY()) + _wall.notation();
         case GLENDENNING:

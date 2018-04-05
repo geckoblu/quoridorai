@@ -43,11 +43,11 @@ public class QgfUtils {
         if (fileToLoad == null) {
 
             File lastLoadPath;
-            File lastLoadFile = Config.lastLoadFile();
+            File lastLoadFile = Config.getLastLoadFile();
             if (lastLoadFile != null) {
                 lastLoadPath = lastLoadFile;
             } else {
-                lastLoadPath = new File(Config.lastLoadPath());
+                lastLoadPath = new File(Config.getLastLoadPath());
             }
 
             JFileChooser chooser = new JFileChooser(lastLoadPath);
@@ -60,7 +60,7 @@ public class QgfUtils {
             int returnVal = chooser.showOpenDialog(_parent);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 fileToLoad = chooser.getSelectedFile();
-                Config.lastLoadFile(fileToLoad);
+                Config.setLastLoadFile(fileToLoad);
             } else {
                 return null;
             }
@@ -197,11 +197,11 @@ public class QgfUtils {
         if (fileToSave == null) {
 
             File lastLoadPath;
-            File lastLoadFile = Config.lastLoadFile();
+            File lastLoadFile = Config.getLastLoadFile();
             if (lastLoadFile != null) {
                 lastLoadPath = lastLoadFile;
             } else {
-                lastLoadPath = new File(Config.lastLoadPath());
+                lastLoadPath = new File(Config.getLastLoadPath());
             }
 
             JFileChooser chooser = new JFileChooser(lastLoadPath);
@@ -217,7 +217,7 @@ public class QgfUtils {
 
                 filename = removeExtension(filename) + ".txt";
                 fileToSave = new File(filename);
-                Config.lastLoadFile(fileToSave);
+                Config.setLastLoadFile(fileToSave);
             } else {
                 return;
             }
@@ -241,7 +241,7 @@ public class QgfUtils {
             writenl("# Player1: ");
             writenl("# Player2: ");
 
-            writenl("# Notation: " + Config.notation());
+            writenl("# Notation: " + Config.getNotation());
 
             int i = 0;
             while (moves.hasNext()) {

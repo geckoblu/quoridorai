@@ -26,7 +26,7 @@ public class PropertiesPanel extends JPanel {
     public PropertiesPanel() {
         initUI();
 
-        switch (Config.notation()) {
+        switch (Config.getNotation()) {
         case LAMEK:
             _lamekNotation.setSelected(true);
             break;
@@ -40,29 +40,29 @@ public class PropertiesPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (_lamekNotation.isSelected()) {
-                    Config.notation(Notation.LAMEK);
+                    Config.setNotation(Notation.LAMEK);
                 }
                 if (_glendenningNotation.isSelected()) {
-                    Config.notation(Notation.GLENDENNING);
+                    Config.setNotation(Notation.GLENDENNING);
                 }
             }
         };
         _lamekNotation.addActionListener(notationActionListener);
         _glendenningNotation.addActionListener(notationActionListener);
 
-        _showCoordinates.setSelected(Config.showCoordinates());
+        _showCoordinates.setSelected(Config.getShowCoordinates());
         _showCoordinates.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Config.showCoordinates(_showCoordinates.isSelected());
+                Config.setShowCoordinates(_showCoordinates.isSelected());
             }
         });
 
-        _playSounds.setSelected(Config.playSounds());
+        _playSounds.setSelected(Config.getPlaySounds());
         _playSounds.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Config.playSounds(_playSounds.isSelected());
+                Config.getPlaySounds(_playSounds.isSelected());
             }
         });
     }

@@ -31,7 +31,7 @@ public class NewGameAction extends AbstractAction implements GameListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         _gameModel.newGame();
-        Config.lastLoadFile(null);
+        Config.setLastLoadFile(null);
     }
 
     @Override // BoardListener

@@ -71,7 +71,7 @@ public class BoardCanvas extends JPanel implements GameListener {
      * Converts from board coordinates to pixel coordinates.
      */
     private double getX(int bx) {
-        double dim = Config.showCoordinates() ? 1 : 0.5;
+        double dim = Config.getShowCoordinates() ? 1 : 0.5;
 
         double delta = (getWidth() - _boardWidth) / 2;
         double x = (bx + dim) * _cellSize;
@@ -90,7 +90,7 @@ public class BoardCanvas extends JPanel implements GameListener {
      * Converts from board coordinates to pixel coordinates.
      */
     private double getY(int by) {
-        double dim = Config.showCoordinates() ? 1 : 0.5;
+        double dim = Config.getShowCoordinates() ? 1 : 0.5;
 
         double delta = (getHeight() - _boardHeight) / 2;
         double y = ((by + dim) * _cellSize);
@@ -113,7 +113,7 @@ public class BoardCanvas extends JPanel implements GameListener {
             return null;
         }
 
-        double dim = Config.showCoordinates() ? 1 : 0.5;
+        double dim = Config.getShowCoordinates() ? 1 : 0.5;
 
         double deltaX = (getWidth() - _boardWidth) / 2;
         double x1 = (mouseLocation.x - deltaX) / _cellSize - dim;
@@ -145,7 +145,7 @@ public class BoardCanvas extends JPanel implements GameListener {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-        int dim = Config.showCoordinates() ? 2 : 1;
+        int dim = Config.getShowCoordinates() ? 2 : 1;
 
         double bWidth = (Board.SIZE + dim) * CELL_SIZE;
         double bHeight = (Board.SIZE + dim) * CELL_SIZE;
@@ -245,7 +245,7 @@ public class BoardCanvas extends JPanel implements GameListener {
 
     private void drawCoordinates(Graphics2D g2) {
 
-        if (!Config.showCoordinates()) {
+        if (!Config.getShowCoordinates()) {
             return;
         }
 
@@ -256,7 +256,7 @@ public class BoardCanvas extends JPanel implements GameListener {
         // Draw X coordinates
         for (int bx = 0; bx < Board.SIZE; bx++) {
             String coord;
-            switch (Config.notation()) {
+            switch (Config.getNotation()) {
             case LAMEK:
             case GLENDENNING:
                 coord = Character.toString((char) ('a' + bx));
@@ -280,7 +280,7 @@ public class BoardCanvas extends JPanel implements GameListener {
         // Draw Y coordinates
         for (int by = 0; by < Board.SIZE; by++) {
             String coord;
-            switch (Config.notation()) {
+            switch (Config.getNotation()) {
             case LAMEK:
                 coord = Character.toString((char) ('1' + by));
                 break;
