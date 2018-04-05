@@ -24,11 +24,6 @@ public class SoundPlayer implements GameListener {
     public SoundPlayer(GameModel gameModel) {
         _gameModel = gameModel;
         gameModel.addGameListener(this);
-
-        // Load audio.
-        _stone = Applet.newAudioClip(getClass().getResource("/sounds/stone.wav"));
-        _yahoo = Applet.newAudioClip(getClass().getResource("/sounds/yahoo1.au"));
-        _yahooSad = Applet.newAudioClip(getClass().getResource("/sounds/yahoo2.au"));
     }
 
     @Override // BoardListener
@@ -42,9 +37,10 @@ public class SoundPlayer implements GameListener {
             return;
         }
 
-        _stone.play();
+        getStone().play();
         if (_gameModel.isGameOver()) {
-            AudioClip yay = _yahoo;
+
+            AudioClip yay = getYahoo();
 
             // Determine winner.
             Player winner = _gameModel.getWinner();
@@ -57,7 +53,7 @@ public class SoundPlayer implements GameListener {
                     }
                     if (!_gameModel.getController(p).isHuman()) {
                         // We've found a non-human opponent.
-                        yay = _yahooSad;
+                        yay = getYahooSad();
                         break;
                     }
                 }
@@ -65,6 +61,27 @@ public class SoundPlayer implements GameListener {
 
             yay.play();
         }
+    }
+
+    private AudioClip getStone() {
+        if (_stone == null) {
+            _stone = Applet.newAudioClip(getClass().getResource("/sounds/stone.wav"));
+        }
+        return _stone;
+    }
+
+    private AudioClip getYahooSad() {
+        if (_yahooSad == null) {
+            _yahooSad = Applet.newAudioClip(getClass().getResource("/sounds/yahoo2.au"));
+        }
+        return _yahooSad;
+    }
+
+    private AudioClip getYahoo() {
+        if (_yahoo == null) {
+            _yahoo = Applet.newAudioClip(getClass().getResource("/sounds/yahoo1.au"));
+        }
+        return _yahoo;
     }
 
 }
