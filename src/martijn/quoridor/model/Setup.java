@@ -1,7 +1,5 @@
 package martijn.quoridor.model;
 
-import martijn.quoridor.ui.Controller;
-import martijn.quoridor.ui.HumanController;
 
 /**
  * Setup describes a complete game setup: board and controllers.

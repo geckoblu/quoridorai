@@ -21,19 +21,17 @@ public final class Config {
     private static final String NOTATION = "NOTATION";
     private static final String SHOWCOORDINATES = "SHOWCOORDINATES";
     private static final String PLAYSOUNDS = "PLAYSOUNDS";
-
+    private static final String BRAIN = "BRAIN";
 
     /*
      * Cached properties
      */
     private static final String CACHE_LASTLOADPATH = "LAST_LOAD_PATH";
 
-
     /*
      * Singleton
      */
     private static final Config THIS = new Config();
-
 
     /*
      * Instance variables
@@ -43,7 +41,6 @@ public final class Config {
     private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
 
     private File _lastLoadFile = null;
-
 
     private Config() {
         File configFile = new File(getConfigFileName());
@@ -290,6 +287,36 @@ public final class Config {
 
     }
 
+    public static String getBrain(int player) {
+
+        String brainName; // default value
+        if (player == 0) {
+            brainName = "HUMAN";
+        } else {
+            brainName = "SMARTBRAIN 2";
+        }
+
+        String value = THIS._cache.getProperty(BRAIN + player);
+
+        if (value == null) {
+            THIS._cache.setProperty(BRAIN + player, "" + brainName);
+        } else {
+            brainName = value;
+        }
+
+        return brainName;
+    }
+
+    public static void setBrain(int player, String brainName) {
+
+        String oldValue = getBrain(player);
+
+        if (brainName != oldValue) {
+            THIS._cache.setProperty(BRAIN + player, brainName);
+        }
+
+    }
+
     /**
      * Cached properties
      */
@@ -302,7 +329,6 @@ public final class Config {
         THIS._cache.setProperty(CACHE_LASTLOADPATH, lastLoadPath);
         save();
     }
-
 
     public static File lastLoadFile() {
         return THIS._lastLoadFile;

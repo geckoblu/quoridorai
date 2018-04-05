@@ -1,17 +1,19 @@
 package martijn.quoridor.model;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 
+import javax.swing.JOptionPane;
+
+import martijn.quoridor.Config;
+import martijn.quoridor.Core;
+import martijn.quoridor.I18N;
 import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
 import martijn.quoridor.brains.DefaultBrainFactory;
 import martijn.quoridor.ui.BoardCanvas;
-import martijn.quoridor.ui.BrainController;
-import martijn.quoridor.ui.Controller;
-import martijn.quoridor.ui.HumanController;
 
 public final class GameModel {
 
@@ -135,25 +137,28 @@ public final class GameModel {
         _setupListeners.remove(l);
     }
 
-    protected void fireSetupChanged(int player) {
+    protected void fireSetupChanged() {
         for (SetupListener l : _setupListeners) {
-            l.setupChanged(player);
+            l.setupChanged();
         }
     }
 
     public void initControllers(BoardCanvas boardCanvas) {
         BrainFactory factory = new DefaultBrainFactory();
+        List<Brain> brains = factory.getBrains();
 
-        List<Brain> brains = new ArrayList<Brain>();
-        factory.addBrains(brains);
+        HumanController humanController = new HumanController(this, boardCanvas);
 
         _controllers = new Controller[brains.size() + 1];
-        _controllers[0] = new HumanController(this, boardCanvas);
+        _controllers[0] = humanController;
         for (int i = 0; i < brains.size(); i++) {
             _controllers[i + 1] = new BrainController(this, brains.get(i));
         }
 
-        _setup = new Setup((HumanController) _controllers[0], new Controller[] {_controllers[0], _controllers[1]});
+        Controller controller0 =  getController(Config.getBrain(0));
+        Controller controller1 =  getController(Config.getBrain(1));
+
+        _setup = new Setup(humanController, new Controller[] {controller0, controller1});
     }
 
     public Controller[] getControllers() {
@@ -166,7 +171,26 @@ public final class GameModel {
 
     public void setController(Player player, Controller controller) {
         _setup.setController(player, controller);
-        fireSetupChanged(player.index);
+        Config.setBrain(player.index, controller.getName());
+        fireSetupChanged();
+    }
+
+    private Controller getController(String brainName) {
+        for (Controller controller : _controllers) {
+            if (controller.getName().equals(brainName)) {
+                return controller;
+            }
+        }
+
+        // Something went wrong
+        Controller fallback = _controllers[0];
+        String title = I18N.tr("WRONG_BRAIN_TITLE");
+        String message = I18N.tr("WRONG_BRAIN_MESSAGE");
+        message = message.replace("$1", brainName);
+        message = message.replace("$2", fallback.getName());
+        Core.LOGGER.log(Level.SEVERE, message.replace('\n', ' '));
+        JOptionPane.showMessageDialog(Core.getRootComponent(), message, title, JOptionPane.ERROR_MESSAGE);
+        return fallback;
     }
 
 }

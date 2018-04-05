@@ -1,4 +1,4 @@
-package martijn.quoridor.ui;
+package martijn.quoridor.model;
 
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -10,13 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import martijn.quoridor.I18N;
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.GameModel;
-import martijn.quoridor.model.Jump;
-import martijn.quoridor.model.Move;
-import martijn.quoridor.model.Position;
-import martijn.quoridor.model.PutWall;
-import martijn.quoridor.model.Wall;
+import martijn.quoridor.ui.BoardCanvas;
 
 public class HumanController extends Controller {
 
@@ -170,6 +164,11 @@ public class HumanController extends Controller {
     @Override
     public String toString() {
         return I18N.tr("HUMAN");
+    }
+
+    @Override
+    public String getName() {
+        return "HUMAN";
     }
 
 }

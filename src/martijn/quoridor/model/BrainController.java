@@ -1,4 +1,4 @@
-package martijn.quoridor.ui;
+package martijn.quoridor.model;
 
 import java.util.logging.Level;
 
@@ -7,10 +7,7 @@ import javax.swing.JOptionPane;
 import martijn.quoridor.Core;
 import martijn.quoridor.brains.Brain;
 //CHECKSTYLE.OFF: UnusedImports - This import is added by Eclipse for the JavaDoc of _controllerMove
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.GameModel;
 //CHECKSTYLE.ON: UnusedImports
-import martijn.quoridor.model.Move;
 
 public class BrainController extends Controller {
 
@@ -131,6 +128,11 @@ public class BrainController extends Controller {
     @Override
     public String toString() {
         return _brain.getName();
+    }
+
+    @Override
+    public String getName() {
+        return _brain.getName().toUpperCase();
     }
 
 }

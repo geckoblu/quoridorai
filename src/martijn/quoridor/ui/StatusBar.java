@@ -7,6 +7,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import martijn.quoridor.model.Controller;
 import martijn.quoridor.model.GameListener;
 import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Player;

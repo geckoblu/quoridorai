@@ -8,11 +8,8 @@ import java.util.List;
 public interface BrainFactory {
 
     /**
-     * Creates and appends this factory's brains to the list.
-     *
-     * @param brains
-     *            the list to append the created brains to.
+     * Returns the list of brains.
      */
-    void addBrains(List<Brain> brains);
+    List<Brain> getBrains();
 
 }

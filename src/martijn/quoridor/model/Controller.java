@@ -1,12 +1,7 @@
-package martijn.quoridor.ui;
+package martijn.quoridor.model;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.GameListener;
-import martijn.quoridor.model.GameModel;
-import martijn.quoridor.model.Move;
 
 /**
  * A Controller controls a specific player.
@@ -102,6 +97,11 @@ public abstract class Controller implements GameListener {
         }
     }
 
+    protected void move(Move move) {
+        _expecting = false;
+        _gameModel.move(move);
+    }
+
     /**
      * Notification that it has become this controller's player's turn and that
      * the controller should make a move. The implementation should exit
@@ -117,12 +117,13 @@ public abstract class Controller implements GameListener {
      */
     protected abstract void moveCancelled();
 
-    protected void move(Move move) {
-        _expecting = false;
-        _gameModel.move(move);
-    }
-
     /** Returns whether the controller is human. */
     public abstract boolean isHuman();
+
+    /**
+     * The name of the brain this controller is controlling.
+     * Should be used as a key.
+     */
+    public abstract String getName();
 
 }

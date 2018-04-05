@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import martijn.quoridor.I18N;
+import martijn.quoridor.model.Controller;
 import martijn.quoridor.model.GameModel;
 
 @SuppressWarnings("serial")
