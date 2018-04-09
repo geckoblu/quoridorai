@@ -53,6 +53,11 @@ public class ApplicationFrame extends JFrame {
             public void windowClosing(WindowEvent e) {
                 close();
             }
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                _gameModel.newGame();
+            }
         });
     }
 
@@ -130,7 +135,6 @@ public class ApplicationFrame extends JFrame {
         viewMenu.setMnemonic(i18nMenu.mnemonic);
 
         JMenu povMenu = new JMenu(I18N.tr("POINT_OF_VIEW"));
-        //menuItem.setAction(new AboutAction(this));
         viewMenu.add(povMenu);
 
         ButtonGroup group = new ButtonGroup();

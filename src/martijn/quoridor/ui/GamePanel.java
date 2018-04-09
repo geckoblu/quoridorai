@@ -53,8 +53,6 @@ public class GamePanel extends JPanel {
         setKeyBindings();
 
         new SoundPlayer(_gameModel);
-
-        _gameModel.newGame();
     }
 
 
