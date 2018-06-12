@@ -39,7 +39,7 @@ public class AboutPanel extends JPanel {
         if (txt.equals("")) {
             txt = "WARNING: Could nof find about file. Check log.";
         } else {
-            URL url = getClass().getResource("/icons/quoridor.png");
+            URL url = getClass().getResource("/icons/quoridorai.png");
             txt = txt.replace("%SRC_ICON%", url.toString());
             txt = txt.replace("%VERSION%", ApplicationFrame.VERSION);
         }

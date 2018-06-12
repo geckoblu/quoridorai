@@ -35,7 +35,7 @@ import martijn.quoridor.ui.actions.SaveAction;
 @SuppressWarnings("serial")
 public class ApplicationFrame extends JFrame {
 
-    public static final String VERSION = "2.1";
+    public static final String VERSION = "2.1.1";
 
     private GameModel _gameModel;
     private GamePanel _gamePanel;
