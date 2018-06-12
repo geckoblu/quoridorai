@@ -1,33 +1,27 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.model;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class PositionSet {
 
-	private boolean[][] flags;
+    private boolean[][] _flags;
 
-	public PositionSet(Board board) {
-		this(board.getWidth(), board.getHeight());
-	}
+    public PositionSet(Board board) {
+        this(Board.SIZE, Board.SIZE);
+    }
 
-	public PositionSet(int width, int height) {
-		flags = new boolean[width][height];
-	}
+    public PositionSet(int width, int height) {
+        _flags = new boolean[width][height];
+    }
 
-	public void add(Position pos) {
-		flags[pos.getX()][pos.getY()] = true;
-	}
+    public void add(Position pos) {
+        _flags[pos.getX()][pos.getY()] = true;
+    }
 
-	public boolean contains(Position pos) {
-		return flags[pos.getX()][pos.getY()];
-	}
+    public boolean contains(Position pos) {
+        return _flags[pos.getX()][pos.getY()];
+    }
 
-	public void remove(Position pos) {
-		flags[pos.getX()][pos.getY()] = false;
-	}
+    public void remove(Position pos) {
+        _flags[pos.getX()][pos.getY()] = false;
+    }
 
 }

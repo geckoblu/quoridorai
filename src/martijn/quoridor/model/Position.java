@@ -1,88 +1,92 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
 import static java.lang.Math.abs;
 
-/**
- * @author Martijn van Steenbergen
- */
-public class Position implements Comparable {
+import java.util.Objects;
 
-	private int x;
+public class Position implements Comparable<Position> {
 
-	private int y;
+    private final int _x;
 
-	public Position(int x, int y) {
-		super();
-		this.x = x;
-		this.y = y;
-	}
+    private final int _y;
 
-	public int getX() {
-		return x;
-	}
+    public Position(int x, int y) {
+        super();
+        this._x = x;
+        this._y = y;
+    }
 
-	public int getY() {
-		return y;
-	}
+    public int getX() {
+        return _x;
+    }
 
-	public Position north() {
-		return new Position(x, y + 1);
-	}
+    public int getY() {
+        return _y;
+    }
 
-	public Position east() {
-		return new Position(x + 1, y);
-	}
+    public Position north() {
+        return new Position(_x, _y + 1);
+    }
 
-	public Position south() {
-		return new Position(x, y - 1);
-	}
+    public Position east() {
+        return new Position(_x + 1, _y);
+    }
 
-	public Position west() {
-		return new Position(x - 1, y);
-	}
+    public Position south() {
+        return new Position(_x, _y - 1);
+    }
 
-	public Position move(Orientation orientation) {
-		switch (orientation) {
-		case NORTH:
-			return north();
-		case EAST:
-			return east();
-		case SOUTH:
-			return south();
-		case WEST:
-			return west();
-		default:
-			throw new NullPointerException("orientation is null");
-		}
-	}
+    public Position west() {
+        return new Position(_x - 1, _y);
+    }
 
-	public boolean equals(Object o) {
-		Position that = (Position) o;
-		return this.x == that.x && this.y == that.y;
-	}
+    public Position move(Orientation orientation) {
+        switch (orientation) {
+        case NORTH:
+            return north();
+        case EAST:
+            return east();
+        case SOUTH:
+            return south();
+        case WEST:
+            return west();
+        default:
+            throw new NullPointerException("orientation is null");
+        }
+    }
 
-	public int compareTo(Object o) {
-		Position that = (Position) o;
-		if (this.x != that.x) {
-			return this.x - that.x;
-		} else {
-			return this.y - that.y;
-		}
-	}
+    @Override
+    public boolean equals(Object o) {
+        Position that = (Position) o;
+        return this._x == that._x && this._y == that._y;
+    }
 
-	public String toString() {
-		return "(" + x + ", " + y + ")";
-	}
+    @Override
+    public int compareTo(Position o) {
+        Position that = o;
+        if (this._x != that._x) {
+            return this._x - that._x;
+        } else {
+            return this._y - that._y;
+        }
+    }
 
-	public <E> E visit(E[][] matrix) {
-		return matrix[x][y];
-	}
+    @Override
+    public String toString() {
+        return "(" + _x + ", " + _y + ")";
+    }
 
-	public int manhattan(Position pos) {
-		return abs(pos.x - x) + abs(pos.y - y);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(_x, _y);
+    }
+
+    public <E> E visit(E[][] matrix) {
+        return matrix[_x][_y];
+    }
+
+    public int manhattan(Position pos) {
+        return abs(pos._x - _x) + abs(pos._y - _y);
+    }
 
 }

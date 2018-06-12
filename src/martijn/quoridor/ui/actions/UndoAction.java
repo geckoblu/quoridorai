@@ -1,77 +1,56 @@
-/*
- * Created on Aug 6, 2006 
- */
 package martijn.quoridor.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
-import martijn.quoridor.model.Move;
-import martijn.quoridor.ui.GameCard;
-import martijn.quoridor.ui.SetupListener;
+import martijn.quoridor.I18N;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 
-/**
- * @author Martijn van Steenbergen
- */
-public class UndoAction extends AbstractAction implements BoardListener,
-		SetupListener {
+@SuppressWarnings("serial")
+public class UndoAction extends AbstractAction implements GameListener {
 
-	private GameCard game;
+    private final GameModel _gameModel;
 
-	public UndoAction(GameCard game) {
-		super("Undo");
-		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_Z);
-		this.game = game;
-		update();
-		game.getBoard().addBoardListener(this);
-		game.getSetup().addSetupListener(this);
-	}
+    public UndoAction(GameModel gameModel) {
+        super();
 
-	public void actionPerformed(ActionEvent e) {
-		game.getBoard().undo(getUndoLevel());
-	}
+        I18N.Action action = I18N.getAction("UNDO");
+        // putValue(Action.NAME, action.name);
+        putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
+        putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
-	public int getUndoLevel() {
-		Board board = game.getBoard();
-		int number = 0;
-		int turn = board.getTurnIndex();
-		do {
-			if (number > board.getHistory().size()) {
-				return -1;
-			}
-			number++;
-			turn--;
-			if (turn < 0) {
-				turn += board.getPlayers().length;
-			}
-		} while (!game.getSetup().getController(turn).isHuman());
-		return number;
-	}
+        URL url = getClass().getResource("/icons/go-previous.png");
+        ImageIcon icon = new ImageIcon(url);
+        putValue(Action.LARGE_ICON_KEY, icon);
 
-	public void moveExecuted(Move move) {
-		update();
-	}
+        //putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke((char)KeyEvent.VK_LEFT));
+        putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('u'));
 
-	public void movesUndone(Move[] moves) {
-		update();
-	}
+        _gameModel = gameModel;
 
-	public void newGame() {
-		update();
-	}
+        update();
 
-	private void update() {
-		int n = getUndoLevel();
-		setEnabled(n >= 0 && n <= game.getBoard().getHistory().size());
-	}
+        _gameModel.addGameListener(this);
+    }
 
-	public void setupChanged(int player) {
-		update();
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        _gameModel.undo();
+    }
+
+    @Override // BoardListener
+    public void boardChanged() {
+        update();
+    }
+
+    private void update() {
+        setEnabled(_gameModel.canUndo());
+    }
 
 }

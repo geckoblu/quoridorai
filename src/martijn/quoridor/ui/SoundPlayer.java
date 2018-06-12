@@ -1,76 +1,87 @@
-/*
- * Created on Aug 31, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
 
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
-import martijn.quoridor.model.Move;
+import martijn.quoridor.Config;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
+import martijn.quoridor.model.Player;
 
-/**
- * @author Martijn van Steenbergen
- */
-public class SoundPlayer implements BoardListener {
+public class SoundPlayer implements GameListener {
 
-	private Board board;
+    private GameModel _gameModel;
 
-	private Setup setup;
+    /** The audio clip for executing a move. */
+    private AudioClip _stone;
 
-	/** The audio clip for executing a move. */
-	private AudioClip stone;
+    /** The audio clip for winning the game. */
+    private AudioClip _yahoo;
 
-	/** The audio clip for winning the game. */
-	private AudioClip yahoo;
+    /** The audio clip for losing the game. */
+    private AudioClip _yahooSad;
 
-	/** The audio clip for losing the game. */
-	private AudioClip yahooSad;
+    public SoundPlayer(GameModel gameModel) {
+        _gameModel = gameModel;
+        gameModel.addGameListener(this);
+    }
 
-	public SoundPlayer(Board board, Setup setup) {
-		this.board = board;
-		this.setup = setup;
-		board.addBoardListener(this);
+    @Override // BoardListener
+    public void boardChanged() {
+        playSound();
+    }
 
-		// Load audio.
-		stone = Applet.newAudioClip(getClass().getResource("stone.wav"));
-		yahoo = Applet.newAudioClip(getClass().getResource("yahoo1.au"));
-		yahooSad = Applet.newAudioClip(getClass().getResource("yahoo2.au"));
-	}
+    private void playSound() {
 
-	public void moveExecuted(Move move) {
-		stone.play();
-		if (board.isGameOver()) {
-			AudioClip yay = yahoo;
+        if (!Config.getPlaySounds()) {
+            return;
+        }
 
-			// Determine winner.
-			int winner = board.getWinner().getIndex();
+        getStone().play();
+        if (_gameModel.isGameOver()) {
 
-			if (setup.getController(winner).isHuman()) {
-				// Maybe we need to play the sad yahoo.
-				for (int i = 0; i < board.getPlayers().length; i++) {
-					if (i == winner) {
-						continue;
-					}
-					if (!setup.getController(i).isHuman()) {
-						// We've found a non-human opponent.
-						yay = yahooSad;
-						break;
-					}
-				}
-			}
+            AudioClip yay = getYahoo();
 
-			yay.play();
-		}
-	}
+            // Determine winner.
+            Player winner = _gameModel.getWinner();
 
-	public void movesUndone(Move[] moves) {
-		stone.play();
-	}
+            if (_gameModel.getController(winner).isHuman()) {
+                // Maybe we need to play the sad yahoo.
+                for (Player p : _gameModel.getPlayers()) {
+                    if (p == winner) {
+                        continue;
+                    }
+                    if (!_gameModel.getController(p).isHuman()) {
+                        // We've found a non-human opponent.
+                        yay = getYahooSad();
+                        break;
+                    }
+                }
+            }
 
-	public void newGame() {
-		stone.play();
-	}
+            yay.play();
+        }
+    }
+
+    private AudioClip getStone() {
+        if (_stone == null) {
+            _stone = Applet.newAudioClip(getClass().getResource("/sounds/stone.wav"));
+        }
+        return _stone;
+    }
+
+    private AudioClip getYahooSad() {
+        if (_yahooSad == null) {
+            _yahooSad = Applet.newAudioClip(getClass().getResource("/sounds/yahoo2.au"));
+        }
+        return _yahooSad;
+    }
+
+    private AudioClip getYahoo() {
+        if (_yahoo == null) {
+            _yahoo = Applet.newAudioClip(getClass().getResource("/sounds/yahoo1.au"));
+        }
+        return _yahoo;
+    }
 
 }

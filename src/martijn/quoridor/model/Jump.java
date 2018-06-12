@@ -1,57 +1,93 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
+
+import martijn.quoridor.Config;
 
 /**
  * A jump move.
- * 
- * @author Martijn van Steenbergen
  */
 public class Jump implements Move {
 
-	private Position oldPosition;
+    private Position _oldPosition;
 
-	private Position newPosition;
+    private Position _newPosition;
 
-	/**
-	 * Creates a move representing the active player's jump to
-	 * {@code newPosition}.
-	 */
-	public Jump(Position newPosition) {
-		this.newPosition = newPosition;
-	}
+    /**
+     * Creates a move representing the active player's jump to
+     * {@code newPosition}.
+     */
+    public Jump(Position newPosition) {
+        _newPosition = newPosition;
+    }
 
-	/** Returns the player's position after the jump. */
-	public Position getNewPosition() {
-		return newPosition;
-	}
+    /**
+     * Creates a move representing the active player's jump to
+     * {@code move} defined as a string in {@ code notation} notation.
+     * @param notation
+     * @param move
+     */
+    public Jump(Notation notation, String move) {
+        char cx = move.charAt(0);
+        char cy = move.charAt(1);
+        int x;
+        int y;
+        x = cx - 'a';
+        switch (notation) {
+        case LAMEK:
+            y = cy - '1';
+            break;
+        case GLENDENNING:
+            y = cy + '9';
+            break;
+        default:
+            x = cx - '0';
+            y = cy - '0';
+            break;
+        }
+        _newPosition = new Position(x, y);
+    }
 
-	/**
-	 * Returns the player's position before the jump. Returns null if the move
-	 * has never been executed yet.
-	 */
-	public Position getOldPosition() {
-		return oldPosition;
-	}
+    /** Returns the player's position after the jump. */
+    public Position getPosition() {
+        return _newPosition;
+    }
 
-	public void execute(Board board) {
-		Player p = board.getTurn();
-		oldPosition = p.getPosition();
-		p.setPosition(newPosition);
-	}
+    @Override
+    public void execute(Board board) {
+        Player p = board.getTurn();
+        _oldPosition = p.getPosition();
+        p.setPosition(_newPosition);
+    }
 
-	public void undo(Board board) {
-		board.getTurn().setPosition(oldPosition);
-	}
+    @Override
+    public void undo(Board board) {
+        board.getTurn().setPosition(_oldPosition);
+    }
 
-	public boolean isLegal(Board board) {
-		return !board.isGameOver()
-				&& board.getTurn().getJumpPositions().contains(newPosition);
-	}
+    @Override
+    public void redo(Board board) {
+        board.getTurn().setPosition(_newPosition);
+    }
 
-	public String toString() {
-		return "Jump to " + getNewPosition();
-	}
+    @Override
+    public boolean isLegal(Board board) {
+        return !board.isGameOver() && board.getTurn().getJumpPositions().contains(_newPosition);
+    }
+
+    @Override
+    public String toString() {
+        return "Jump to " + _newPosition;
+    }
+
+    @Override
+    public String notation() {
+        switch (Config.getNotation()) {
+        case LAMEK:
+            return "" + (char) ('a' + _newPosition.getX()) + (char) ('1' + _newPosition.getY());
+        case GLENDENNING:
+            return "" + (char) ('a' + _newPosition.getX()) + (char) ('9' - _newPosition.getY());
+        default:
+            return "" + (char) ('0' + _newPosition.getX()) + (char) ('0' + _newPosition.getY());
+        }
+    }
 
 }

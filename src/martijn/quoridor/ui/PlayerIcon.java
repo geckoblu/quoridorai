@@ -1,6 +1,3 @@
-/*
- * Created on Aug 9, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.Color;
@@ -19,173 +16,154 @@ import martijn.quoridor.Core;
 import martijn.quoridor.anim.Animation;
 import martijn.quoridor.anim.Animator;
 import martijn.quoridor.anim.PlayJob;
-import martijn.quoridor.model.Board;
 import martijn.quoridor.model.Player;
 
-/**
- * @author Martijn van Steenbergen
- */
+@SuppressWarnings("serial")
 public class PlayerIcon extends JLabel implements Icon {
 
-	private static final int NFRAMES = 12;
+    private static final int NFRAMES = 12;
 
-	public static final int FLIP_DURATION = 500;
+    public static final int FLIP_DURATION = 500;
 
-	private static final long BRAIN_DELAY = 2000;
+    private static final long BRAIN_DELAY = 2000;
 
-	private Board board;
+    private Color _color;
 
-	private int playerIndex;
+    // Animations.
 
-	// Animations.
+    private Animator _animator;
 
-	private Animator animator;
+    private double _scale = 1;
 
-	private double scale = 1;
+    public PlayerIcon(Color color) {
 
-	private int alpha = 0x7f;
+        _color = color;
 
-	private boolean solid = false;
+        _animator = new Animator();
+        setIcon(this);
+    }
 
-	public PlayerIcon(Board board, int playerIndex) {
-		this.board = board;
-		this.playerIndex = playerIndex;
-		animator = new Animator();
-		setIcon(this);
-	}
+    public PlayerIcon(Player player) {
+        this(player.getColor());
+    }
 
-	public Player getPlayer() {
-		return board.getPlayers()[playerIndex];
-	}
+    public void setPlayer(Player player) {
+        this._color = player.getColor();
+        repaint();
+    }
 
-	// Icon implementation.
+    // Icon implementation.
 
-	public int getIconHeight() {
-		return 16;
-	}
+    @Override
+    public int getIconHeight() {
+        return 16;
+    }
 
-	public int getIconWidth() {
-		return 16;
-	}
+    @Override
+    public int getIconWidth() {
+        return 16;
+    }
 
-	public void paintIcon(Component comp, Graphics g, int x, int y) {
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		int w = getIconWidth() - 2;
-		int h = getIconHeight() - 2;
-		Shape disc = new Ellipse2D.Double(-w / 2.0, -h / 2.0, w, h);
+    @Override
+    public void paintIcon(Component comp, Graphics g, int x, int y) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int w = getIconWidth() - 2;
+        int h = getIconHeight() - 2;
+        Shape disc = new Ellipse2D.Double(-w / 2.0, -h / 2.0, w, h);
 
-		AffineTransform at = new AffineTransform();
-		at.translate(x + 1 + w / 2.0, y + 1 + h / 2.0);
-		at.scale(scale, 1);
-		disc = at.createTransformedShape(disc);
+        AffineTransform at = new AffineTransform();
+        at.translate(x + 1 + w / 2.0, y + 1 + h / 2.0);
+        at.scale(_scale, 1);
+        disc = at.createTransformedShape(disc);
 
-		Color fill = Core.transparent(getPlayer().getColor(), alpha);
-		Color stroke = Core.transparent(Color.BLACK, alpha);
-		// if ((!board.isGameOver() && !getPlayer().isTurn())
-		// || (board.isGameOver() && !getPlayer().isWinner())) {
-		// fill = Core.transparent(fill);
-		// stroke = Core.transparent(stroke);
-		// }
+        Color fill = Core.transparent(_color, 0xff);
+        Color stroke = Core.transparent(Color.BLACK, 0xff);
 
-		g2.setColor(fill);
-		g2.fill(disc);
-		g2.setColor(stroke);
-		g2.draw(disc);
-	}
+        g2.setColor(fill);
+        g2.fill(disc);
+        g2.setColor(stroke);
+        g2.draw(disc);
+    }
 
-	public void update() {
-		repaint();
-	}
+    public void update() {
+        repaint();
+    }
 
-	// Animation.
+    // Animation.
 
-	public void flipOnce() {
-		animator.play(PlayJob.playOnce(new Flip(), true));
-	}
+    public void flipOnce() {
+        _animator.play(PlayJob.playOnce(new Flip(), true));
+    }
 
-	public void startFlippingContinuously() {
-		animator.play(PlayJob.loop(new Flip(), true));
-	}
+    public void startFlippingContinuously() {
+        _animator.play(PlayJob.loop(new Flip(), true));
+    }
 
-	public void startFlippingSlowly() {
-		animator.play(new PlayJob(new Flip(), PlayJob.LOOP, BRAIN_DELAY,
-				BRAIN_DELAY, true));
-	}
+    public void startFlippingSlowly() {
+        _animator.play(new PlayJob(new Flip(), PlayJob.LOOP, BRAIN_DELAY, BRAIN_DELAY, true));
+    }
 
-	public void stopFlipping() {
-		synchronized (animator) {
-			PlayJob current = animator.getCurrent();
-			if (current != null && current.getAnimation() instanceof Flip) {
-				animator.cancelCurrent();
-			}
-		}
-	}
+    public void stopFlipping() {
+        synchronized (_animator) {
+            PlayJob current = _animator.getCurrent();
+            if (current != null && current.getAnimation() instanceof Flip) {
+                _animator.cancelCurrent();
+            }
+        }
+    }
 
-	public boolean isSolid() {
-		return solid;
-	}
+    private void setScale(double scale) {
+        this._scale = scale;
+        repaint();
+    }
 
-	public void setSolid(boolean solid) {
-		if (this.solid != solid) {
-			this.solid = solid;
-			if (solid) {
-				animator.play(PlayJob.playOnce(new FadeIn(), true));
-			} else {
-				animator.play(PlayJob.playOnce(new FadeIn(), false));
-			}
-		}
-	}
+    private class Flip implements Animation {
 
-	private void setScale(double scale) {
-		this.scale = scale;
-		repaint();
-	}
+        @Override
+        public int getFrameCount() {
+            return NFRAMES;
+        }
 
-	private void setAlpha(int alpha) {
-		this.alpha = alpha;
-		repaint();
-	}
+        @Override
+        public long getFrameDisplayTime(int frame) {
+            return FLIP_DURATION / NFRAMES;
+        }
 
-	private class Flip implements Animation {
+        @Override
+        public void showFrame(int frame) {
+            setScale(Math.cos((double) frame / (NFRAMES - 1) * Math.PI));
+        }
 
-		public int getFrameCount() {
-			return NFRAMES;
-		}
+        @Override
+        public void animationStopped() {
+            setScale(1);
+        }
 
-		public long getFrameDisplayTime(int frame) {
-			return FLIP_DURATION / NFRAMES;
-		}
+    }
 
-		public void showFrame(int frame) {
-			setScale(Math.cos((double) frame / (NFRAMES - 1) * Math.PI));
-		}
-
-		public void animationStopped() {
-			setScale(1);
-		}
-
-	}
-
-	private class FadeIn implements Animation {
-
-		public int getFrameCount() {
-			return NFRAMES;
-		}
-
-		public long getFrameDisplayTime(int frame) {
-			return 250 / NFRAMES;
-		}
-
-		public void showFrame(int frame) {
-			setAlpha(0x80 + 0x7f * frame / (NFRAMES - 1));
-		}
-
-		public void animationStopped() {
-			setAlpha(solid ? 0xff : 0x7f);
-		}
-
-	}
+//    private class FadeIn implements Animation {
+//
+//        @Override
+//        public int getFrameCount() {
+//            return NFRAMES;
+//        }
+//
+//        @Override
+//        public long getFrameDisplayTime(int frame) {
+//            return 250 / NFRAMES;
+//        }
+//
+//        @Override
+//        public void showFrame(int frame) {
+//            setAlpha(0x80 + 0x7f * frame / (NFRAMES - 1));
+//        }
+//
+//        @Override
+//        public void animationStopped() {
+//            setAlpha(0x7f);
+//        }
+//
+//    }
 
 }

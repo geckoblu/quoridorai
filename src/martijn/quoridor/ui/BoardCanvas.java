@@ -1,226 +1,383 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JPanel;
 
+import martijn.quoridor.Config;
 import martijn.quoridor.Core;
 import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 import martijn.quoridor.model.Jump;
 import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Player;
+import martijn.quoridor.model.PointOfView;
 import martijn.quoridor.model.Position;
 import martijn.quoridor.model.PutWall;
 import martijn.quoridor.model.Wall;
 
 /**
  * A JPanel that draws a Quoridor state and a shadow move.
- * 
- * @author Martijn van Steenbergen
  */
-public class BoardCanvas extends JPanel implements BoardListener {
+@SuppressWarnings("serial")
+public class BoardCanvas extends JPanel implements GameListener {
 
-	private static final float WALL_THICKNESS = .1f;
+    private static final double CELL_SIZE = 10;
+    private static final float WALL_THICKNESS = 2;
+    private static final double PLAYER_RADIUS = CELL_SIZE - WALL_THICKNESS - 2;
 
-	/** The board this canvas visualizes. */
-	private Board board;
+    private static final Color BACKGROUND_COLOR = Color.decode("#B0A092");
+    private static final Color CELL_COLOR = Color.decode("#A18E80"); //"#554b44");
+    private static final Color COORDINATES_COLOR = Color.decode("#554b44");
+    private static final Color WALL_COLOR = Color.decode("#3E1E0F"); //Color.decode("#554b44");
 
-	/** The current shadow move. */
-	private Move shadow;
 
-	/** The transformation used to transform from pixel to board coordinates. */
-	private AffineTransform transform;
+    private double _scale;
+    private double _boardWidth;
+    private double _boardHeight;
+    private double _cellSize;
 
-	/** Creates a new QuoridorCanvas. */
-	public BoardCanvas(Board board) {
-		this.board = board;
-		board.addBoardListener(this);
-	}
+    private PointOfView _pointOfView = PointOfView.POV1;
 
-	// Painting.
+    /** The board this canvas visualizes. */
+    private GameModel _gameModel;
 
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
+    /** The current shadow move. */
+    private Move _shadow;
 
-		// Transform from pixel coordinates to board coordinates.
-		transform = new AffineTransform();
-		double scale = Math.min((double) getWidth() / board.getWidth(),
-				(double) getHeight() / board.getHeight());
-		scale *= .95;
-		double boardWidth = board.getWidth() * scale;
-		double boardHeight = board.getHeight() * scale;
-		transform.translate((getWidth() - boardWidth) / 2,
-				-(getHeight() - boardHeight) / 2);
-		transform.translate(0, getHeight());
-		transform.scale(1, -1);
-		transform.scale(scale, scale);
+    /**
+     * Creates a new QuoridorCanvas.
+     * */
+    public BoardCanvas(GameModel gameModel) {
+        _gameModel = gameModel;
+        _gameModel.addGameListener(this);
+    }
 
-		g2.transform(transform);
-		paintState(g2, (float) (1 / scale));
-	}
+    /**
+     * Converts from board coordinates to pixel coordinates.
+     */
+    private double getX(int bx) {
+        double dim = Config.getShowCoordinates() ? 1 : 0.5;
 
-	/** Paints the current state. */
-	private void paintState(Graphics2D g, float hairline) {
-		g.setColor(Color.GRAY);
+        double delta = (getWidth() - _boardWidth) / 2;
+        double x = (bx + dim) * _cellSize;
 
-		// Draw cells.
-		g.setStroke(new BasicStroke(hairline));
-		for (int x = 0; x < board.getWidth(); x++) {
-			for (int y = 0; y < board.getHeight(); y++) {
-				g.draw(new Rectangle2D.Double(x + WALL_THICKNESS / 2, y
-						+ WALL_THICKNESS / 2, 1 - WALL_THICKNESS,
-						1 - WALL_THICKNESS));
-			}
-		}
+        if (_pointOfView == PointOfView.POV2) {
+            x = _boardWidth - _cellSize - x;
+        }
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+        x = x + delta;
 
-		// Draw walls.
-		for (int x = 0; x < board.getWidth() - 1; x++) {
-			for (int y = 0; y < board.getHeight() - 1; y++) {
-				Wall wall = board.getWall(new Position(x, y));
-				if (wall != null) {
-					drawWall(g, hairline, wall, x, y, false);
-				}
-			}
-		}
+        return x;
 
-		// Draw players.
-		for (Player p : board.getPlayers()) {
-			drawPlayer(g, hairline, p, p.getPosition(), false);
-		}
+    }
 
-		// Draw shadow.
-		if (isShadowLegal()) {
-			if (shadow instanceof PutWall) {
-				PutWall pw = (PutWall) shadow;
-				drawWall(g, hairline, pw.getWall(), pw.getPosition().getX(), pw
-						.getPosition().getY(), true);
-			} else if (shadow instanceof Jump) {
-				Jump j = (Jump) shadow;
-				drawPlayer(g, hairline, board.getTurn(), j.getNewPosition(),
-						true);
-			}
-		}
-	}
+    /**
+     * Converts from board coordinates to pixel coordinates.
+     */
+    private double getY(int by) {
+        double dim = Config.getShowCoordinates() ? 1 : 0.5;
 
-	/** Draws a single player. */
-	private void drawPlayer(Graphics2D g, float hairline, Player p,
-			Position pos, boolean shadow) {
+        double delta = (getHeight() - _boardHeight) / 2;
+        double y = ((by + dim) * _cellSize);
 
-		// Remember the old transformation.
-		AffineTransform at = g.getTransform();
+        if (_pointOfView == PointOfView.POV1) {
+            y = _boardHeight - y - _cellSize;
+        }
 
-		// The shape that represents the player.
-		Shape s = new Ellipse2D.Double(-.5, -.5, 1, 1);
+        y = y + delta;
 
-		// Transform so that the shape is drawn at the correct position.
-		g.translate(pos.getX() + .5, pos.getY() + .5);
-		g.scale(.75, .75);
+        return y;
+    }
 
-		// Draw fill.
-		Color c = p.getColor();
-		if (shadow) {
-			c = Core.transparent(c);
-		}
-		g.setColor(c);
-		g.fill(s);
+    /**
+     * Converts from pixel coordinates to board coordinates.
+     * Returns {@code null} if something went wrong.
+     */
+    public Point2D toBoardCoordinates(Point mouseLocation) {
+        if (mouseLocation == null) {
+            return null;
+        }
 
-		// Draw outline.
-		g.setColor(Color.BLACK);
-		g.setStroke(new BasicStroke(hairline * 1.5f));
-		g.draw(s);
+        double dim = Config.getShowCoordinates() ? 1 : 0.5;
 
-		// Revert to old transformation.
-		g.setTransform(at);
-	}
+        double deltaX = (getWidth() - _boardWidth) / 2;
+        double x1 = (mouseLocation.x - deltaX) / _cellSize - dim;
 
-	/** Draws a single wall. */
-	private void drawWall(Graphics2D g, float hairline, Wall wall, int x,
-			int y, boolean shadow) {
-		g.setStroke(new BasicStroke(WALL_THICKNESS));
-		g.setColor(shadow ? new Color(0x7f000000, true) : Color.BLACK);
-		Shape line;
-		switch (wall) {
-		case HORIZONTAL:
-			line = new Line2D.Double(x + WALL_THICKNESS, y + 1, x + 2
-					- WALL_THICKNESS, y + 1);
-			break;
-		case VERTICAL:
-			line = new Line2D.Double(x + 1, y + WALL_THICKNESS, x + 1, y + 2
-					- WALL_THICKNESS);
-			break;
-		default:
-			throw new InternalError();
-		}
-		g.draw(line);
-	}
+        if (_pointOfView == PointOfView.POV2) {
+            x1 = Board.SIZE - x1;
+        }
 
-	/**
-	 * Returns the transformation that was used at the last paint operation to
-	 * transform from board coordinates to pixel coordinates. Returns null if
-	 * there has never been a paint operation performed yet.
-	 */
-	public AffineTransform getPaintTransformation() {
-		return transform;
-	}
+        double deltaY = (getHeight() - _boardHeight) / 2;
+        double y1;
+        if (_pointOfView == PointOfView.POV1) {
+            y1 = (_boardHeight + deltaY - mouseLocation.y) / _cellSize - dim;
+        } else {
+            y1 = (mouseLocation.y - deltaY) / _cellSize - dim;
+        }
 
-	// Getters and setters.
 
-	/** Returns the board this canvas visualizes. */
-	public Board getBoard() {
-		return board;
-	}
+        Point2D.Double p = new Point2D.Double(x1, y1);
+        return p;
+    }
 
-	/** Returns the current shadow move. */
-	public Move getShadow() {
-		return shadow;
-	}
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-	/** Sets the current shadow move. */
-	public void setShadow(Move shadow) {
-		this.shadow = shadow;
-		repaint();
-	}
+        Graphics2D g2 = (Graphics2D) g;
 
-	/** Returns whether the shadow is non-null and legal. */
-	public boolean isShadowLegal() {
-		return shadow != null && shadow.isLegal(getBoard());
-	}
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-	public void applyShadow() {
-		board.move(shadow);
-		setShadow(null);
-	}
+        int dim = Config.getShowCoordinates() ? 2 : 1;
 
-	public void moveExecuted(Move move) {
-		setShadow(null);
-		repaint();
-	}
+        double bWidth = (Board.SIZE + dim) * CELL_SIZE;
+        double bHeight = (Board.SIZE + dim) * CELL_SIZE;
+        _scale = Math.min(getWidth() / bWidth, getHeight() / bHeight);
+        _scale *= .95;
 
-	public void movesUndone(Move[] moves) {
-		setShadow(null);
-		repaint();
-	}
+        _cellSize = CELL_SIZE * _scale;
+        _boardWidth = bWidth * _scale;
+        _boardHeight = bHeight * _scale;
 
-	public void newGame() {
-		setShadow(null);
-		repaint();
-	}
+        g2.setColor(BACKGROUND_COLOR);
+        double bx = (getWidth() - _boardWidth) / 2;
+        double by = (getHeight() - _boardHeight) / 2;
+        g2.fill(new RoundRectangle2D.Double(bx, by, _boardWidth, _boardHeight, 50.0, 50.0));
+        drawCells(g2);
+
+        drawCoordinates(g2);
+
+        Board board = _gameModel.getBoard();
+
+        // Draw walls.
+        for (int x = 0; x < Board.SIZE - 1; x++) {
+            for (int y = 0; y < Board.SIZE - 1; y++) {
+                Position pos = new Position(x, y);
+                Wall wall = board.getWall(pos);
+                if (wall != null) {
+                    drawWall(g2, wall, pos, false);
+                }
+            }
+        }
+
+        // Draw players.
+        for (Player p : board.getPlayers()) {
+            // System.out.println("BC " + p + " " + p.getPosition());
+            drawPlayer(g2, p, p.getPosition(), false);
+        }
+
+        // Draw shadow.
+        if (isShadowLegal()) {
+            if (_shadow instanceof PutWall) {
+                PutWall pw = (PutWall) _shadow;
+                drawWall(g2, pw.getWall(), pw.getPosition(), true);
+            } else if (_shadow instanceof Jump) {
+                Jump j = (Jump) _shadow;
+                drawPlayer(g2, board.getTurn(), j.getPosition(), true);
+            }
+        }
+    }
+
+    /** Draw a single cell **/
+    private void drawCell(Graphics2D g2, int bx, int by) {
+
+        double border = WALL_THICKNESS * _scale;
+        double x1 = getX(bx);
+        double y1 = getY(by);
+
+        g2.setColor(CELL_COLOR);
+        g2.fill(new Rectangle2D.Double(x1 + border / 2, y1 + border / 2, _cellSize - border, _cellSize - border));
+
+    }
+
+    /** Draw all the board cells **/
+    private void drawCells(Graphics2D g2) {
+        for (int bx = 0; bx < Board.SIZE; bx++) {
+            for (int by = 0; by < Board.SIZE; by++) {
+                drawCell(g2, bx, by);
+            }
+        }
+    }
+
+    /** Draw a single player. */
+    private void drawPlayer(Graphics2D g2, Player p, Position pos, boolean shadow) {
+
+        double radius = PLAYER_RADIUS * _scale;
+        double delta = (_cellSize - radius) / 2;
+        double x1 = getX(pos.getX()) + delta;
+        double y1 = getY(pos.getY()) + delta;
+
+        Shape s = new Ellipse2D.Double(x1, y1, radius, radius);
+
+        // Draw fill.
+        Color c = p.getColor();
+        if (shadow) {
+            c = Core.transparent(c);
+        }
+        g2.setColor(c);
+        g2.fill(s);
+
+        // Draw outline.
+        c = Color.BLACK;
+        if (shadow) {
+            c = Core.transparent(c);
+        }
+        g2.setColor(c);
+        g2.draw(s);
+    }
+
+    private void drawCoordinates(Graphics2D g2) {
+
+        if (!Config.getShowCoordinates()) {
+            return;
+        }
+
+        g2.setColor(COORDINATES_COLOR);
+
+        FontMetrics metrics = g2.getFontMetrics();
+
+        // Draw X coordinates
+        for (int bx = 0; bx < Board.SIZE; bx++) {
+            String coord;
+            switch (Config.getNotation()) {
+            case LAMEK:
+            case GLENDENNING:
+                coord = Character.toString((char) ('a' + bx));
+                break;
+            default:
+                coord = Character.toString((char) ('0' + bx));
+                break;
+            }
+
+            double deltaX = (_cellSize - metrics.stringWidth(coord)) / 2;
+            double deltaY = _cellSize - (_cellSize - metrics.getHeight()) / 2;
+            double x1 = getX(bx);
+
+            double yAbove = getY(-1);
+            g2.drawString(coord, (int) (x1 + deltaX), (int) (yAbove + deltaY));
+
+            double yBelow = getY(Board.SIZE);
+            g2.drawString(coord, (int) (x1 + deltaX), (int) (yBelow + deltaY));
+        }
+
+        // Draw Y coordinates
+        for (int by = 0; by < Board.SIZE; by++) {
+            String coord;
+            switch (Config.getNotation()) {
+            case LAMEK:
+                coord = Character.toString((char) ('1' + by));
+                break;
+            case GLENDENNING:
+                coord = Character.toString((char) ('9' - by));
+                break;
+            default:
+                coord = Character.toString((char) ('0' + by));
+                break;
+            }
+
+            double deltaX = (_cellSize - metrics.stringWidth(coord)) / 2;
+            double deltaY = _cellSize - (_cellSize - metrics.getHeight()) / 2;
+            double y1 = getY(by);
+
+            double xLeft = getX(-1);
+            g2.drawString(coord, (int) (xLeft + deltaX), (int) (y1 + deltaY));
+
+            double xRight = getX(Board.SIZE);
+            g2.drawString(coord, (int) (xRight + deltaX), (int) (y1 + deltaY));
+        }
+    }
+
+    /** Draw a single wall. */
+    private void drawWall(Graphics2D g2, Wall wall, Position pos, boolean shadow) {
+
+        double x1;
+        double y1;
+        double border = WALL_THICKNESS * _scale / 2;
+
+        Stroke oldStroke = g2.getStroke();
+        BasicStroke newStroke = new BasicStroke((float) (border));
+        g2.setStroke(newStroke);
+
+        float lineWidth = newStroke.getLineWidth() / 2;
+        double length = (_cellSize) * 2 - border - lineWidth;
+
+        g2.setColor(shadow ? Core.transparent(WALL_COLOR, 0x8f) : WALL_COLOR);
+        Shape line;
+
+        switch (wall) {
+        case HORIZONTAL:
+            x1 = getX(pos.getX() + (_pointOfView == PointOfView.POV1 ? 0 : 1));
+            y1 = getY(pos.getY() + (_pointOfView == PointOfView.POV1 ? 0 : 1));
+            line = new Line2D.Double(x1 + border + lineWidth / 2, y1, x1 + length, y1);
+            break;
+        case VERTICAL:
+            x1 = getX(pos.getX() + (_pointOfView == PointOfView.POV1 ? 1 : 0));
+            y1 = getY(pos.getY() + (_pointOfView == PointOfView.POV1 ? 1 : 0));
+            line = new Line2D.Double(x1, y1 + border + lineWidth / 2, x1, y1 + length);
+            break;
+        default:
+            throw new InternalError();
+        }
+
+        g2.draw(line);
+
+        g2.setStroke(oldStroke);
+    }
+
+
+    /** Returns the current shadow move. */
+    public Move getShadow() {
+        return _shadow;
+    }
+
+    /** Sets the current shadow move. */
+    public void setShadow(Move shadow) {
+        this._shadow = shadow;
+        repaint();
+    }
+
+    /** Returns whether the shadow is non-null and legal. */
+    public boolean isShadowLegal() {
+        return _shadow != null && _shadow.isLegal(_gameModel.getBoard());
+    }
+
+    public void applyShadow() {
+        _gameModel.move(_shadow);
+        setShadow(null);
+    }
+
+    public void setPointOfView(PointOfView pointOfView) {
+        PointOfView oldPointOfView = _pointOfView;
+        _pointOfView = pointOfView;
+        repaint();
+        firePropertyChange("POINT_OF_VIEW", oldPointOfView, _pointOfView);
+    }
+
+    public PointOfView getPointOfView() {
+        return _pointOfView;
+    }
+
+    @Override // BoardListener
+    public void boardChanged() {
+        setShadow(null);
+        repaint();
+    }
 
 }

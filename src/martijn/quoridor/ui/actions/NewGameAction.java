@@ -1,48 +1,46 @@
-/*
- * Created on Aug 8, 2006 
- */
 package martijn.quoridor.ui.actions;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 
-import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
-import martijn.quoridor.model.Move;
+import martijn.quoridor.Config;
+import martijn.quoridor.I18N;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 
-/**
- * @author Martijn van Steenbergen
- */
-public class NewGameAction extends AbstractAction implements BoardListener {
+@SuppressWarnings("serial")
+public class NewGameAction extends AbstractAction implements GameListener {
 
-	private Board board;
+    private final GameModel _gameModel;
 
-	public NewGameAction(Board board) {
-		super("New Game");
-		this.board = board;
-		update();
-		board.addBoardListener(this);
-	}
+    public NewGameAction(GameModel board) {
+        super();
 
-	public void actionPerformed(ActionEvent e) {
-		board.newGame();
-	}
+        I18N.Action action = I18N.getAction("NEW_GAME");
+        putValue(Action.NAME, action.name);
+        putValue(Action.MNEMONIC_KEY, action.mnemonicKey);
+        putValue(Action.SHORT_DESCRIPTION, action.shortDescription);
 
-	public void moveExecuted(Move move) {
-		update();
-	}
+        _gameModel = board;
+        update();
+        board.addGameListener(this);
+    }
 
-	public void movesUndone(Move[] moves) {
-		update();
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        _gameModel.newGame();
+        Config.setLastLoadFile(null);
+    }
 
-	public void newGame() {
-		update();
-	}
+    @Override // BoardListener
+    public void boardChanged() {
+        update();
+    }
 
-	private void update() {
-		setEnabled(!board.getHistory().isEmpty());
-	}
+    private void update() {
+        setEnabled(_gameModel.hasHistory());
+    }
 
 }

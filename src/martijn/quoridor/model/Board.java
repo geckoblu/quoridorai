@@ -1,351 +1,364 @@
-/*
- * Created on Aug 4, 2006 
- */
 package martijn.quoridor.model;
 
-import java.awt.Color;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
 
-/**
- * @author Martijn van Steenbergen
- */
 public class Board {
 
-	private int width;
+    public static final int SIZE = 9;
 
-	private int height;
+    public static final int NPLAYERS = 2;
 
-	private Wall[][] walls;
+    private Wall[][] _walls;
 
-	private Player[] players;
+    private Player[] _players;
 
-	private int turn;
+    private int _turn;
 
-	private Stack<Move> history;
+    private LinkedList<Move> _history;
+    private int _historyIndex;
 
-	private List<BoardListener> listeners;
+    /** Creates a new 9x9 board with two players. */
+    public Board() {
 
-	// Initialization.
+        _players = new Player[NPLAYERS];
+        _history = new LinkedList<Move>();
+        _historyIndex = 0;
 
-	/** Creates a new 9x9 board. */
-	public Board() {
-		this(9);
-	}
+        newGame();
+    }
 
-	/** Creates a board of the specified size. */
-	public Board(int size) {
-		this(size, size);
-	}
+    /** Starts a new game, clearing the history. */
+    public void newGame() {
+        // Clear walls.
+        _walls = new Wall[SIZE - 1][SIZE - 1];
 
-	private Board(int width, int height) {
-		this.width = width;
-		this.height = height;
-		players = new Player[2];
-		history = new Stack<Move>();
-		listeners = new LinkedList<BoardListener>();
-		newGame();
-	}
+        // Create fresh players.
+        _players[0] = new Player(0, this, Orientation.SOUTH);
+        _players[1] = new Player(1, this, Orientation.NORTH);
 
-	/** Starts a new game, clearing the history. */
-	public void newGame() {
-		// Clear walls.
-		walls = new Wall[width - 1][height - 1];
+        // Reset turn.
+        _turn = 0;
 
-		// Create fresh players.
-		Color[] cs = createPlayerColors(2);
-		players[0] = new Player(this, Orientation.SOUTH, "Player 1", 10, cs[0]);
-		players[1] = new Player(this, Orientation.NORTH, "Player 2", 10, cs[1]);
+        // Clear history.
+        _history.clear();
+        _historyIndex = 0;
 
-		// Reset turn.
-		turn = 0;
+    }
 
-		// Clear history.
-		history.clear();
 
-		// Notify listeners.
-		fireNewGame();
-	}
+    // Player positions.
 
-	// Listeners.
+    /** Returns whether the player position is within the board's bounds. */
+    public boolean containsPlayerPosition(Position position) {
+        return 0 <= position.getX() && position.getX() < SIZE && 0 <= position.getY()
+                && position.getY() < SIZE;
+    }
 
-	private Color[] createPlayerColors(int nplayers) {
-		List<Color> colors = createPossibleColors();
-		Color[] cs = new Color[nplayers];
-		for (int i = 0; i < nplayers; i++) {
-			cs[i] = colors.get(i);
-		}
-		return cs;
-	}
+    /** Returns whether the position is taken by any player. */
+    public boolean isTaken(Position position) {
+        for (Player p : _players) {
+            if (p.getPosition().equals(position)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private List<Color> createPossibleColors() {
-		List<Color> colors = new LinkedList<Color>();
-		int n = 24;
-		for (int i = 0; i < n; i++) {
-			colors.add(Color.getHSBColor((float) i / n, .5f, 1));
-		}
-		Collections.shuffle(colors);
-		return colors;
-	}
+    // Wall positions.
 
-	/** Causes the listener to be notified of subsequent board events. */
-	public void addBoardListener(BoardListener l) {
-		listeners.add(l);
-	}
+    /** Returns whether the wall position is within the board's bounds. */
+    public boolean containsWallPosition(Position wallPosition) {
+        return 0 <= wallPosition.getX() && wallPosition.getX() < SIZE - 1 && 0 <= wallPosition.getY()
+                && wallPosition.getY() < SIZE - 1;
+    }
 
-	/** Causes the listener to no longer be notified of subsequent board events. */
-	public void removeBoardListener(BoardListener l) {
-		listeners.remove(l);
-	}
+    /**
+     * Returns the wall at the specified position, or {@literal null} if there
+     * is no wall at that position.
+     */
+    public Wall getWall(Position position) {
+        return _walls[position.getX()][position.getY()];
+    }
 
-	private void fireNewGame() {
-		for (BoardListener l : listeners) {
-			l.newGame();
-		}
-	}
+    /** Sets the wall at the specified position. */
+    public void setWall(Position position, Wall wall) {
+        _walls[position.getX()][position.getY()] = wall;
+    }
 
-	private void fireMoveExecuted(Move move) {
-		for (BoardListener l : listeners) {
-			l.moveExecuted(move);
-		}
-	}
+    /**
+     * Returns whether a wall or the board's bounds prevents a player from
+     * moving from the specified position in the specified direction.
+     */
+    public boolean isBlocked(Position position, Orientation orientation) {
+        if (!containsPlayerPosition(position)) {
+            throw new IllegalArgumentException("Illegal position: " + position);
+        }
 
-	private void fireMovesUndone(Move[] moves) {
-		for (BoardListener l : listeners) {
-			l.movesUndone(moves);
-		}
-	}
+        if (!containsPlayerPosition(position.move(orientation))) {
+            // Can't move in the specified direction.
+            return true;
+        }
 
-	// Board size.
+        // The wall positions are going to be checked for a wall of type "wall".
+        // If they have such a wall, the way is blocked.
+        Position wallPosition1, wallPosition2;
+        Wall wall;
 
-	/** Returns the board's width. */
-	public int getWidth() {
-		return width;
-	}
+        switch (orientation) {
+        case NORTH:
+            wallPosition1 = position;
+            wallPosition2 = position.west();
+            wall = Wall.HORIZONTAL;
+            break;
+        case EAST:
+            wallPosition1 = position;
+            wallPosition2 = position.south();
+            wall = Wall.VERTICAL;
+            break;
+        case SOUTH:
+            wallPosition1 = position.south();
+            wallPosition2 = position.south().west();
+            wall = Wall.HORIZONTAL;
+            break;
+        case WEST:
+            wallPosition1 = position.west();
+            wallPosition2 = position.west().south();
+            wall = Wall.VERTICAL;
+            break;
+        default:
+            throw new InternalError();
+        }
 
-	/** Returns the board's height. */
-	public int getHeight() {
-		return height;
-	}
+      //CHECKSTYLE.OFF: SimplifyBooleanReturn - Easier to read
+        if (containsWallPosition(wallPosition1) && getWall(wallPosition1) == wall) {
+            // The wall at position 1 blocks.
+            return true;
+        } else if (containsWallPosition(wallPosition2) && getWall(wallPosition2) == wall) {
+            // The wall at position 2 blocks.
+            return true;
+        } else {
+            // Nothing blocks.
+            return false;
+        }
+      //CHECKSTYLE.ON: SimplifyBooleanReturn
+    }
 
-	// Player positions.
+    // Players.
 
-	/** Returns whether the player position is within the board's bounds. */
-	public boolean containsPlayerPosition(Position position) {
-		return 0 <= position.getX() && position.getX() < width
-				&& 0 <= position.getY() && position.getY() < height;
-	}
+    /** Returns all players participating in this game. */
+    public Iterable<Player> getPlayers() {
+        return Arrays.asList(_players);
+    }
 
-	/** Returns whether the position is taken by any player. */
-	public boolean isTaken(Position position) {
-		for (Player p : players) {
-			if (p.getPosition().equals(position)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /** Returns the i-player. */
+    public Player getPlayer(int i) {
+        return _players[i];
+    }
 
-	// Wall positions.
+    /** Returns the player whose turn it is. */
+    public Player getTurn() {
+        return _players[_turn];
+    }
 
-	/** Returns whether the wall position is within the board's bounds. */
-	public boolean containsWallPosition(Position wallPosition) {
-		return 0 <= wallPosition.getX() && wallPosition.getX() < width - 1
-				&& 0 <= wallPosition.getY() && wallPosition.getY() < height - 1;
-	}
+    /** Returns the index of the player whose turn it is. */
+    public int getTurnIndex() {
+        return _turn;
+    }
 
-	/**
-	 * Returns the wall at the specified position, or {@literal null} if there
-	 * is no wall at that position.
-	 */
-	public Wall getWall(Position position) {
-		return walls[position.getX()][position.getY()];
-	}
+    /**
+     * Returns the player who has won, or {@literal null} if the game is not
+     * over yet.
+     */
+    public Player getWinner() {
+        for (Player p : getPlayers()) {
+            if (p.isWinner()) {
+                return p;
+            }
+        }
+        return null;
+    }
 
-	/** Sets the wall at the specified position. */
-	public void setWall(Position position, Wall wall) {
-		walls[position.getX()][position.getY()] = wall;
-	}
+    /** Returns whether the game is over. */
+    public boolean isGameOver() {
+        return getWinner() != null;
+    }
 
-	/**
-	 * Returns whether a wall or the board's bounds prevents a player from
-	 * moving from the specified position in the specified direction.
-	 */
-	public boolean isBlocked(Position position, Orientation orientation) {
-		if (!containsPlayerPosition(position)) {
-			throw new IllegalArgumentException("Illegal position: " + position);
-		}
+    // Moves.
 
-		if (!containsPlayerPosition(position.move(orientation))) {
-			// Can't move in the specified direction.
-			return true;
-		}
+    /** Executes the move. */
+    public void move(Move move) {
+        // if (!move.isLegal(this)) {
+        // throw new IllegalArgumentException("Illegal move for " + getTurn()
+        // + ": " + move);
+        // }
 
-		// The wall positions are going to be checked for a wall of type "wall".
-		// If they have such a wall, the way is blocked.
-		Position wallPosition1, wallPosition2;
-		Wall wall;
+        // Note: execute before increasing turn.
+        move.execute(this);
 
-		switch (orientation) {
-		case NORTH:
-			wallPosition1 = position;
-			wallPosition2 = position.west();
-			wall = Wall.HORIZONTAL;
-			break;
-		case EAST:
-			wallPosition1 = position;
-			wallPosition2 = position.south();
-			wall = Wall.VERTICAL;
-			break;
-		case SOUTH:
-			wallPosition1 = position.south();
-			wallPosition2 = position.south().west();
-			wall = Wall.HORIZONTAL;
-			break;
-		case WEST:
-			wallPosition1 = position.west();
-			wallPosition2 = position.west().south();
-			wall = Wall.VERTICAL;
-			break;
-		default:
-			throw new InternalError();
-		}
+        increaseTurn();
 
-		if (containsWallPosition(wallPosition1)
-				&& getWall(wallPosition1) == wall) {
-			// The wall at position 1 blocks.
-			return true;
-		} else if (containsWallPosition(wallPosition2)
-				&& getWall(wallPosition2) == wall) {
-			// The wall at position 2 blocks.
-			return true;
-		} else {
-			// Nothing blocks.
-			return false;
-		}
-	}
+        // made a move clears the future history
+        while (_historyIndex < _history.size()) {
+            _history.removeFirst();
+        }
 
-	// Players.
+        _history.push(move);
+        _historyIndex++;
 
-	/** Returns all players participating in this game. */
-	public Player[] getPlayers() {
-		return players;
-	}
+    }
 
-	/** Returns the player whose turn it is. */
-	public Player getTurn() {
-		return players[turn];
-	}
+    /**
+     * Add the move to the history, without playing it.
+     * @param move
+     */
+    private void add(Move move) {
 
-	/** Returns the index of the player whose turn it is. */
-	public int getTurnIndex() {
-		return turn;
-	}
+        move.execute(this);
 
-	/**
-	 * Returns the player who has won, or {@literal null} is the game is not
-	 * over yet.
-	 */
-	public Player getWinner() {
-		for (Player p : getPlayers()) {
-			if (p.isWinner()) {
-				return p;
-			}
-		}
-		return null;
-	}
+        // Note: execute before increasing turn.
+        increaseTurn();
 
-	/** Returns whether the game is over. */
-	public boolean isGameOver() {
-		return getWinner() != null;
-	}
+        _history.push(move);
+        _historyIndex++;
 
-	// Moves.
+    }
 
-	/** Executes the move. */
-	public void move(Move move) {
-		// if (!move.isLegal(this)) {
-		// throw new IllegalArgumentException("Illegal move for " + getTurn()
-		// + ": " + move);
-		// }
+    /**
+     * Add the moves to the history, without playing it.
+     */
+    public void add(Iterator<Move> moves) {
+        while (moves.hasNext()) {
+            Move move = moves.next();
+            add(move);
+        }
+    }
 
-		// Note: execute before increasing turn.
+    public boolean canUndo() {
+        return _historyIndex > 0;
+    }
 
-		move.execute(this);
-		increaseTurn();
-		history.push(move);
+    /** Equivalent to {@code undo(1)}. */
+    public void undo() {
+        undo(1);
+    }
 
-		fireMoveExecuted(move);
-	}
+    /** **/
+    public void undoAll() {
+        undo(_historyIndex);
+    }
 
-	/** Equivalent to {@code undo(1)}. */
-	public void undo() {
-		undo(1);
-	}
+    /** Undoes the last {@code number} moves. */
+    public void undo(int number) {
+        if (number < 1) {
+            throw new IllegalArgumentException("Number must be at least 1.");
+        }
 
-	/** Undoes the last {@code number} moves. */
-	public void undo(int number) {
-		if (number < 1) {
-			throw new IllegalArgumentException("Number must be at least 1.");
-		}
+        if (number > _history.size()) {
+            throw new IllegalArgumentException("Cannot undo " + number + " moves (max is " + _history.size()
+                    + ")");
+        }
 
-		if (number > history.size()) {
-			throw new IllegalArgumentException("Cannot undo " + number
-					+ " moves (max is " + history.size() + ")");
-		}
+        for (int i = 0; i < number; i++) {
+            // Note: decrease turn before undoing.
+            Move move = _history.get(_history.size() - _historyIndex);
+            _historyIndex--;
+            decreaseTurn();
+            move.undo(this);
+        }
 
-		List<Move> undone = new LinkedList<Move>();
+    }
 
-		for (int i = 0; i < number; i++) {
-			// Note: decrease turn before undoing.
-			Move move = history.pop();
-			decreaseTurn();
-			move.undo(this);
-			undone.add(move);
-		}
+    public boolean canRedo() {
+        return _historyIndex < _history.size();
+    }
 
-		Move[] moves = new Move[undone.size()];
-		undone.toArray(moves);
-		fireMovesUndone(moves);
-	}
+    /** Equivalent to {@code redo(1)}. */
+    public void redo() {
+        redo(1);
+    }
 
-	/** Returns the stack of executed moves. */
-	public Stack<Move> getHistory() {
-		return history;
-	}
+    public void redoAll() {
+        redo(_history.size() - _historyIndex);
+    }
 
-	/** Increases the turn by 1. */
-	private void increaseTurn() {
-		turn = (turn + 1) % players.length;
-	}
+    /** Re-play the next {@code number} moves. */
+    public void redo(int number) {
+        if (number < 1) {
+            throw new IllegalArgumentException("Number must be at least 1.");
+        }
 
-	/** Decreases the turn by 1. */
-	private void decreaseTurn() {
-		turn--;
-		if (turn < 0) {
-			turn += players.length;
-		}
-	}
+        if (number + _historyIndex > _history.size()) {
+            throw new IllegalArgumentException("Cannot redo " + number + " moves (max is "
+                    + (_history.size() - _historyIndex) + ")");
+        }
 
-	// Cloning.
+        for (int i = 0; i < number; i++) {
+            // Note: decrease turn before undoing.
+            _historyIndex++;
+            Move move = _history.get(_history.size() - _historyIndex);
+            move.redo(this);
+            increaseTurn();
+        }
 
-	/** Creates a deep copy of this board. */
-	@SuppressWarnings("unchecked")
-	public Board clone() {
-		Board clone = new Board(width, height);
-		clone.history.addAll(history);
-		for (int i = 0; i < players.length; i++) {
-			clone.players[i] = new Player(clone, players[i]);
-		}
-		clone.turn = turn;
-		for (int x = 0; x < width - 1; x++) {
-			for (int y = 0; y < height - 1; y++) {
-				clone.walls[x][y] = walls[x][y];
-			}
-		}
-		return clone;
-	}
+    }
+
+    /** Returns an iterator over the stack of executed moves. */
+    public Iterator<Move> getHistory() {
+        return _history.descendingIterator();
+    }
+
+    public int getHistoryIndex() {
+        return _historyIndex;
+    }
+
+    public boolean hasHistory() {
+        return !_history.isEmpty();
+    }
+
+    /** Increases the turn by 1. */
+    private void increaseTurn() {
+        _turn = (_turn + 1) % _players.length;
+    }
+
+    /** Decreases the turn by 1. */
+    private void decreaseTurn() {
+        _turn--;
+        if (_turn < 0) {
+            _turn += _players.length;
+        }
+    }
+
+    // Cloning.
+
+    /**
+     * Creates a deep copy of this board.
+     */
+    @Override
+    public Board clone() {
+        Board clonedBoard = new Board(this);
+        return clonedBoard;
+    }
+
+    /**
+     * Used only for cloned boards
+     */
+    private Board(Board board) {
+        _players = new Player[NPLAYERS];
+        _walls = new Wall[SIZE - 1][SIZE - 1];
+        _history = new LinkedList<Move>(); // no history for cloned boards
+        _historyIndex = 0;
+
+        _turn = board._turn;
+        for (int i = 0; i < Board.NPLAYERS; i++) {
+            _players[i] = new Player(this, board._players[i]);
+        }
+        for (int x = 0; x < SIZE - 1; x++) {
+            for (int y = 0; y < SIZE - 1; y++) {
+                _walls[x][y] = board._walls[x][y];
+            }
+        }
+    }
 
 }

@@ -1,6 +1,3 @@
-/*
- * Created on Aug 12, 2006 
- */
 package martijn.quoridor.ui;
 
 import java.awt.GridBagConstraints;
@@ -10,66 +7,55 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 
 import martijn.quoridor.model.Board;
-import martijn.quoridor.model.BoardListener;
-import martijn.quoridor.model.Move;
+import martijn.quoridor.model.GameListener;
+import martijn.quoridor.model.GameModel;
 
-/**
- * @author Martijn van Steenbergen
- */
-public class GameStatus extends JPanel implements BoardListener, SetupListener {
+@SuppressWarnings("serial")
+public class GameStatus extends JPanel implements GameListener {
 
-	private PlayerStatus[] lines;
+    private PlayerStatusPanel[] _lines;
 
-	private GameCard game;
+    private final GameModel _gameModel;
 
-	public GameStatus(GameCard game) {
-		this.game = game;
-		createGUI();
-		getBoard().addBoardListener(this);
-		getSetup().addSetupListener(this);
-	}
+    public GameStatus(GameModel gameModel) {
 
-	private Setup getSetup() {
-		return game.getSetup();
-	}
+        _gameModel = gameModel;
 
-	private Board getBoard() {
-		return game.getBoard();
-	}
+        createGUI();
 
-	private void createGUI() {
-		setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.insets = new Insets(0, 10, 0, 10);
+        //setup.addSetupListener(this);
+        _gameModel.addGameListener(this);
+    }
 
-		lines = new PlayerStatus[getBoard().getPlayers().length];
-		for (int i = 0; i < getBoard().getPlayers().length; i++) {
-			lines[i] = new PlayerStatus(game, i);
-			lines[i].createGUI(this, gbc);
-		}
-	}
+    private void createGUI() {
+        setLayout(new GridBagLayout());
 
-	public void moveExecuted(Move move) {
-		update();
-	}
+        GridBagConstraints gbc = new GridBagConstraints();
+        // gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 5, 0, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 0;
 
-	public void movesUndone(Move[] moves) {
-		update();
-	}
+        _lines = new PlayerStatusPanel[Board.NPLAYERS];
+        for (int i = 0; i < Board.NPLAYERS; i++) {
+            _lines[i] = new PlayerStatusPanel(i, _gameModel);
+            gbc.gridy = i;
+            add(_lines[i], gbc);
+        }
 
-	public void newGame() {
-		update();
-	}
+        update();
 
-	public void setupChanged(int player) {
-		update();
-	}
+    }
 
-	private void update() {
-		for (PlayerStatus s : lines) {
-			s.update();
-		}
-	}
+    private void update() {
+        for (PlayerStatusPanel s : _lines) {
+            s.update();
+        }
+    }
+
+    @Override // BoardListener
+    public void boardChanged() {
+        update();
+    }
 
 }

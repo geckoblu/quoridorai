@@ -1,3 +1,11 @@
+This project is a fork of https://github.com/MedeaMelana/quoridorai.
+
+---
+
+### OLD README
+
+---
+
 # Quoridor
 
 ## Game rules
