@@ -27,6 +27,8 @@ public class Player {
 
     public final int index;
 
+    private final GoalSeeker _goalSeeker;
+
     private Position _position;
 
     private int _nwalls;
@@ -43,6 +45,7 @@ public class Player {
         this.index = index;
         this._board = board;
         this._orientation = orientation;
+        this._goalSeeker = new GoalSeeker(this);
         this._nwalls = INITIAL_NWALLS;
         this._position = getInitialPosition();
     }
@@ -55,6 +58,7 @@ public class Player {
         this.index = player.index;
         this._nwalls = player._nwalls;
         this._orientation = player._orientation;
+        this._goalSeeker = new GoalSeeker(this);
         this._position = player._position;
     }
 

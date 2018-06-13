@@ -12,62 +12,12 @@ public class GoalSeeker implements Comparator<Position> {
 
     private int[][] _distance;
 
-    private Orientation[] _path;
 
     public GoalSeeker(Player player) {
         if (player == null) {
             throw new NullPointerException("Player is null.");
         }
         this._player = player;
-
-        if (player.isWinner()) {
-            // Special case: we're already at a goal position.
-            _path = new Orientation[0];
-            return;
-        }
-
-        int w = Board.SIZE;
-        int h = Board.SIZE;
-        _from = new Orientation[w][h];
-        _distance = new int[w][h];
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
-                _distance[x][y] = Integer.MAX_VALUE;
-            }
-        }
-
-        Queue<Position> front = new PriorityQueue<Position>(8, this);
-        Position pos = player.getPosition();
-        _distance[pos.getX()][pos.getY()] = 0;
-        front.add(player.getPosition());
-
-        int counter = 0;
-
-        while (!front.isEmpty()) {
-            counter++;
-            pos = front.remove();
-            int x = pos.getX();
-            int y = pos.getY();
-            for (Orientation o : Orientation.values()) {
-                if (getBoard().isBlocked(pos, o)) {
-                    continue;
-                }
-                Position pos2 = pos.move(o);
-                int x2 = pos2.getX();
-                int y2 = pos2.getY();
-                if (_distance[x2][y2] > _distance[x][y] + 1) {
-                    _distance[x2][y2] = _distance[x][y] + 1;
-                    _from[x2][y2] = o.opposite();
-                    front.add(pos2);
-
-                    if (player.isGoal(pos2)) {
-                        // We've found a goal position. Build and return path.
-                        _path = buildPath(pos2);
-                        return;
-                    }
-                }
-            }
-        }
     }
 
     private Orientation[] buildPath(Position to) {
@@ -80,8 +30,64 @@ public class GoalSeeker implements Comparator<Position> {
         return path;
     }
 
+    /**
+     * Finds a goal closest to the player's current position and returns a
+     * shortest path to it. The path does not take into account what positions
+     * are blocked by other players.
+     */
     public Orientation[] getPath() {
-        return _path;
+
+        if (_player.isWinner()) {
+            // Special case: we're already at a goal position.
+            return new Orientation[0];
+        }
+
+        // Dijkstra's algorithm
+
+        int w = Board.SIZE;
+        int h = Board.SIZE;
+        _from = new Orientation[w][h];
+        _distance = new int[w][h];
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                _distance[x][y] = Integer.MAX_VALUE;
+            }
+        }
+
+        Queue<Position> front = new PriorityQueue<Position>(8, this);
+        Position pos = _player.getPosition();
+        _distance[pos.getX()][pos.getY()] = 0;
+        front.add(_player.getPosition());
+
+        int counter = 0;
+
+        while (!front.isEmpty()) {
+            counter++;
+            pos = front.remove();
+            int x = pos.getX();
+            int y = pos.getY();
+            for (Orientation o : Orientation.values()) {
+                if (getBoard().isBlocked(pos, o)) {
+                    continue;
+                }
+
+                Position pos2 = pos.move(o);
+                int x2 = pos2.getX();
+                int y2 = pos2.getY();
+                if (_distance[x2][y2] > _distance[x][y] + 1) {
+                    _distance[x2][y2] = _distance[x][y] + 1;
+                    _from[x2][y2] = o.opposite();
+                    front.add(pos2);
+
+                    if (_player.isGoal(pos2)) {
+                        // We've found a goal position. Build and return path.
+                        return buildPath(pos2);
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private Board getBoard() {
