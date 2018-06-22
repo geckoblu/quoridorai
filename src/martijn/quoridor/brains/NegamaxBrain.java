@@ -11,9 +11,11 @@ public abstract class NegamaxBrain extends Brain {
 
     private int _depth;
 
+    private boolean _deterministic = false;
+
     private boolean _debug = false;
 
-    private boolean _deterministic = true;
+    private boolean _showMoves = true;
 
     public NegamaxBrain(int depth) {
         this(null, depth);
@@ -24,7 +26,7 @@ public abstract class NegamaxBrain extends Brain {
         if (depth < 1) {
             throw new IllegalArgumentException("Depth must be at least 1.");
         }
-        this._depth = depth;
+        _depth = depth;
     }
 
     public void setDebug(boolean debug) {
@@ -75,12 +77,35 @@ public abstract class NegamaxBrain extends Brain {
             // + " best move(s).");
             Collections.shuffle(best);
             move = best.get(0);
+
+        }
+
+        if (_showMoves) {
+            out("");
+            out("----------");
+            int bestRating = moves.get(0).getRating();
+            for (RatedMove m : moves) {
+                if (m.getRating() == bestRating) {
+                    if (m == move) {
+                        out("  > " + m);
+                    } else {
+                        out("    " + m);
+                    }
+                } else {
+                    break;
+                }
+            }
+            out("");
         }
 
         debug("Moving " + move.getMove() + " (" + (move.getRating() - cur) + ")");
         debug("My current advantage: " + move.getRating());
 
         return move.getMove();
+    }
+
+    protected void out(String s) {
+        System.out.println(s);
     }
 
     protected void debug(String s) {

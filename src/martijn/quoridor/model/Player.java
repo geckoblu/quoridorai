@@ -17,8 +17,8 @@ public class Player {
 
     static {
         COLOR = new Color[2];
-        COLOR[0] = Color.decode("#AE611A"); //Color.decode("#809FFF");
-        COLOR[1] = Color.decode("#3E1E0F"); //Color.decode("#FF80FF");
+        COLOR[0] = Color.decode("#AE611A"); // Color.decode("#809FFF");
+        COLOR[1] = Color.decode("#3E1E0F"); // Color.decode("#FF80FF");
     }
 
     private final Board _board;
@@ -51,7 +51,8 @@ public class Player {
     }
 
     /**
-     * Creates a player on the specified board that is a clone of the specified player.
+     * Creates a player on the specified board that is a clone of the specified
+     * player.
      */
     public Player(Board board, Player player) {
         this._board = board;
@@ -175,12 +176,46 @@ public class Player {
     }
 
     /**
-     * Finds a goal closest to the player's current position and returns a
-     * shortest path to it. The path does not take into account what positions
-     * are blocked by other players.
+     * Finds a goal closest to the player's current position and returns the
+     * length of shortest path to it. The path does not take into account what
+     * positions are blocked by other players.
+     *
+     * Return -1 if no path exists.
+     *
      */
-    public Orientation[] findGoal() {
-        return new GoalSeeker(this).getPath();
+    public int findGoal() {
+        return _goalSeeker.findGoal();
+    }
+
+    /**
+     * Returns the shortest path from the player's current position to the
+     * nearest goal found with method findGoal(). The path does not take into
+     * account what positions are blocked by other players.
+     *
+     * WARNING: The path is searched calling findGoal(), always call it before
+     * calling this, otherwise the result is meaningless.
+     *
+     * Return null if no path exists.
+     *
+     */
+    public Orientation[] getPathToGoal() {
+        return _goalSeeker.getPathToGoal();
+    }
+
+    /**
+     * Find and returns the shortest path from the player's current position to the
+     * nearest goal found with method findGoal(). The path does not take into
+     * account what positions are blocked by other players.
+     *
+     * WARNING: The path is searched calling findGoal(), always call it before
+     * calling this, otherwise the result is meaningless.
+     *
+     * Return null if no path exists.
+     *
+     */
+    public Orientation[] findPathToGoal() {
+        _goalSeeker.findGoal();
+        return _goalSeeker.getPathToGoal();
     }
 
     /**
@@ -193,7 +228,7 @@ public class Player {
         Position old = getPosition();
         for (Position pos : getJumpPositions()) {
             setPosition(pos);
-            int d = findGoal().length;
+            int d = findGoal();
             if (d < best) {
                 best = d;
                 step = pos;

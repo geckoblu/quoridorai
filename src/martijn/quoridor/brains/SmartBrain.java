@@ -49,9 +49,9 @@ public class SmartBrain extends NegamaxBrain {
         return moves.toArray(rv);
     }
 
-    private void markWallLocations(PositionSet set, Player p) {
-        Orientation[] path = p.findGoal();
-        Position pos = p.getPosition();
+    private void markWallLocations(PositionSet set, Player player) {
+        Orientation[] path = player.findPathToGoal();
+        Position pos = player.getPosition();
         select(set, pos);
         for (Orientation o : path) {
             pos = pos.move(o);
@@ -92,7 +92,7 @@ public class SmartBrain extends NegamaxBrain {
         } else if (p2.isWinner()) {
             return -1000;
         } else {
-            return p2.findGoal().length - p1.findGoal().length;
+            return p2.findGoal() - p1.findGoal();
         }
     }
 

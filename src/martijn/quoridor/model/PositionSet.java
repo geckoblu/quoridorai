@@ -24,4 +24,25 @@ public class PositionSet {
         _flags[pos.getX()][pos.getY()] = false;
     }
 
+    @Override
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+
+        for (int x = 0; x < Board.SIZE; x++) {
+            for (int y = 0; y < Board.SIZE; y++) {
+                Position pos = new Position(x, y);
+                if (this.contains(pos)) {
+                    sb.append(pos.toString());
+                    sb.append(" ");
+                }
+            }
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

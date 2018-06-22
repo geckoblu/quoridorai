@@ -361,4 +361,41 @@ public class Board {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return hashString().hashCode();
+    }
+
+    public String hashString() {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append(getTurn().index);
+
+        for (int i = 0; i < Board.NPLAYERS; i++) {
+            Player pl = _players[i];
+            sb.append(pl.getPosition().getX());
+            sb.append(pl.getPosition().getY());
+            int wc = pl.getWallCount();
+            if (wc == 10) {
+                sb.append("0");
+            } else if (wc == 0) {
+                    sb.append("-");
+            } else {
+                sb.append(wc);
+            }
+        }
+        for (int x = 0; x < SIZE - 1; x++) {
+            for (int y = 0; y < SIZE - 1; y++) {
+                Wall w = _walls[x][y];
+                if (w == null) {
+                    sb.append("-");
+                } else {
+                    sb.append(w.notation());
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
 }

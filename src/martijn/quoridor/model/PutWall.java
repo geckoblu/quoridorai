@@ -132,7 +132,7 @@ public class PutWall implements Move {
         try {
             execute(board);
             for (Player p : board.getPlayers()) {
-                if (p.findGoal() == null) {
+                if (p.findGoal() < 0) {
                     // This player's has no way of reaching their goal anymore.
                     return false;
                 }

@@ -12,8 +12,8 @@ public class RatedMove implements Comparable<RatedMove> {
 
     public RatedMove(Move move, int rating) {
         super();
-        this._move = move;
-        this._rating = rating;
+        _move = move;
+        _rating = rating;
     }
 
     public Move getMove() {
@@ -34,8 +34,7 @@ public class RatedMove implements Comparable<RatedMove> {
     }
 
     @Override
-    public int compareTo(RatedMove o) {
-        RatedMove rm = o;
+    public int compareTo(RatedMove rm) {
         return rm._rating - _rating;
     }
 

@@ -1,7 +1,5 @@
 package martijn.quoridor.model;
 
-import static java.lang.Math.abs;
-
 import java.util.Objects;
 
 public class Position implements Comparable<Position> {
@@ -57,6 +55,9 @@ public class Position implements Comparable<Position> {
 
     @Override
     public boolean equals(Object o) {
+        if (!(o instanceof Position)) {
+            return false;
+        }
         Position that = (Position) o;
         return this._x == that._x && this._y == that._y;
     }
@@ -83,10 +84,6 @@ public class Position implements Comparable<Position> {
 
     public <E> E visit(E[][] matrix) {
         return matrix[_x][_y];
-    }
-
-    public int manhattan(Position pos) {
-        return abs(pos._x - _x) + abs(pos._y - _y);
     }
 
 }

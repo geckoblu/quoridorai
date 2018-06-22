@@ -7,7 +7,7 @@ public class Utils {
         String[] ao = orientation.trim().split(" ");
 
         Orientation[] res = new Orientation[ao.length];
-        for (int i = 0; i < ao.length; i++){
+        for (int i = 0; i < ao.length; i++) {
             res[i] = toOrientation(ao[i]);
         }
 
@@ -29,8 +29,12 @@ public class Utils {
         }
     }
 
+    public final static Board getBoard() {
+        return new Board();
+    }
+
     public final static Board getBoard(String p0, String p1, String walls) {
-        return getBoard(Notation.LAMEK, p0, p1, walls);
+        return getBoard(Notation.DEBUG, p0, p1, walls);
     }
 
     public final static Board getBoard(Notation notation, String p0, String p1, String walls) {
@@ -39,12 +43,20 @@ public class Utils {
 
         if (p0 != null && p0.length() == 2) {
             Jump jump0 = new Jump(notation, p0);
-            board.getPlayer(0).setPosition(jump0.getPosition());
+            if (board.containsPlayerPosition(jump0.getPosition())) {
+                board.getPlayer(0).setPosition(jump0.getPosition());
+            } else {
+                throw new Error("Not a valid position for player p0 " + p0);
+            }
         }
 
         if (p1 != null && p1.length() == 2) {
             Jump jump1 = new Jump(notation, p1);
-            board.getPlayer(1).setPosition(jump1.getPosition());
+            if (board.containsPlayerPosition(jump1.getPosition())) {
+                board.getPlayer(1).setPosition(jump1.getPosition());
+            } else {
+                throw new Error("Not a valid position for player p1 " + p1);
+            }
         }
 
         if (walls != null && walls.length() > 3) {
