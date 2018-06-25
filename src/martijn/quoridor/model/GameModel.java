@@ -155,8 +155,8 @@ public final class GameModel {
             _controllers[i + 1] = new BrainController(this, brains.get(i));
         }
 
-        Controller controller0 =  getController(Config.getBrain(0));
-        Controller controller1 =  getController(Config.getBrain(1));
+        Controller controller0 =  getController(0);
+        Controller controller1 =  getController(1);
 
         _setup = new Setup(humanController, new Controller[] {controller0, controller1});
     }
@@ -175,7 +175,10 @@ public final class GameModel {
         fireSetupChanged();
     }
 
-    private Controller getController(String brainName) {
+    private Controller getController(int playerIndex) {
+
+        String brainName = Config.getBrain(playerIndex);
+
         for (Controller controller : _controllers) {
             if (controller.getName().equals(brainName)) {
                 return controller;
@@ -188,8 +191,9 @@ public final class GameModel {
         String message = I18N.tr("WRONG_BRAIN_MESSAGE");
         message = message.replace("$1", brainName);
         message = message.replace("$2", fallback.getName());
-        Core.LOGGER.log(Level.SEVERE, message.replace('\n', ' '));
-        JOptionPane.showMessageDialog(Core.getRootComponent(), message, title, JOptionPane.ERROR_MESSAGE);
+        Core.LOGGER.log(Level.WARNING, message.replace('\n', ' '));
+        JOptionPane.showMessageDialog(Core.getRootComponent(), message, title, JOptionPane.WARNING_MESSAGE);
+        Config.setBrain(playerIndex, fallback.getName());
         return fallback;
     }
 
