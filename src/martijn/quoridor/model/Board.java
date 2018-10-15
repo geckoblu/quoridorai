@@ -167,6 +167,11 @@ public class Board {
         return _turn;
     }
 
+    /** Returns the player whose turn it is not. */
+    public Player getOpponent() {
+        return _players[(_turn + 1) % NPLAYERS];
+    }
+
     /**
      * Returns the player who has won, or {@literal null} if the game is not
      * over yet.
@@ -319,14 +324,14 @@ public class Board {
 
     /** Increases the turn by 1. */
     private void increaseTurn() {
-        _turn = (_turn + 1) % _players.length;
+        _turn = (_turn + 1) % NPLAYERS;
     }
 
     /** Decreases the turn by 1. */
     private void decreaseTurn() {
         _turn--;
         if (_turn < 0) {
-            _turn += _players.length;
+            _turn += NPLAYERS;
         }
     }
 

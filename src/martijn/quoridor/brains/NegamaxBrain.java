@@ -9,6 +9,9 @@ import martijn.quoridor.model.Move;
 
 public abstract class NegamaxBrain extends Brain {
 
+    protected static final int MAX_VALUE = Integer.MAX_VALUE;
+    protected static final int MIN_VALUE = Integer.MIN_VALUE + 1; // To avoid overflow (abs, neg, ...)
+
     private int _depth;
 
     private boolean _deterministic = false;
@@ -121,7 +124,7 @@ public abstract class NegamaxBrain extends Brain {
         if (depth == 0 || board.isGameOver()) {
             return getHeuristic(board);
         } else {
-            int negamax = Integer.MIN_VALUE;
+            int negamax = MIN_VALUE;
             for (Move move : selectMoves(board)) {
                 board.move(move);
                 negamax = Math.max(negamax, -negamax(board, depth - 1));
