@@ -6,18 +6,21 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import martijn.quoridor.Game;
 import martijn.quoridor.I18N;
 import martijn.quoridor.QgfUtils;
 import martijn.quoridor.model.GameListener;
 import martijn.quoridor.model.GameModel;
+import martijn.quoridor.ui.GamePanel;
 
 @SuppressWarnings("serial")
 public class SaveAction extends AbstractAction implements GameListener {
 
     private final Component _parent;
     private final GameModel _gameModel;
+    private final GamePanel _gamePanel;
 
-    public SaveAction(Component parent, GameModel gameModel) {
+    public SaveAction(Component parent, GameModel gameModel, GamePanel gamePanel) {
         super();
 
         I18N.Action action = I18N.getAction("SAVE");
@@ -27,6 +30,7 @@ public class SaveAction extends AbstractAction implements GameListener {
 
         _parent = parent;
         _gameModel = gameModel;
+        _gamePanel = gamePanel;
 
         update();
 
@@ -37,7 +41,9 @@ public class SaveAction extends AbstractAction implements GameListener {
     public void actionPerformed(ActionEvent e) {
         QgfUtils qgfutils = new QgfUtils(_parent);
 
-        qgfutils.save(_gameModel.getHistory());
+        Game game = _gameModel.getGame();
+        game.setPointOfView(_gamePanel.getPointOfView());
+        qgfutils.save(game);
     }
 
     @Override // BoardListener

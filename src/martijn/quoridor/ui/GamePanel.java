@@ -106,8 +106,12 @@ public class GamePanel extends JPanel {
         am.put("RIGHT", new RedoAction(_gameModel));
     }
 
-    void setPointOfView(PointOfView pointOfView) {
+    public void setPointOfView(PointOfView pointOfView) {
         _boardCanvas.setPointOfView(pointOfView);
+    }
+
+    public PointOfView getPointOfView() {
+        return _boardCanvas.getPointOfView();
     }
 
 }

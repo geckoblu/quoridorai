@@ -105,11 +105,11 @@ public class ApplicationFrame extends JFrame {
         fileMenu.addSeparator();
 
         menuItem = new JMenuItem();
-        menuItem.setAction(new SaveAction(this, _gameModel));
+        menuItem.setAction(new SaveAction(this, _gameModel, _gamePanel));
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem();
-        menuItem.setAction(new LoadAction(this, _gameModel));
+        menuItem.setAction(new LoadAction(this, _gameModel, _gamePanel));
         fileMenu.add(menuItem);
 
         fileMenu.addSeparator();

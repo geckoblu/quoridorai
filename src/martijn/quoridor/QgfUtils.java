@@ -18,6 +18,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import martijn.quoridor.model.Jump;
 import martijn.quoridor.model.Move;
 import martijn.quoridor.model.Notation;
+import martijn.quoridor.model.PointOfView;
 import martijn.quoridor.model.PutWall;
 
 public class QgfUtils {
@@ -25,8 +26,12 @@ public class QgfUtils {
     private static final String NL = System.getProperty("line.separator");
 
     private Component _parent;
+
+    private String _player1;
+    private String _player2;
     private Notation _notation;
     private List<Move> _moves;
+    private PointOfView _pointOfView;
 
     private BufferedWriter _w;
 
@@ -34,11 +39,11 @@ public class QgfUtils {
         _parent = parent;
     }
 
-    public Iterator<Move> load() {
+    public Game load() {
         return load(null);
     }
 
-    private Iterator<Move> load(File fileToLoad) {
+    private Game load(File fileToLoad) {
 
         if (fileToLoad == null) {
 
@@ -81,12 +86,15 @@ public class QgfUtils {
             return null;
         }
 
-        return _moves.iterator();
-
+        return new Game(_player1, _player2, _notation, _moves.iterator(), _pointOfView);
     }
 
     private void parseQgf(File path) throws IOException {
 
+        _player1 = "";
+        _player2 = "";
+        _notation = null;
+        _pointOfView = PointOfView.POV1;
         _moves = new ArrayList<Move>();
 
         List<String> lines = Files.readAllLines(path.toPath());
@@ -102,8 +110,6 @@ public class QgfUtils {
             throw new LoadException("Not a valid version");
         }
 
-        boolean notationFound = false;
-
         int linenumber = 1;
         int movenumber = 0;
         while (iter.hasNext()) {
@@ -111,8 +117,30 @@ public class QgfUtils {
             linenumber++;
 
             if (line.startsWith("# Notation:")) {
-                notationFound = true;
-                _notation = Notation.parse(line.substring(line.indexOf(":") + 1).trim());
+                String notation = line.substring(line.indexOf(":") + 1).trim();
+                try {
+                    _notation = Notation.parse(notation);
+                } catch (IllegalArgumentException ex) {
+                    String message = "Error on line " + linenumber + ": not a valid notation " + notation;
+                    throw new LoadException(message);
+                }
+            }
+
+            if (line.startsWith("# Player1:")) {
+                _player1 = line.substring(line.indexOf(":") + 1).trim();
+            }
+
+            if (line.startsWith("# Player2:")) {
+                _player2 = line.substring(line.indexOf(":") + 1).trim();
+            }
+
+            if (line.startsWith("# PointOfView:")) {
+                String pov = line.substring(line.indexOf(":") + 1).trim();
+                try {
+                    _pointOfView = PointOfView.parse(pov);
+                } catch (IllegalArgumentException ex) {
+                    System.err.println("WARNING: Not a valid PointOfView " + pov);
+                }
             }
 
             int idx = line.indexOf(".");
@@ -123,7 +151,7 @@ public class QgfUtils {
                     int mv = Integer.parseInt(pref);
                     movenumber++;
 
-                    if (mv >= 1 && !notationFound) {
+                    if (mv >= 1 && _notation == null) {
                         throw new LoadException("Notation not found");
                     }
 
@@ -188,11 +216,11 @@ public class QgfUtils {
 
     }
 
-    public void save(Iterator<Move> moves) {
-        save(null, moves);
+    public void save(Game game) {
+        save(null, game);
     }
 
-    public void save(File fileToSave, Iterator<Move> moves) {
+    public void save(File fileToSave, Game game) {
 
         if (fileToSave == null) {
 
@@ -224,25 +252,27 @@ public class QgfUtils {
         }
 
         try {
-            saveQgf(fileToSave, moves);
+            saveQgf(fileToSave, game);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(_parent, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    private void saveQgf(File fileToSave, Iterator<Move> moves) throws IOException {
+    private void saveQgf(File fileToSave, Game game) throws IOException {
 
         try {
             _w = new BufferedWriter(new FileWriter(fileToSave));
 
             writenl("# QGF V[1.0]");
 
-            writenl("# Player1: ");
-            writenl("# Player2: ");
+            writenl("# Player1: " + game.getPlayer1());
+            writenl("# Player2: " + game.getPlayer2());
 
+            writenl("# PointOfView: " + game.getPointOfView());
             writenl("# Notation: " + Config.getNotation());
 
+            Iterator<Move> moves = game.getMoves();
             int i = 0;
             while (moves.hasNext()) {
                 i++;
@@ -311,3 +341,4 @@ public class QgfUtils {
     }
 
 }
+

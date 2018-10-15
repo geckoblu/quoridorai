@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import martijn.quoridor.Config;
 import martijn.quoridor.Core;
+import martijn.quoridor.Game;
 import martijn.quoridor.I18N;
 import martijn.quoridor.brains.Brain;
 import martijn.quoridor.brains.BrainFactory;
@@ -23,6 +24,8 @@ public final class GameModel {
 
     private Controller[] _controllers;
 
+    private Game _game;
+
     private final List<GameListener> _gameListeners = new LinkedList<GameListener>();
     private final List<SetupListener> _setupListeners = new LinkedList<SetupListener>();
 
@@ -36,6 +39,7 @@ public final class GameModel {
     }
 
     public void newGame() {
+        _game = null;
         _board.newGame();
         fireBoardChanged();
     }
@@ -195,6 +199,26 @@ public final class GameModel {
         JOptionPane.showMessageDialog(Core.getRootComponent(), message, title, JOptionPane.WARNING_MESSAGE);
         Config.setBrain(playerIndex, fallback.getName());
         return fallback;
+    }
+
+    public void setGame(Game game) {
+        _game = game;
+        _board.newGame();
+        add(game.getMoves());
+    }
+
+    public Game getGame() {
+        String player1;
+        String player2;
+        if (_game == null) {
+            player1 = "";
+            player2 = "";
+        } else {
+            player1 = _game.getPlayer1();
+            player2 = _game.getPlayer2();
+        }
+        _game = new Game(player1, player2, Config.getNotation(), getHistory());
+        return _game;
     }
 
 }

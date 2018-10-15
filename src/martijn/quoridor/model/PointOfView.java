@@ -4,13 +4,13 @@ public enum PointOfView {
 
     POV1, POV2;
 
-    /*
-    public static PointOfView parse(String notation) {
-        notation = notation.toUpperCase();
+    public static PointOfView parse(String pointOfView) {
+        pointOfView = pointOfView.toUpperCase();
 
-        return valueOf(notation);
+        return valueOf(pointOfView);
     }
 
+    /*
     @Override
     public String toString() {
         String name = this.name();
