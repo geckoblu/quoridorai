@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -21,6 +23,11 @@ public final class Config {
     private static final String NOTATION = "NOTATION";
     private static final String SHOWCOORDINATES = "SHOWCOORDINATES";
     private static final String LASTLOADPATH = "LAST_LOAD_PATH";
+    private static final String LASTLOADFILE = "LAST_LOAD_FILE";
+    private static final String LASTLOADFILE2 = "LAST_LOAD_FILE_2";
+    private static final String LASTLOADFILE3 = "LAST_LOAD_FILE_3";
+    private static final String LASTLOADFILE4 = "LAST_LOAD_FILE_4";
+    private static final String LASTLOADFILE5 = "LAST_LOAD_FILE_5";
     private static final String PLAYSOUNDS = "PLAYSOUNDS";
     private static final String BRAIN = "BRAIN";
 
@@ -34,8 +41,6 @@ public final class Config {
      */
     private final Properties _prop = new Properties();
     private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
-
-    private File _lastLoadFile = null;
 
     private Config() {
         File configFile = new File(getConfigFileName());
@@ -163,7 +168,7 @@ public final class Config {
         return playSounds;
     }
 
-    public static void getPlaySounds(boolean playSounds) {
+    public static void setPlaySounds(boolean playSounds) {
 
         boolean oldValue = getPlaySounds();
 
@@ -235,19 +240,111 @@ public final class Config {
     }
 
     public static void setLastLoadPath(String lastLoadPath) {
-        THIS._prop.setProperty(LASTLOADPATH, lastLoadPath);
-        save();
+
+        String oldValue = getLastLoadPath();
+
+        if (lastLoadPath != oldValue) {
+            THIS._prop.setProperty(LASTLOADPATH, lastLoadPath);
+            save();
+        }
     }
 
     public static File getLastLoadFile() {
-        return THIS._lastLoadFile;
+        String llf = THIS._prop.getProperty(LASTLOADFILE, null);
+        if (llf != null) {
+            return new File(llf);
+        } else {
+            return null;
+        }
     }
 
     public static void setLastLoadFile(File lastLoadFile) {
-        THIS._lastLoadFile = lastLoadFile;
-        if (lastLoadFile != null) {
-            String lastLoadPath = lastLoadFile.getParent().toString();
-            setLastLoadPath(lastLoadPath);
+
+        File oldValue = getLastLoadFile();
+
+        if (lastLoadFile != oldValue) {
+
+            if (lastLoadFile != null) {
+                pushLastLoadFiles(lastLoadFile);
+
+                THIS._prop.setProperty(LASTLOADFILE, lastLoadFile.toString());
+                String lastLoadPath = lastLoadFile.getParent().toString();
+                setLastLoadPath(lastLoadPath);
+
+            } else {
+                THIS._prop.remove(LASTLOADFILE);
+            }
+            save();
+        }
+    }
+
+    public static List<File> getLastLoadFiles() {
+        List<File> fileList = new ArrayList<File>();
+        File f;
+        String llf;
+
+        f = getLastLoadFile();
+        if (f != null && f.exists()) {
+            fileList.add(f);
+        }
+
+        llf = THIS._prop.getProperty(LASTLOADFILE2, null);
+        if (llf != null) {
+            f = new File(llf);
+            if (f.exists()) {
+                fileList.add(f);
+            }
+        }
+
+        llf = THIS._prop.getProperty(LASTLOADFILE3, null);
+        if (llf != null) {
+            f = new File(llf);
+            if (f.exists()) {
+                fileList.add(f);
+            }
+        }
+
+        if (fileList.size() >= 3) {
+            return fileList;
+        }
+
+        llf = THIS._prop.getProperty(LASTLOADFILE4, null);
+        if (llf != null) {
+            f = new File(llf);
+            if (f.exists()) {
+                fileList.add(f);
+            }
+        }
+
+        if (fileList.size() >= 3) {
+            return fileList;
+        }
+
+        llf = THIS._prop.getProperty(LASTLOADFILE5, null);
+        if (llf != null) {
+            f = new File(llf);
+            if (f.exists()) {
+                fileList.add(f);
+            }
+        }
+
+        return fileList;
+    }
+
+    public static void pushLastLoadFiles(File lastLoadFile) {
+        List<File> fileList = getLastLoadFiles();
+
+        fileList.remove(lastLoadFile);
+
+        THIS._prop.remove(LASTLOADFILE2);
+        THIS._prop.remove(LASTLOADFILE3);
+        THIS._prop.remove(LASTLOADFILE4);
+        THIS._prop.remove(LASTLOADFILE5);
+
+        int i = 1;
+        for(File file: fileList) {
+            i = i + 1;
+            THIS._prop.setProperty(LASTLOADFILE + i, file.toString());
         }
     }
 

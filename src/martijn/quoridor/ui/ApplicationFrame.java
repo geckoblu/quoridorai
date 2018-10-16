@@ -4,11 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.net.URL;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -17,6 +20,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import martijn.quoridor.Config;
@@ -28,9 +32,10 @@ import martijn.quoridor.ui.actions.AboutAction;
 import martijn.quoridor.ui.actions.EditPropertiesAction;
 import martijn.quoridor.ui.actions.ExitAction;
 import martijn.quoridor.ui.actions.LoadAction;
+import martijn.quoridor.ui.actions.LoadFileAction;
 import martijn.quoridor.ui.actions.NewGameAction;
 import martijn.quoridor.ui.actions.RulesAction;
-import martijn.quoridor.ui.actions.SaveAction;
+import martijn.quoridor.ui.actions.SaveAsAction;
 
 @SuppressWarnings("serial")
 public class ApplicationFrame extends JFrame {
@@ -94,29 +99,52 @@ public class ApplicationFrame extends JFrame {
 
     private void createFileMenu(JMenuBar menubar) {
 
+        JMenuItem menuItem;
+        KeyStroke key;
+
         I18N.Menu i18nMenu = I18N.getMenu("FILE");
         JMenu fileMenu = new JMenu(i18nMenu.label);
         fileMenu.setMnemonic(i18nMenu.mnemonic);
 
-        JMenuItem menuItem = new JMenuItem();
+        menuItem = new JMenuItem();
         menuItem.setAction(new NewGameAction(_gameModel));
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK);
+        menuItem.setAccelerator(key);
         fileMenu.add(menuItem);
 
         fileMenu.addSeparator();
 
+        // menuItem = new JMenuItem();
+        // menuItem.setAction(new SaveAction(this, _gameModel, _gamePanel));
+        // key = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+        // menuItem.setAccelerator(key);
+        // fileMenu.add(menuItem);
+
         menuItem = new JMenuItem();
-        menuItem.setAction(new SaveAction(this, _gameModel, _gamePanel));
+        menuItem.setAction(new SaveAsAction(this, _gameModel, _gamePanel));
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+        menuItem.setAccelerator(key);
         fileMenu.add(menuItem);
 
         menuItem = new JMenuItem();
         menuItem.setAction(new LoadAction(this, _gameModel, _gamePanel));
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); // | KeyEvent.SHIFT_DOWN_MASK);
+        menuItem.setAccelerator(key);
         fileMenu.add(menuItem);
+
+        // menuItem = new JMenuItem();
+        // menuItem.setAction(new LoadLastAction(this, _gameModel, _gamePanel));
+        // key = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK);
+        // menuItem.setAccelerator(key);
+        // fileMenu.add(menuItem);
 
         fileMenu.addSeparator();
 
         menuItem = new JMenuItem();
         menuItem.setAction(new EditPropertiesAction(this));
         fileMenu.add(menuItem);
+
+        //addLastLoadFiles(fileMenu);
 
         fileMenu.addSeparator();
 
@@ -126,6 +154,24 @@ public class ApplicationFrame extends JFrame {
         fileMenu.add(menuItem);
 
         menubar.add(fileMenu);
+    }
+
+    private void addLastLoadFiles(JMenu fileMenu) {
+        Iterator<File> iter = Config.getLastLoadFiles().iterator();
+
+        if (iter.hasNext()) {
+            fileMenu.addSeparator();
+
+            int i = 0;
+            while(iter.hasNext()) {
+                i = i + 1;
+
+                JMenuItem menuItem = new JMenuItem();
+                menuItem.setAction(new LoadFileAction(i, this, _gameModel, _gamePanel, iter.next()));
+                fileMenu.add(menuItem);
+
+            }
+        }
     }
 
     private void createViewMenu(JMenuBar menubar) {

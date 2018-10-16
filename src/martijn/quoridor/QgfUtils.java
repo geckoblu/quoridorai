@@ -40,34 +40,45 @@ public class QgfUtils {
     }
 
     public Game load() {
-        return load(null);
+        return load(null, true);
     }
 
-    private Game load(File fileToLoad) {
+    public Game loadLast() {
+        return load(null, false);
+    }
+
+    public Game load(File fileToLoad, boolean ask) {
 
         if (fileToLoad == null) {
 
             File lastLoadPath;
             File lastLoadFile = Config.getLastLoadFile();
+            if (lastLoadFile != null && !lastLoadFile.exists()) {
+                lastLoadFile = null;
+            }
             if (lastLoadFile != null) {
                 lastLoadPath = lastLoadFile;
             } else {
                 lastLoadPath = new File(Config.getLastLoadPath());
             }
 
-            JFileChooser chooser = new JFileChooser(lastLoadPath);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("QGF Files", "txt");
-            chooser.setFileFilter(filter);
-            if (lastLoadFile != null) {
-                chooser.setSelectedFile(lastLoadFile);
-            }
+            if (ask || lastLoadFile == null) {
+                JFileChooser chooser = new JFileChooser(lastLoadPath);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("QGF Files", "txt");
+                chooser.setFileFilter(filter);
+                if (lastLoadFile != null) {
+                    chooser.setSelectedFile(lastLoadFile);
+                }
 
-            int returnVal = chooser.showOpenDialog(_parent);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                fileToLoad = chooser.getSelectedFile();
-                Config.setLastLoadFile(fileToLoad);
+                int returnVal = chooser.showOpenDialog(_parent);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    fileToLoad = chooser.getSelectedFile();
+                    Config.setLastLoadFile(fileToLoad);
+                } else {
+                    return null;
+                }
             } else {
-                return null;
+                fileToLoad = lastLoadFile;
             }
         }
 
@@ -106,8 +117,11 @@ public class QgfUtils {
         Iterator<String> iter = lines.iterator();
 
         String first = iter.next();
+        if (!first.startsWith("# QGF")) {
+            throw new LoadException("Not a valid QGF file.");
+        }
         if (!first.equals("# QGF V[1.0]")) {
-            throw new LoadException("Not a valid version");
+            throw new LoadException("Not a valid version.");
         }
 
         int linenumber = 1;
@@ -152,7 +166,7 @@ public class QgfUtils {
                     movenumber++;
 
                     if (mv >= 1 && _notation == null) {
-                        throw new LoadException("Notation not found");
+                        throw new LoadException("Notation not found.");
                     }
 
                     if (mv != movenumber) {
@@ -217,10 +231,14 @@ public class QgfUtils {
     }
 
     public void save(Game game) {
-        save(null, game);
+        save(null, game, false);
     }
 
-    public void save(File fileToSave, Game game) {
+    public void saveAs(Game game) {
+        save(null, game, true);
+    }
+
+    public void save(File fileToSave, Game game, boolean ask) {
 
         if (fileToSave == null) {
 
@@ -232,22 +250,26 @@ public class QgfUtils {
                 lastLoadPath = new File(Config.getLastLoadPath());
             }
 
-            JFileChooser chooser = new JFileChooser(lastLoadPath);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("QGF Files (txt)", "txt");
-            chooser.setFileFilter(filter);
-            if (lastLoadFile != null) {
-                chooser.setSelectedFile(lastLoadFile);
-            }
+            if (ask || lastLoadFile == null) {
+                JFileChooser chooser = new JFileChooser(lastLoadPath);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("QGF Files (txt)", "txt");
+                chooser.setFileFilter(filter);
+                if (lastLoadFile != null) {
+                    chooser.setSelectedFile(lastLoadFile);
+                }
 
-            int returnVal = chooser.showSaveDialog(_parent);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                String filename = chooser.getSelectedFile().getPath();
+                int returnVal = chooser.showSaveDialog(_parent);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    String filename = chooser.getSelectedFile().getPath();
 
-                filename = removeExtension(filename) + ".txt";
-                fileToSave = new File(filename);
-                Config.setLastLoadFile(fileToSave);
+                    filename = removeExtension(filename) + ".txt";
+                    fileToSave = new File(filename);
+                    Config.setLastLoadFile(fileToSave);
+                } else {
+                    return;
+                }
             } else {
-                return;
+                fileToSave = lastLoadFile;
             }
         }
 
@@ -301,10 +323,8 @@ public class QgfUtils {
     }
 
     /*
-    private void write(String str) throws IOException {
-        _w.write(str);
-    }
-    */
+     * private void write(String str) throws IOException { _w.write(str); }
+     */
 
     private void writenl(String str) throws IOException {
         _w.write(str);
@@ -329,10 +349,8 @@ public class QgfUtils {
         }
 
         /*
-        LoadException(Throwable cause) {
-            super(cause);
-        }
-        */
+         * LoadException(Throwable cause) { super(cause); }
+         */
 
         LoadException(String message, Throwable cause) {
             super(message, cause);
@@ -341,4 +359,3 @@ public class QgfUtils {
     }
 
 }
-

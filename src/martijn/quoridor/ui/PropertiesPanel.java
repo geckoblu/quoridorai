@@ -62,7 +62,7 @@ public class PropertiesPanel extends JPanel {
         _playSounds.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Config.getPlaySounds(_playSounds.isSelected());
+                Config.setPlaySounds(_playSounds.isSelected());
             }
         });
     }
