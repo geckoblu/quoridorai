@@ -24,6 +24,7 @@ public final class Config {
     private static final String SHOWCOORDINATES = "SHOWCOORDINATES";
     private static final String LASTLOADPATH = "LAST_LOAD_PATH";
     private static final String LASTLOADFILE = "LAST_LOAD_FILE";
+    private static final String LASTLOADFILE_ = "LAST_LOAD_FILE_";
     private static final String LASTLOADFILE2 = "LAST_LOAD_FILE_2";
     private static final String LASTLOADFILE3 = "LAST_LOAD_FILE_3";
     private static final String LASTLOADFILE4 = "LAST_LOAD_FILE_4";
@@ -341,10 +342,13 @@ public final class Config {
         THIS._prop.remove(LASTLOADFILE4);
         THIS._prop.remove(LASTLOADFILE5);
 
-        int i = 1;
+        int i = 2;
         for(File file: fileList) {
+            THIS._prop.setProperty(LASTLOADFILE_ + i, file.toString());
             i = i + 1;
-            THIS._prop.setProperty(LASTLOADFILE + i, file.toString());
+            if (i > 5) {
+                break;
+            }
         }
     }
 

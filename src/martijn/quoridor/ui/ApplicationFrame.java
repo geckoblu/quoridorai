@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -44,6 +45,8 @@ public class ApplicationFrame extends JFrame {
 
     private GameModel _gameModel;
     private GamePanel _gamePanel;
+
+    private JMenu fileMenu;
 
     public ApplicationFrame() {
 
@@ -99,12 +102,26 @@ public class ApplicationFrame extends JFrame {
 
     private void createFileMenu(JMenuBar menubar) {
 
+        I18N.Menu i18nMenu = I18N.getMenu("FILE");
+        fileMenu = new JMenu(i18nMenu.label) {
+            @Override
+            public void setPopupMenuVisible(boolean b) {
+                if (b) {
+                    JPopupMenu jpm = super.getPopupMenu();
+                    jpm.removeAll();
+                    createFileMenuPopup();
+                }
+                super.setPopupMenuVisible(b);
+            }
+        };
+        fileMenu.setMnemonic(i18nMenu.mnemonic);
+
+        menubar.add(fileMenu);
+    }
+
+    private void createFileMenuPopup() {
         JMenuItem menuItem;
         KeyStroke key;
-
-        I18N.Menu i18nMenu = I18N.getMenu("FILE");
-        JMenu fileMenu = new JMenu(i18nMenu.label);
-        fileMenu.setMnemonic(i18nMenu.mnemonic);
 
         menuItem = new JMenuItem();
         menuItem.setAction(new NewGameAction(_gameModel));
@@ -128,7 +145,8 @@ public class ApplicationFrame extends JFrame {
 
         menuItem = new JMenuItem();
         menuItem.setAction(new LoadAction(this, _gameModel, _gamePanel));
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); // | KeyEvent.SHIFT_DOWN_MASK);
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); // |
+                                                                              // KeyEvent.SHIFT_DOWN_MASK);
         menuItem.setAccelerator(key);
         fileMenu.add(menuItem);
 
@@ -144,7 +162,7 @@ public class ApplicationFrame extends JFrame {
         menuItem.setAction(new EditPropertiesAction(this));
         fileMenu.add(menuItem);
 
-        //addLastLoadFiles(fileMenu);
+        addLastLoadFiles(fileMenu);
 
         fileMenu.addSeparator();
 
@@ -152,8 +170,6 @@ public class ApplicationFrame extends JFrame {
         menuItem.setAction(new ExitAction(this));
 
         fileMenu.add(menuItem);
-
-        menubar.add(fileMenu);
     }
 
     private void addLastLoadFiles(JMenu fileMenu) {
@@ -163,7 +179,7 @@ public class ApplicationFrame extends JFrame {
             fileMenu.addSeparator();
 
             int i = 0;
-            while(iter.hasNext()) {
+            while (iter.hasNext()) {
                 i = i + 1;
 
                 JMenuItem menuItem = new JMenuItem();
@@ -211,7 +227,6 @@ public class ApplicationFrame extends JFrame {
                 menuItem2.setSelected(evt.getNewValue().equals(PointOfView.POV2));
             }
         });
-
 
         menubar.add(viewMenu);
     }

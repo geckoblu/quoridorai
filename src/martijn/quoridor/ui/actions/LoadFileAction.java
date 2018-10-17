@@ -35,8 +35,6 @@ public class LoadFileAction extends AbstractAction {
         _gamePanel = gamePanel;
         _file = file;
 
-        System.out.println(name);
-
     }
 
     @Override

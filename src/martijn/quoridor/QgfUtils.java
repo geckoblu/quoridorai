@@ -73,7 +73,6 @@ public class QgfUtils {
                 int returnVal = chooser.showOpenDialog(_parent);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     fileToLoad = chooser.getSelectedFile();
-                    Config.setLastLoadFile(fileToLoad);
                 } else {
                     return null;
                 }
@@ -81,6 +80,8 @@ public class QgfUtils {
                 fileToLoad = lastLoadFile;
             }
         }
+
+        Config.setLastLoadFile(fileToLoad);
 
         try {
             parseQgf(fileToLoad);
@@ -264,7 +265,6 @@ public class QgfUtils {
 
                     filename = removeExtension(filename) + ".txt";
                     fileToSave = new File(filename);
-                    Config.setLastLoadFile(fileToSave);
                 } else {
                     return;
                 }
@@ -272,6 +272,8 @@ public class QgfUtils {
                 fileToSave = lastLoadFile;
             }
         }
+
+        Config.setLastLoadFile(fileToSave);
 
         try {
             saveQgf(fileToSave, game);
