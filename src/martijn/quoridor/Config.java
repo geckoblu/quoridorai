@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -40,7 +43,22 @@ public final class Config {
     /*
      * Instance variables
      */
-    private final Properties _prop = new Properties();
+    @SuppressWarnings("serial")
+    private final Properties _prop = new Properties() {
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            List<Object> keys = new ArrayList<Object>(keySet());
+            Collections.sort(keys,  new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return o1.toString().compareTo(o2.toString());
+                }
+            });
+
+            return Collections.enumeration(keys);
+        }
+    };
+
     private final PropertyChangeSupport _pcs = new PropertyChangeSupport(this);
 
     private Config() {
